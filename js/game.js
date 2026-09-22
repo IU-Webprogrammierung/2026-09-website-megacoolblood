@@ -2,10 +2,12 @@ const board = document.querySelector('#game-board');
 const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
+const modeButtons = document.querySelectorAll('.mode-button');
 const boardSize = 9;
 const mineTotal = 10;
 let cells = [];
 let gameOver = false;
+let activeMode = 'reveal';
 
 function getColumnLabel(columnIndex) {
 	let label = '';
@@ -59,7 +61,7 @@ function countAdjacentMines(cell) {
 }
 
 function revealCell(cell) {
-	if (gameOver || cell.isRevealed) {
+	if (gameOver || cell.isRevealed || cell.isFlagged) {
 		return;
 	}
 
@@ -84,7 +86,72 @@ function revealCell(cell) {
 		'aria-label',
 		`${cell.coordinate}, ${adjacentMines} angrenzende Minen`
 	);
+
+	if (cells.every((currentCell) => currentCell.isMine || currentCell.isRevealed)) {
+		gameOver = true;
+		gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt.';
+		return;
+	}
+
 	gameStatus.textContent = `Feld ${cell.coordinate} aufgedeckt.`;
+}
+
+function toggleFlag(cell) {
+	if (gameOver || cell.isRevealed || cell.isMarked) {
+		return;
+	}
+
+	cell.isFlagged = !cell.isFlagged;
+	cell.element.textContent = cell.isFlagged ? 'F' : '?';
+	cell.element.classList.toggle('is-flagged', cell.isFlagged);
+	cell.element.setAttribute(
+		'aria-label',
+		`${cell.isFlagged ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
+	);
+	mineCount.textContent = mineTotal - cells.filter((currentCell) => currentCell.isFlagged).length;
+	gameStatus.textContent = cell.isFlagged
+		? `Feld ${cell.coordinate} als vermutete Mine markiert.`
+		: `Markierung von Feld ${cell.coordinate} entfernt.`;
+}
+
+function toggleMark(cell) {
+	if (gameOver || cell.isRevealed || cell.isFlagged) {
+		return;
+	}
+
+	cell.isMarked = !cell.isMarked;
+	cell.element.textContent = cell.isMarked ? '?' : '';
+	cell.element.classList.toggle('is-marked', cell.isMarked);
+	cell.element.setAttribute(
+		'aria-label',
+		`${cell.isMarked ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
+	);
+	gameStatus.textContent = cell.isMarked
+		? `Feld ${cell.coordinate} mit einem Fragezeichen markiert.`
+		: `Markierung von Feld ${cell.coordinate} entfernt.`;
+}
+
+function setMode(mode) {
+	activeMode = mode;
+	modeButtons.forEach((button) => {
+		const isActive = button.dataset.mode === activeMode;
+		button.classList.toggle('is-active', isActive);
+		button.setAttribute('aria-pressed', String(isActive));
+	});
+}
+
+function useActiveMode(cell) {
+	if (activeMode === 'flag') {
+		toggleFlag(cell);
+		return;
+	}
+
+	if (activeMode === 'mark') {
+		toggleMark(cell);
+		return;
+	}
+
+	revealCell(cell);
 }
 
 function handleCellClick(event) {
@@ -92,8 +159,35 @@ function handleCellClick(event) {
 	const cell = cells.find((currentCell) => currentCell.element === cellElement);
 
 	if (cell) {
-		revealCell(cell);
+		useActiveMode(cell);
 	}
+}
+
+function handleCellKeyDown(event) {
+	const cellElement = event.target.closest('.game-cell');
+
+	if (event.key === ' ') {
+		event.preventDefault();
+		const cell = cells.find((currentCell) => currentCell.element === cellElement);
+
+		if (cell) {
+			useActiveMode(cell);
+		}
+		return;
+	}
+}
+
+
+function handleModeShortcut(event) {
+	const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark' };
+	const mode = modeShortcuts[event.key.toLowerCase()];
+
+	if (!mode || event.target.matches('input, select, textarea')) {
+		return;
+	}
+
+	event.preventDefault();
+	setMode(mode);
 }
 
 function createBoard() {
@@ -112,6 +206,8 @@ function createBoard() {
 				coordinate,
 				element: cell,
 				isMine: false,
+				isFlagged: false,
+				isMarked: false,
 				isRevealed: false,
 				row
 			};
@@ -129,6 +225,12 @@ function createBoard() {
 	placeMines();
 }
 
+modeButtons.forEach((button) => {
+	button.addEventListener('click', () => setMode(button.dataset.mode));
+});
+
 board.addEventListener('click', handleCellClick);
+board.addEventListener('keydown', handleCellKeyDown);
+document.addEventListener('keydown', handleModeShortcut);
 newGameButton.addEventListener('click', createBoard);
 createBoard();

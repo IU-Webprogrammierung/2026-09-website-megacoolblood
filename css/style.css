@@ -105,6 +105,26 @@ button:hover {
 	background: var(--color-accent);
 }
 
+.game-modes {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-small);
+	margin-top: var(--space-medium);
+}
+
+.mode-button {
+	color: var(--color-text);
+	background: var(--color-surface);
+	border-color: var(--color-accent-dark);
+}
+
+.mode-button.is-active,
+.mode-button.is-active:hover {
+	color: #ffffff;
+	background: var(--color-accent-dark);
+}
+
 fieldset {
 	display: grid;
 	gap: var(--space-small);
@@ -168,6 +188,16 @@ dd {
 .game-cell.is-mine {
 	color: #ffffff;
 	background: #9b2c2c;
+}
+
+.game-cell.is-flagged {
+	color: #174936;
+	background: #f2d28b;
+}
+
+.game-cell.is-marked {
+	color: #6b4f00;
+	background: #f2d28b;
 }
 
 table {
