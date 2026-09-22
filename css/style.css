@@ -83,6 +83,13 @@ header {
 	border: 0.1rem solid var(--color-border);
 }
 
+.brand-image {
+	display: block;
+	width: min(100%, 20rem);
+	height: auto;
+	margin: var(--space-medium) auto;
+}
+
 nav ul {
 	display: flex;
 	gap: var(--space-medium);
