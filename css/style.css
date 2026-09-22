@@ -114,6 +114,40 @@ fieldset {
 	border: 0.1rem solid var(--color-border);
 }
 
+dl {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--space-medium);
+}
+
+dl div {
+	padding: var(--space-medium);
+	background: #e3ebe0;
+}
+
+dt {
+	color: var(--color-muted);
+	font-size: 0.9rem;
+}
+
+dd {
+	margin: 0;
+	font-size: 1.5rem;
+	font-weight: 700;
+}
+
+.game-board {
+	display: grid;
+	grid-template-columns: repeat(9, minmax(2rem, 3rem));
+	grid-auto-rows: minmax(2rem, 3rem);
+	gap: 0.15rem;
+	width: max-content;
+	max-width: 100%;
+	padding: var(--space-small);
+	overflow: auto;
+	background: var(--color-border);
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;
