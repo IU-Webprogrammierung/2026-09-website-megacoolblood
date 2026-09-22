@@ -296,6 +296,14 @@ dd {
 	border: 0.1rem solid var(--color-border);
 }
 
+.game-cell-icon {
+	display: block;
+	width: 65%;
+	height: 65%;
+	margin: auto;
+	object-fit: contain;
+}
+
 .game-cell:hover {
 	background: #e3ebe0;
 }
@@ -310,7 +318,7 @@ dd {
 
 .game-cell.is-mine {
 	color: #ffffff;
-	background: #9b2c2c;
+	background: #d41a1a;
 }
 
 .game-cell.is-flagged {
