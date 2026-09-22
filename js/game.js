@@ -29,7 +29,8 @@ const streakStorageKey = 'lycheelab-winning-streak';
 const highscoreStorageKey = 'lycheelab-highscores';
 const iconPaths = {
 	flag: '../../assets/icons/flag.svg',
-	mine: '../../assets/icons/mine.svg'
+	mine: '../../assets/icons/mine.svg',
+	questionmark: '../../assets/icons/questionmark.svg'
 };
 let cells = [];
 let gameOver = false;
@@ -243,7 +244,7 @@ function toggleMark(cell) {
 	}
 
 	cell.isMarked = !cell.isMarked;
-	cell.element.textContent = cell.isMarked ? '?' : '';
+	setCellContent(cell, cell.isMarked ? 'questionmark' : null, '');
 	cell.element.classList.toggle('is-marked', cell.isMarked);
 	cell.element.setAttribute(
 		'aria-label',
