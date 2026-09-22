@@ -31,19 +31,19 @@
         <h2 id="game-info-heading" class="visually-hidden">Spielinformationen</h2>
         <dl>
           <div>
-            <dt>Verbleibende Minen</dt>
+            <dt><img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true">Verbleibende Minen</dt>
             <dd id="mine-count">0</dd>
           </div>
           <div>
-            <dt>Aktuelle Siegesserie</dt>
+            <dt><img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true">Aktuelle Siegesserie</dt>
             <dd id="winning-streak">0</dd>
           </div>
           <div>
-            <dt>Höchster Highscore</dt>
+            <dt><img class="info-icon" src="../../assets/icons/highscore.svg" alt="" aria-hidden="true">Höchster Highscore</dt>
             <dd id="highest-score">0</dd>
           </div>
         </dl>
-        <button type="button" id="new-game">Neustart</button>
+        <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true">Neustart</button>
         <label for="player-name">Name für den Highscore</label>
         <input id="player-name" name="player-name" type="text" maxlength="24" value="Spieler">
       </header>
@@ -51,9 +51,9 @@
       <footer class="game-footer">
         <div class="game-modes" role="group" aria-label="Eingabemodus">
           <span>Modus:</span>
-          <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true">Aufdecken (A)</button>
-          <button type="button" class="mode-button" data-mode="flag" aria-pressed="false">Flagge (F)</button>
-          <button type="button" class="mode-button" data-mode="mark" aria-pressed="false">Markieren (M)</button>
+          <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true"><img class="mode-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true">Aufdecken (A)</button>
+          <button type="button" class="mode-button" data-mode="flag" aria-pressed="false"><img class="mode-icon" src="../../assets/icons/flag.svg" alt="" aria-hidden="true">Flagge (F)</button>
+          <button type="button" class="mode-button" data-mode="mark" aria-pressed="false"><img class="mode-icon" src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true">Markieren (M)</button>
         </div>
       </footer>
     </section>
