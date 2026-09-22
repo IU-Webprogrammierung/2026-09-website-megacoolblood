@@ -24,12 +24,22 @@
     <p id="game-status" role="status">Bereit für ein neues Spiel.</p>
     <section aria-labelledby="game-info-heading">
       <h2 id="game-info-heading">Spielinformationen</h2>
-      <p>Verbleibende Minen: <span>0</span></p>
-      <p>Aktuelle Siegesserie (Winning Streak): <span>0</span></p>
+      <dl>
+        <div>
+          <dt>Verbleibende Minen</dt>
+          <dd id="mine-count">0</dd>
+        </div>
+        <div>
+          <dt>Aktuelle Siegesserie</dt>
+          <dd id="winning-streak">0</dd>
+        </div>
+      </dl>
+      <button type="button" id="new-game">Neues Spiel</button>
     </section>
     <section aria-labelledby="board-heading">
       <h2 id="board-heading">Spielfeld</h2>
-      <p>Das Spielfeld wird in einer späteren Entwicklungsphase ergänzt.</p>
+      <p id="board-description">Das Spielfeld wird in einer späteren Entwicklungsphase mit interaktiven Feldern gefüllt.</p>
+      <div id="game-board" class="game-board" role="grid" aria-labelledby="board-heading" aria-describedby="board-description"></div>
     </section>
   </main>
 
