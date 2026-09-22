@@ -61,14 +61,13 @@ function countAdjacentMines(cell) {
 }
 
 function revealCell(cell) {
-	if (gameOver || cell.isRevealed || cell.isFlagged) {
+	if (gameOver || cell.isRevealed || cell.isFlagged || cell.isMarked) {
 		return;
 	}
 
-	cell.isRevealed = true;
-	cell.element.classList.add('is-revealed');
-
 	if (cell.isMine) {
+		cell.isRevealed = true;
+		cell.element.classList.add('is-revealed');
 		cell.element.textContent = '*';
 		cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
 		gameOver = true;
@@ -80,12 +79,34 @@ function revealCell(cell) {
 		return;
 	}
 
-	const adjacentMines = countAdjacentMines(cell);
-	cell.element.textContent = adjacentMines > 0 ? adjacentMines : '';
-	cell.element.setAttribute(
-		'aria-label',
-		`${cell.coordinate}, ${adjacentMines} angrenzende Minen`
-	);
+	const cellsToReveal = [cell];
+	let currentIndex = 0;
+
+	while (currentIndex < cellsToReveal.length) {
+		const currentCell = cellsToReveal[currentIndex];
+		currentIndex += 1;
+
+		if (currentCell.isRevealed || currentCell.isFlagged || currentCell.isMarked) {
+			continue;
+		}
+
+		currentCell.isRevealed = true;
+		currentCell.element.classList.add('is-revealed');
+		const adjacentMines = countAdjacentMines(currentCell);
+		currentCell.element.textContent = adjacentMines > 0 ? adjacentMines : '';
+		currentCell.element.setAttribute(
+			'aria-label',
+			`${currentCell.coordinate}, ${adjacentMines} angrenzende Minen`
+		);
+
+		if (adjacentMines === 0) {
+			getNeighbors(currentCell.row, currentCell.column).forEach((neighbor) => {
+				if (!neighbor.isMine && !neighbor.isRevealed && !neighbor.isFlagged && !neighbor.isMarked) {
+					cellsToReveal.push(neighbor);
+				}
+			});
+		}
+	}
 
 	if (cells.every((currentCell) => currentCell.isMine || currentCell.isRevealed)) {
 		gameOver = true;
