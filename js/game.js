@@ -4,6 +4,8 @@ const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
 const winningStreakElement = document.querySelector('#winning-streak');
 const highestScoreElement = document.querySelector('#highest-score');
+const highscoreDialog = document.querySelector('#highscore-dialog');
+const highscoreForm = document.querySelector('#highscore-form');
 const playerNameInput = document.querySelector('#player-name');
 const modeButtons = document.querySelectorAll('.mode-button');
 const difficultySettings = {
@@ -35,6 +37,7 @@ const iconPaths = {
 let cells = [];
 let gameOver = false;
 let activeMode = 'reveal';
+let pendingHighscoreStreak = 0;
 
 function getWinningStreak() {
 	try {
@@ -86,11 +89,11 @@ function setCellContent(cell, iconName, fallbackText) {
 	cell.element.append(icon);
 }
 
-function saveHighscore(streak) {
+function saveHighscore(streak, playerName) {
 	const highscore = {
 		date: new Date().toISOString().slice(0, 10),
 		difficulty,
-		name: playerNameInput.value.trim() || 'Spieler',
+		name: playerName.trim() || 'Spieler',
 		streak
 	};
 
@@ -103,6 +106,13 @@ function saveHighscore(streak) {
 		updateHighestScore();
 	} catch {
 	}
+}
+
+function openHighscoreDialog(streak) {
+	pendingHighscoreStreak = streak;
+	playerNameInput.value = 'Spieler';
+	highscoreDialog.showModal();
+	playerNameInput.select();
 }
 
 function getColumnLabel(columnIndex) {
@@ -169,7 +179,7 @@ function revealCell(cell) {
 		gameOver = true;
 		const streak = getWinningStreak();
 		if (streak > 0) {
-			saveHighscore(streak);
+			openHighscoreDialog(streak);
 		}
 		setWinningStreak(0);
 		gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
@@ -392,5 +402,15 @@ modeButtons.forEach((button) => {
 board.addEventListener('click', handleCellClick);
 board.addEventListener('keydown', handleCellKeyDown);
 document.addEventListener('keydown', handleModeShortcut);
+highscoreForm.addEventListener('submit', (event) => {
+	if (event.submitter.value === 'save' && pendingHighscoreStreak > 0) {
+		saveHighscore(pendingHighscoreStreak, playerNameInput.value);
+	}
+
+	pendingHighscoreStreak = 0;
+});
+highscoreDialog.addEventListener('cancel', () => {
+	pendingHighscoreStreak = 0;
+});
 newGameButton.addEventListener('click', createBoard);
 createBoard();
