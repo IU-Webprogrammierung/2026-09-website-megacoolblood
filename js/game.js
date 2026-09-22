@@ -27,6 +27,10 @@ const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
 const streakStorageKey = 'lycheelab-winning-streak';
 const highscoreStorageKey = 'lycheelab-highscores';
+const iconPaths = {
+	flag: '../../assets/icons/flag.svg',
+	mine: '../../assets/icons/mine.svg'
+};
 let cells = [];
 let gameOver = false;
 let activeMode = 'reveal';
@@ -64,6 +68,21 @@ function getHighestScore() {
 
 function updateHighestScore() {
 	highestScoreElement.textContent = getHighestScore();
+}
+
+function setCellContent(cell, iconName, fallbackText) {
+	cell.element.replaceChildren();
+
+	if (!iconName) {
+		cell.element.textContent = fallbackText;
+		return;
+	}
+
+	const icon = document.createElement('img');
+	icon.className = 'game-cell-icon';
+	icon.src = iconPaths[iconName];
+	icon.alt = '';
+	cell.element.append(icon);
 }
 
 function saveHighscore(streak) {
@@ -144,7 +163,7 @@ function revealCell(cell) {
 	if (cell.isMine) {
 		cell.isRevealed = true;
 		cell.element.classList.add('is-revealed');
-		cell.element.textContent = '*';
+		setCellContent(cell, 'mine', '*');
 		cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
 		gameOver = true;
 		const streak = getWinningStreak();
@@ -154,7 +173,7 @@ function revealCell(cell) {
 		setWinningStreak(0);
 		gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
 		cells.filter((currentCell) => currentCell.isMine).forEach((mine) => {
-			mine.element.textContent = '*';
+			setCellContent(mine, 'mine', '*');
 			mine.element.classList.add('is-mine');
 		});
 		return;
@@ -206,7 +225,7 @@ function toggleFlag(cell) {
 	}
 
 	cell.isFlagged = !cell.isFlagged;
-	cell.element.textContent = cell.isFlagged ? 'F' : '?';
+	setCellContent(cell, cell.isFlagged ? 'flag' : null, '?');
 	cell.element.classList.toggle('is-flagged', cell.isFlagged);
 	cell.element.setAttribute(
 		'aria-label',
