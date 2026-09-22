@@ -2,6 +2,7 @@ const board = document.querySelector('#game-board');
 const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
+const winningStreakElement = document.querySelector('#winning-streak');
 const modeButtons = document.querySelectorAll('.mode-button');
 const difficultySettings = {
 	beginner: { columns: 9, mines: 10, rows: 9 },
@@ -22,9 +23,28 @@ const difficulty = difficultySettings[storedDifficulty] ? storedDifficulty : 'be
 const boardSize = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
+const streakStorageKey = 'lycheelab-winning-streak';
 let cells = [];
 let gameOver = false;
 let activeMode = 'reveal';
+
+function getWinningStreak() {
+	try {
+		const storedStreak = Number.parseInt(localStorage.getItem(streakStorageKey), 10);
+		return Number.isNaN(storedStreak) || storedStreak < 0 ? 0 : storedStreak;
+	} catch {
+		return 0;
+	}
+}
+
+function setWinningStreak(streak) {
+	winningStreakElement.textContent = streak;
+
+	try {
+		localStorage.setItem(streakStorageKey, String(streak));
+	} catch {
+	}
+}
 
 function getColumnLabel(columnIndex) {
 	let label = '';
@@ -88,6 +108,7 @@ function revealCell(cell) {
 		cell.element.textContent = '*';
 		cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
 		gameOver = true;
+		setWinningStreak(0);
 		gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
 		cells.filter((currentCell) => currentCell.isMine).forEach((mine) => {
 			mine.element.textContent = '*';
@@ -127,6 +148,7 @@ function revealCell(cell) {
 
 	if (cells.every((currentCell) => currentCell.isMine || currentCell.isRevealed)) {
 		gameOver = true;
+		setWinningStreak(getWinningStreak() + 1);
 		gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt.';
 		return;
 	}
@@ -266,6 +288,7 @@ function createBoard() {
 	gameOver = false;
 	gameStatus.textContent = 'Neues Spiel gestartet.';
 	mineCount.textContent = mineTotal;
+	winningStreakElement.textContent = getWinningStreak();
 
 	board.style.gridTemplateColumns = `repeat(${boardColumns}, minmax(2rem, 3rem))`;
 
