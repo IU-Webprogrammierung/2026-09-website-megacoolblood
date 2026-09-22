@@ -44,8 +44,6 @@
           </div>
         </dl>
         <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true">Neustart</button>
-        <label for="player-name">Name für den Highscore</label>
-        <input id="player-name" name="player-name" type="text" maxlength="24" value="Spieler">
       </header>
       <div id="game-board" class="game-board" role="grid" aria-labelledby="board-heading" aria-describedby="board-description"></div>
       <footer class="game-footer">
@@ -58,6 +56,19 @@
       </footer>
     </section>
   </main>
+
+  <dialog id="highscore-dialog" aria-labelledby="highscore-dialog-title">
+    <form method="dialog" id="highscore-form">
+      <h2 id="highscore-dialog-title">Highscore eintragen</h2>
+      <p>Du hast eine Siegesserie erreicht. Unter welchem Namen soll sie gespeichert werden?</p>
+      <label for="player-name">Name für den Highscore</label>
+      <input id="player-name" name="player-name" type="text" maxlength="24" value="Spieler" required>
+      <div class="dialog-actions">
+        <button type="submit" value="save">Speichern</button>
+        <button type="submit" value="cancel" class="dialog-cancel" formnovalidate>Nicht speichern</button>
+      </div>
+    </form>
+  </dialog>
 
   <footer>
     <a href="../impressum.html">Impressum</a>

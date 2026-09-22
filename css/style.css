@@ -220,14 +220,6 @@ button:hover {
 	font-size: 1.1rem;
 }
 
-.game-header input {
-	width: 8rem;
-	min-height: 2.25rem;
-	padding: 0.25rem 0.5rem;
-	font: inherit;
-	border: 0.1rem solid var(--color-border);
-}
-
 .visually-hidden {
 	position: absolute;
 	width: 1px;
@@ -237,6 +229,48 @@ button:hover {
 	clip: rect(0, 0, 0, 0);
 	white-space: nowrap;
 	border: 0;
+}
+
+dialog {
+	width: min(calc(100% - 2rem), 32rem);
+	padding: var(--space-large);
+	color: var(--color-text);
+	background: var(--color-surface);
+	border: 0.1rem solid var(--color-border);
+}
+
+dialog::backdrop {
+	background: rgb(32 35 31 / 55%);
+}
+
+dialog form {
+	display: grid;
+	gap: var(--space-small);
+}
+
+dialog h2,
+dialog p {
+	margin-block: 0;
+}
+
+dialog input {
+	min-height: 2.75rem;
+	padding: 0.5rem 0.75rem;
+	font: inherit;
+	border: 0.1rem solid var(--color-border);
+}
+
+.dialog-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-small);
+	margin-top: var(--space-small);
+}
+
+.dialog-cancel {
+	color: var(--color-text);
+	background: var(--color-surface);
+	border-color: var(--color-accent-dark);
 }
 
 .game-footer {
