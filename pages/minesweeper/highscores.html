@@ -21,7 +21,7 @@
 
   <main>
     <h1>Minesweeper-Highscores</h1>
-    <p>Hier werden später die besten lokal gespeicherten Siegesserien angezeigt.</p>
+    <p id="highscore-status" role="status">Lokal gespeicherte Siegesserien.</p>
     <div class="table-wrapper">
       <table>
         <caption>Highscore-Liste nach Siegesserie</caption>
@@ -34,11 +34,7 @@
             <th scope="col">Datum</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td colspan="5">Noch keine Siegesserien vorhanden.</td>
-          </tr>
-        </tbody>
+        <tbody id="highscore-list"></tbody>
       </table>
     </div>
   </main>
@@ -47,5 +43,6 @@
     <a href="../impressum.html">Impressum</a>
     <a href="../datenschutz.html">Datenschutz</a>
   </footer>
+  <script src="../../js/highscores.js"></script>
 </body>
 </html>
