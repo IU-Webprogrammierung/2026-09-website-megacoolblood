@@ -3,6 +3,7 @@ const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
 const winningStreakElement = document.querySelector('#winning-streak');
+const highestScoreElement = document.querySelector('#highest-score');
 const playerNameInput = document.querySelector('#player-name');
 const modeButtons = document.querySelectorAll('.mode-button');
 const difficultySettings = {
@@ -48,6 +49,23 @@ function setWinningStreak(streak) {
 	}
 }
 
+function getHighestScore() {
+	try {
+		const storedHighscores = JSON.parse(localStorage.getItem(highscoreStorageKey) || '[]');
+		const highscores = Array.isArray(storedHighscores) ? storedHighscores : [];
+
+		return highscores
+			.filter((highscore) => highscore.difficulty === difficulty)
+			.reduce((highest, highscore) => Math.max(highest, Number(highscore.streak) || 0), 0);
+	} catch {
+		return 0;
+	}
+}
+
+function updateHighestScore() {
+	highestScoreElement.textContent = getHighestScore();
+}
+
 function saveHighscore(streak) {
 	const highscore = {
 		date: new Date().toISOString().slice(0, 10),
@@ -62,6 +80,7 @@ function saveHighscore(streak) {
 		highscores.push(highscore);
 		highscores.sort((first, second) => second.streak - first.streak);
 		localStorage.setItem(highscoreStorageKey, JSON.stringify(highscores.slice(0, 10)));
+		updateHighestScore();
 	} catch {
 	}
 }
@@ -314,6 +333,7 @@ function createBoard() {
 	gameStatus.textContent = 'Neues Spiel gestartet.';
 	mineCount.textContent = mineTotal;
 	winningStreakElement.textContent = getWinningStreak();
+	updateHighestScore();
 
 	board.style.gridTemplateColumns = `repeat(${boardColumns}, minmax(2rem, 3rem))`;
 

@@ -112,6 +112,97 @@ button:hover {
 	margin-top: var(--space-medium);
 }
 
+.game-panel {
+	display: grid;
+	gap: var(--space-large);
+}
+
+.game-header,
+.game-footer {
+	width: auto;
+	margin: 0;
+	border: 0;
+}
+
+.game-header {
+	display: grid;
+	grid-template-columns: minmax(10rem, 1fr) auto auto auto auto;
+	align-items: center;
+	gap: var(--space-small);
+	padding: 0;
+}
+
+.game-header-intro {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	column-gap: var(--space-medium);
+	min-width: 0;
+}
+
+.game-header h1 {
+	margin: 0;
+}
+
+.game-header #game-status {
+	margin: 0;
+}
+
+.game-header #game-status {
+	color: var(--color-muted);
+}
+
+.game-header dl {
+	display: grid;
+	grid-template-columns: repeat(3, max-content);
+	gap: var(--space-small);
+	margin: 0;
+}
+
+.game-header dl div {
+	display: flex;
+	align-items: baseline;
+	gap: 0.25rem;
+	padding: 0;
+	background: transparent;
+}
+
+.game-header dt {
+	font-size: 0.8rem;
+}
+
+.game-header dd {
+	font-size: 1.1rem;
+}
+
+.game-header input {
+	width: 8rem;
+	min-height: 2.25rem;
+	padding: 0.25rem 0.5rem;
+	font: inherit;
+	border: 0.1rem solid var(--color-border);
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.game-footer {
+	padding: var(--space-medium) 0 0;
+	border-top: 0.1rem solid var(--color-border);
+}
+
+.game-footer .game-modes {
+	margin-top: 0;
+}
+
 .mode-button {
 	color: var(--color-text);
 	background: var(--color-surface);
@@ -284,6 +375,36 @@ footer {
 
 	main > section {
 		margin-block: 0;
+	}
+
+	main > .game-panel {
+		grid-column: 1 / -1;
+	}
+}
+
+@media (max-width: 47.99rem) {
+	.game-header {
+		grid-template-columns: 1fr;
+		align-items: stretch;
+	}
+
+	.game-header-intro,
+	.game-header dl {
+		grid-column: auto;
+	}
+
+	.game-header button,
+	.game-header input {
+		width: 100%;
+	}
+
+	.game-header dl {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.game-header dl div {
+		align-items: center;
+		flex-direction: column;
 	}
 }
 
