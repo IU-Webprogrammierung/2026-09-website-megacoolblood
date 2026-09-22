@@ -56,9 +56,31 @@ header {
 	border-bottom: 0.1rem solid var(--color-border);
 }
 
-header > a {
-	font-size: 1.5rem;
+
+.site-logo {
+	display: block;
+	line-height: 0;
 	text-decoration: none;
+}
+
+.site-logo img {
+	display: block;
+	width: 4.5rem;
+	height: 4.5rem;
+	object-fit: contain;
+}
+
+.game-preview {
+	display: block;
+	width: min(100%, 16rem);
+	margin-block: var(--space-medium);
+}
+
+.game-preview img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border: 0.1rem solid var(--color-border);
 }
 
 nav ul {
