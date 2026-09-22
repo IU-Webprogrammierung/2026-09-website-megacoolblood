@@ -35,10 +35,16 @@
         </div>
       </dl>
       <button type="button" id="new-game">Neues Spiel</button>
+      <div class="game-modes" role="group" aria-label="Eingabemodus">
+        <span>Modus:</span>
+        <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true">Aufdecken (A)</button>
+        <button type="button" class="mode-button" data-mode="flag" aria-pressed="false">Flagge (F)</button>
+        <button type="button" class="mode-button" data-mode="mark" aria-pressed="false">Markieren (M)</button>
+      </div>
     </section>
     <section aria-labelledby="board-heading">
       <h2 id="board-heading">Spielfeld</h2>
-      <p id="board-description">Decke sichere Felder auf und vermeide die versteckten Minen.</p>
+      <p id="board-description">Wähle einen Modus. Klicke ein Feld oder fokussiere es und drücke die Leertaste.</p>
       <div id="game-board" class="game-board" role="grid" aria-labelledby="board-heading" aria-describedby="board-description"></div>
     </section>
   </main>
