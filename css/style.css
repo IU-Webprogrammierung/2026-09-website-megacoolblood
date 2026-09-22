@@ -161,6 +161,15 @@ dd {
 	background: #e3ebe0;
 }
 
+.game-cell.is-revealed {
+	background: #e3ebe0;
+}
+
+.game-cell.is-mine {
+	color: #ffffff;
+	background: #9b2c2c;
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;
