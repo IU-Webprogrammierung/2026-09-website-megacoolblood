@@ -3,8 +3,25 @@ const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
 const modeButtons = document.querySelectorAll('.mode-button');
-const boardSize = 9;
-const mineTotal = 10;
+const difficultySettings = {
+	beginner: { columns: 9, mines: 10, rows: 9 },
+	intermediate: { columns: 16, mines: 40, rows: 16 },
+	expert: { columns: 30, mines: 99, rows: 16 }
+};
+
+function getStoredDifficulty() {
+	try {
+		return localStorage.getItem('lycheelab-difficulty');
+	} catch {
+		return null;
+	}
+}
+
+const storedDifficulty = getStoredDifficulty();
+const difficulty = difficultySettings[storedDifficulty] ? storedDifficulty : 'beginner';
+const boardSize = difficultySettings[difficulty].rows;
+const boardColumns = difficultySettings[difficulty].columns;
+const mineTotal = difficultySettings[difficulty].mines;
 let cells = [];
 let gameOver = false;
 let activeMode = 'reveal';
@@ -34,7 +51,7 @@ function getNeighbors(row, column) {
 				neighborRow >= 0 &&
 				neighborRow < boardSize &&
 				neighborColumn >= 0 &&
-				neighborColumn < boardSize
+				neighborColumn < boardColumns
 			) {
 				neighbors.push(cells[neighborRow * boardSize + neighborColumn]);
 			}
@@ -192,7 +209,7 @@ function moveFocus(currentCell, rowOffset, columnOffset) {
 		targetRow < 0 ||
 		targetRow >= boardSize ||
 		targetColumn < 0 ||
-		targetColumn >= boardSize
+		targetColumn >= boardColumns
 	) {
 		return;
 	}
@@ -250,8 +267,10 @@ function createBoard() {
 	gameStatus.textContent = 'Neues Spiel gestartet.';
 	mineCount.textContent = mineTotal;
 
+	board.style.gridTemplateColumns = `repeat(${boardColumns}, minmax(2rem, 3rem))`;
+
 	for (let row = 0; row < boardSize; row += 1) {
-		for (let column = 0; column < boardSize; column += 1) {
+		for (let column = 0; column < boardColumns; column += 1) {
 			const cell = document.createElement('button');
 			const coordinate = `${getColumnLabel(column)}${row + 1}`;
 			const cellState = {

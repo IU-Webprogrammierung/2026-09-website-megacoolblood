@@ -21,7 +21,7 @@
 
   <main>
     <h1>Minesweeper-Einstellungen</h1>
-    <form>
+    <form id="settings-form">
       <fieldset>
         <legend>Schwierigkeitsgrad</legend>
         <label for="difficulty">Auswahl</label>
@@ -32,6 +32,7 @@
         </select>
       </fieldset>
       <button type="submit">Einstellungen speichern</button>
+      <p id="settings-status" role="status" aria-live="polite"></p>
     </form>
   </main>
 
@@ -39,5 +40,6 @@
     <a href="../impressum.html">Impressum</a>
     <a href="../datenschutz.html">Datenschutz</a>
   </footer>
+  <script src="../../js/settings.js"></script>
 </body>
 </html>
