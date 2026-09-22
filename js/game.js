@@ -163,12 +163,44 @@ function handleCellClick(event) {
 	}
 }
 
+function moveFocus(currentCell, rowOffset, columnOffset) {
+	const targetRow = currentCell.row + rowOffset;
+	const targetColumn = currentCell.column + columnOffset;
+
+	if (
+		targetRow < 0 ||
+		targetRow >= boardSize ||
+		targetColumn < 0 ||
+		targetColumn >= boardSize
+	) {
+		return;
+	}
+
+	const targetCell = cells[targetRow * boardSize + targetColumn];
+	targetCell.element.focus();
+}
+
 function handleCellKeyDown(event) {
 	const cellElement = event.target.closest('.game-cell');
+	const cell = cells.find((currentCell) => currentCell.element === cellElement);
+
+	if (cell && event.key.startsWith('Arrow')) {
+		const movement = {
+			ArrowDown: [1, 0],
+			ArrowLeft: [0, -1],
+			ArrowRight: [0, 1],
+			ArrowUp: [-1, 0]
+		}[event.key];
+
+		if (movement) {
+			event.preventDefault();
+			moveFocus(cell, movement[0], movement[1]);
+		}
+		return;
+	}
 
 	if (event.key === ' ') {
 		event.preventDefault();
-		const cell = cells.find((currentCell) => currentCell.element === cellElement);
 
 		if (cell) {
 			useActiveMode(cell);
