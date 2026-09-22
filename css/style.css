@@ -148,6 +148,19 @@ dd {
 	background: var(--color-border);
 }
 
+.game-cell {
+	min-width: 2rem;
+	min-height: 2rem;
+	padding: 0;
+	color: var(--color-text);
+	background: var(--color-surface);
+	border: 0.1rem solid var(--color-border);
+}
+
+.game-cell:hover {
+	background: #e3ebe0;
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;
