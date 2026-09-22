@@ -3,6 +3,7 @@ const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
 const winningStreakElement = document.querySelector('#winning-streak');
+const playerNameInput = document.querySelector('#player-name');
 const modeButtons = document.querySelectorAll('.mode-button');
 const difficultySettings = {
 	beginner: { columns: 9, mines: 10, rows: 9 },
@@ -24,6 +25,7 @@ const boardSize = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
 const streakStorageKey = 'lycheelab-winning-streak';
+const highscoreStorageKey = 'lycheelab-highscores';
 let cells = [];
 let gameOver = false;
 let activeMode = 'reveal';
@@ -42,6 +44,24 @@ function setWinningStreak(streak) {
 
 	try {
 		localStorage.setItem(streakStorageKey, String(streak));
+	} catch {
+	}
+}
+
+function saveHighscore(streak) {
+	const highscore = {
+		date: new Date().toISOString().slice(0, 10),
+		difficulty,
+		name: playerNameInput.value.trim() || 'Spieler',
+		streak
+	};
+
+	try {
+		const storedHighscores = JSON.parse(localStorage.getItem(highscoreStorageKey) || '[]');
+		const highscores = Array.isArray(storedHighscores) ? storedHighscores : [];
+		highscores.push(highscore);
+		highscores.sort((first, second) => second.streak - first.streak);
+		localStorage.setItem(highscoreStorageKey, JSON.stringify(highscores.slice(0, 10)));
 	} catch {
 	}
 }
@@ -108,6 +128,10 @@ function revealCell(cell) {
 		cell.element.textContent = '*';
 		cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
 		gameOver = true;
+		const streak = getWinningStreak();
+		if (streak > 0) {
+			saveHighscore(streak);
+		}
 		setWinningStreak(0);
 		gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
 		cells.filter((currentCell) => currentCell.isMine).forEach((mine) => {
@@ -148,7 +172,8 @@ function revealCell(cell) {
 
 	if (cells.every((currentCell) => currentCell.isMine || currentCell.isRevealed)) {
 		gameOver = true;
-		setWinningStreak(getWinningStreak() + 1);
+		const streak = getWinningStreak() + 1;
+		setWinningStreak(streak);
 		gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt.';
 		return;
 	}
