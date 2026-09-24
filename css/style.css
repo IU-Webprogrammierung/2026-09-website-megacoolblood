@@ -14,7 +14,6 @@
 	background: var(--color-background);
 }
 
-
 .info-icon,
 .control-icon,
 .mode-icon {
@@ -24,10 +23,17 @@
 	object-fit: contain;
 }
 
-
 .game-board {
 	display: grid;
 	grid-template-columns: repeat(9, minmax(2rem, 3rem));
 	grid-auto-rows: minmax(2rem, 3rem);
 	gap: 0.15rem;
+}
+
+.game-cell-icon {
+	display: block;
+	width: 65%;
+	height: 65%;
+	margin: auto;
+	object-fit: contain;
 }
