@@ -26,9 +26,9 @@
       <header class="game-header">
         <div class="game-header-intro">
           <h1>Minesweeper</h1>
+          <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true">Neustart</button>
           <p id="game-status" role="status">Bereit für ein neues Spiel.</p>
         </div>
-        <h2 id="game-info-heading" class="visually-hidden">Spielinformationen</h2>
         <dl>
           <div>
             <dt><img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true">Verbleibende Minen</dt>
@@ -43,7 +43,6 @@
             <dd id="highest-score">0</dd>
           </div>
         </dl>
-        <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true">Neustart</button>
       </header>
       <div id="game-board" class="game-board" role="grid" aria-labelledby="board-heading" aria-describedby="board-description"></div>
       <footer class="game-footer">
