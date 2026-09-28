@@ -2,7 +2,9 @@ const boardElement = document.querySelector('#game-board');
 const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const scoreElement = document.querySelector('#game-score');
+const bestScoreElement = document.querySelector('#best-score');
 const boardSize = 4;
+const bestScoreKey = 'lycheelab-2048-best-score';
 const directions = {
 	ArrowDown: 'down',
 	ArrowLeft: 'left',
@@ -17,12 +19,28 @@ const directionLabels = {
 };
 let board = [];
 let score = 0;
+let bestScore = readBestScore();
 let gameOver = false;
 
 function createEmptyBoard() {
 	return Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
 }
 
+function readBestScore() {
+	try {
+		const storedScore = Number.parseInt(localStorage.getItem(bestScoreKey), 10);
+		return Number.isNaN(storedScore) || storedScore < 0 ? 0 : storedScore;
+	} catch {
+		return 0;
+	}
+}
+
+function saveBestScore() {
+	try {
+		localStorage.setItem(bestScoreKey, String(bestScore));
+	} catch {
+	}
+}
 
 function getEmptyPositions() {
 	const positions = [];
@@ -121,6 +139,7 @@ function canMove() {
 
 function updateScore() {
 	scoreElement.textContent = score;
+	bestScoreElement.textContent = bestScore;
 }
 
 function getTileLabel(value) {
@@ -169,6 +188,10 @@ function move(direction) {
 
 	addRandomTile();
 	score += gainedScore;
+	if (score > bestScore) {
+		bestScore = score;
+		saveBestScore();
+	}
 
     if (!canMove()) {
 		gameOver = true;
@@ -206,4 +229,5 @@ function handleKeyDown(event) {
 
 newGameButton.addEventListener('click', startGame);
 boardElement.addEventListener('keydown', handleKeyDown);
+bestScoreElement.textContent = bestScore;
 startGame();
