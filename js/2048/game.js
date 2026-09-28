@@ -21,6 +21,7 @@ let board = [];
 let score = 0;
 let bestScore = readBestScore();
 let gameOver = false;
+let hasWon = false;
 
 function createEmptyBoard() {
 	return Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
@@ -193,7 +194,10 @@ function move(direction) {
 		saveBestScore();
 	}
 
-    if (!canMove()) {
+	if (!hasWon && board.some((row) => row.includes(2048))) {
+		hasWon = true;
+		setGameStatus('2048 erreicht. Du kannst weiterspielen.');
+	} else if (!canMove()) {
 		gameOver = true;
 		setGameStatus('Kein Zug mehr möglich. Starte ein neues Spiel.');
 	} else {
@@ -208,6 +212,7 @@ function startGame() {
 	board = createEmptyBoard();
 	score = 0;
 	gameOver = false;
+	hasWon = false;
 	addRandomTile();
 	addRandomTile();
 	updateScore();
