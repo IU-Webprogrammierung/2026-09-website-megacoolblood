@@ -15,6 +15,7 @@ const directionLabels = {
 	up: 'oben'
 };
 let board = [];
+let gameOver = false;
 
 function createEmptyBoard() {
 	return Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
@@ -90,6 +91,26 @@ function setLine(direction, index, line) {
 	});
 }
 
+function canMove() {
+	if (getEmptyPositions().length > 0) {
+		return true;
+	}
+
+	for (let rowIndex = 0; rowIndex < boardSize; rowIndex += 1) {
+		for (let columnIndex = 0; columnIndex < boardSize; columnIndex += 1) {
+			const value = board[rowIndex][columnIndex];
+			const rightValue = board[rowIndex][columnIndex + 1];
+			const bottomValue = board[rowIndex + 1]?.[columnIndex];
+
+			if (value === rightValue || value === bottomValue) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 function getTileLabel(value) {
 	return value === 0 ? 'Leeres Feld' : `Stein mit ${value}`;
 }
@@ -116,6 +137,10 @@ function setGameStatus(message) {
 }
 
 function move(direction) {
+	if (gameOver) {
+		return;
+	}
+
 	const previousBoard = board.map((row) => row.slice());
 
 	for (let index = 0; index < boardSize; index += 1) {
@@ -124,12 +149,20 @@ function move(direction) {
 	}
 
 	addRandomTile();
-	setGameStatus(`Steine nach ${directionLabels[direction]} bewegt.`);
+    
+    if (!canMove()) {
+		gameOver = true;
+		setGameStatus('Kein Zug mehr möglich. Starte ein neues Spiel.');
+	} else {
+		setGameStatus(`Steine nach ${directionLabels[direction]} bewegt.`);
+	}
+
 	renderBoard();
 }
 
 function startGame() {
 	board = createEmptyBoard();
+	gameOver = false;
 	addRandomTile();
 	addRandomTile();
 	renderBoard();
