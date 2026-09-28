@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2048 spielen | LycheeLab</title>
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="icon" type="image/png" href="../../assets/images/LycheeLab-small.png">
+</head>
+<body>
+  <header>
+    <a class="site-logo" href="../../index.html"><img src="../../assets/images/LycheeLab-small.png" alt="LycheeLab"></a>
+    <nav aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="../../index.html">Übersicht</a></li>
+        <li><a href="game.html" aria-current="page">Spielen</a></li>
+        <li><a href="instructions.html">Spielanleitung</a></li>
+        <li><a href="statistics.html">Statistiken</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="game-panel" aria-labelledby="game-heading">
+      <header class="game-header">
+        <div class="game-header-intro">
+          <h1 id="game-heading">2048</h1>
+          <button type="button" id="new-game">Neustart</button>
+          <p id="game-status" role="status">Das 2048-Spiel wird hier eingerichtet.</p>
+        </div>
+        <dl>
+          <div>
+            <dt>Punktestand</dt>
+            <dd id="game-score">0</dd>
+          </div>
+          <div>
+            <dt>Bestwert</dt>
+            <dd id="best-score">0</dd>
+          </div>
+        </dl>
+      </header>
+
+      <div id="game-board" class="game-board" role="grid" aria-label="2048-Spielfeld">
+        <p>Das Spielfeld folgt mit der Spielmechanik.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a href="../impressum.html">Impressum</a>
+    <a href="../datenschutz.html">Datenschutz</a>
+  </footer>
+</body>
+</html>
