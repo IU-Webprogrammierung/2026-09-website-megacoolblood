@@ -9,6 +9,7 @@ const defaultStatistics = {
 	losses: 0,
 	moves: 0,
 	totalScore: 0,
+	undos: 0,
 	wins: 0
 };
 
@@ -52,6 +53,7 @@ function renderStatistics() {
 		createStatistic('Züge', statistics.moves),
 		createStatistic('Ungültige Züge', statistics.invalidMoves),
 		createStatistic('Aktionen gesamt', statistics.actions),
+		createStatistic('Zurückgenommene Züge', statistics.undos),
 		createStatistic('Siege mit 2048', statistics.wins),
 		createStatistic('Niederlagen', statistics.losses),
 		createStatistic('Höchster Stein', statistics.highestTile),

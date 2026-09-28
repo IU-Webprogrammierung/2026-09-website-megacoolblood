@@ -26,7 +26,10 @@
       <header class="game-header">
         <div class="game-header-intro">
           <h1 id="game-heading">2048</h1>
-          <button type="button" id="new-game">Neustart</button>
+          <div class="game-controls" role="group" aria-label="Spielsteuerung">
+            <button type="button" id="new-game">Neustart</button>
+            <button type="button" id="undo-move" disabled>Zurück</button>
+          </div>
           <p id="game-status" role="status">Das 2048-Spiel wird hier eingerichtet.</p>
         </div>
         <dl>

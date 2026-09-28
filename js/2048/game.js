@@ -1,5 +1,6 @@
 const boardElement = document.querySelector('#game-board');
 const newGameButton = document.querySelector('#new-game');
+const undoButton = document.querySelector('#undo-move');
 const gameStatus = document.querySelector('#game-status');
 const scoreElement = document.querySelector('#game-score');
 const bestScoreElement = document.querySelector('#best-score');
@@ -24,6 +25,7 @@ let bestScore = readBestScore();
 let gameOver = false;
 let hasWon = false;
 let pointerStart = null;
+let previousState = null;
 
 function createEmptyBoard() {
 	return Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
@@ -54,6 +56,7 @@ function getDefaultStatistics() {
 		losses: 0,
 		moves: 0,
 		totalScore: 0,
+		undos: 0,
 		wins: 0
 	};
 }
@@ -98,6 +101,13 @@ function recordMove(isValid, gainedScore, result) {
 	statistics.highestTile = Math.max(statistics.highestTile, ...board.flat());
 	statistics.wins += result === 'win' ? 1 : 0;
 	statistics.losses += result === 'loss' ? 1 : 0;
+	writeStatistics(statistics);
+}
+
+function recordUndo() {
+	const statistics = readStatistics();
+	statistics.actions += 1;
+	statistics.undos += 1;
 	writeStatistics(statistics);
 }
 
@@ -201,6 +211,10 @@ function updateScore() {
 	bestScoreElement.textContent = bestScore;
 }
 
+function updateUndoButton() {
+	undoButton.disabled = previousState === null;
+}
+
 function getTileLabel(value) {
 	return value === 0 ? 'Leeres Feld' : `Stein mit ${value}`;
 }
@@ -232,6 +246,12 @@ function move(direction) {
 	}
 
 	const previousBoard = board.map((row) => row.slice());
+	const stateBeforeMove = {
+		board: previousBoard,
+		hasWon,
+		gameOver,
+		score
+	};
 	let gainedScore = 0;
 
 	for (let index = 0; index < boardSize; index += 1) {
@@ -246,6 +266,7 @@ function move(direction) {
 		return;
 	}
 
+	previousState = stateBeforeMove;
 	addRandomTile();
 	score += gainedScore;
 	if (score > bestScore) {
@@ -269,6 +290,7 @@ function move(direction) {
 	recordMove(true, gainedScore, result);
 	updateScore();
 	renderBoard();
+	updateUndoButton();
 }
 
 function startGame() {
@@ -276,12 +298,32 @@ function startGame() {
 	score = 0;
 	gameOver = false;
 	hasWon = false;
+	previousState = null;
 	addRandomTile();
 	addRandomTile();
 	updateScore();
 	renderBoard();
+	updateUndoButton();
 	setGameStatus('Neues Spiel gestartet.');
 	recordNewGame();
+	boardElement.focus();
+}
+
+function undoMove() {
+	if (!previousState) {
+		return;
+	}
+
+	board = previousState.board;
+	score = previousState.score;
+	gameOver = previousState.gameOver;
+	hasWon = previousState.hasWon;
+	previousState = null;
+	updateScore();
+	renderBoard();
+	updateUndoButton();
+	recordUndo();
+	setGameStatus('Der letzte Zug wurde zurückgenommen.');
 	boardElement.focus();
 }
 
@@ -320,6 +362,7 @@ function handlePointerUp(event) {
 }
 
 newGameButton.addEventListener('click', startGame);
+undoButton.addEventListener('click', undoMove);
 boardElement.addEventListener('keydown', handleKeyDown);
 boardElement.addEventListener('pointerdown', handlePointerDown);
 boardElement.addEventListener('pointerup', handlePointerUp);
