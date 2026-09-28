@@ -22,6 +22,7 @@ let score = 0;
 let bestScore = readBestScore();
 let gameOver = false;
 let hasWon = false;
+let pointerStart = null;
 
 function createEmptyBoard() {
 	return Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
@@ -232,7 +233,35 @@ function handleKeyDown(event) {
 	move(direction);
 }
 
+function handlePointerDown(event) {
+	pointerStart = { x: event.clientX, y: event.clientY };
+}
+
+function handlePointerUp(event) {
+	if (!pointerStart) {
+		return;
+	}
+
+	const deltaX = event.clientX - pointerStart.x;
+	const deltaY = event.clientY - pointerStart.y;
+	pointerStart = null;
+
+	if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) < 24) {
+		return;
+	}
+
+	const direction = Math.abs(deltaX) > Math.abs(deltaY)
+		? (deltaX > 0 ? 'right' : 'left')
+		: (deltaY > 0 ? 'down' : 'up');
+	move(direction);
+}
+
 newGameButton.addEventListener('click', startGame);
 boardElement.addEventListener('keydown', handleKeyDown);
+boardElement.addEventListener('pointerdown', handlePointerDown);
+boardElement.addEventListener('pointerup', handlePointerUp);
+boardElement.addEventListener('pointercancel', () => {
+	pointerStart = null;
+});
 bestScoreElement.textContent = bestScore;
 startGame();
