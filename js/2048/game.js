@@ -5,6 +5,7 @@ const scoreElement = document.querySelector('#game-score');
 const bestScoreElement = document.querySelector('#best-score');
 const boardSize = 4;
 const bestScoreKey = 'lycheelab-2048-best-score';
+const statisticsKey = 'lycheelab-2048-statistics';
 const directions = {
 	ArrowDown: 'down',
 	ArrowLeft: 'left',
@@ -42,6 +43,62 @@ function saveBestScore() {
 		localStorage.setItem(bestScoreKey, String(bestScore));
 	} catch {
 	}
+}
+
+function getDefaultStatistics() {
+	return {
+		actions: 0,
+		gamesStarted: 0,
+		highestTile: 0,
+		invalidMoves: 0,
+		losses: 0,
+		moves: 0,
+		totalScore: 0,
+		wins: 0
+	};
+}
+
+function readStatistics() {
+	try {
+		const storedStatistics = JSON.parse(localStorage.getItem(statisticsKey) || '{}');
+		const defaults = getDefaultStatistics();
+
+		return Object.keys(defaults).reduce((statistics, key) => {
+			const value = Number(storedStatistics[key]);
+			statistics[key] = Number.isFinite(value) && value >= 0 ? value : defaults[key];
+			return statistics;
+		}, defaults);
+	} catch {
+		return getDefaultStatistics();
+	}
+}
+
+function writeStatistics(statistics) {
+	try {
+		localStorage.setItem(statisticsKey, JSON.stringify(statistics));
+	} catch {
+	}
+}
+
+function recordNewGame() {
+	const statistics = readStatistics();
+	statistics.gamesStarted += 1;
+	writeStatistics(statistics);
+}
+
+function recordMove(isValid, gainedScore, result) {
+	const statistics = readStatistics();
+	statistics.actions += 1;
+	if (isValid) {
+		statistics.moves += 1;
+	} else {
+		statistics.invalidMoves += 1;
+	}
+	statistics.totalScore += gainedScore;
+	statistics.highestTile = Math.max(statistics.highestTile, ...board.flat());
+	statistics.wins += result === 'win' ? 1 : 0;
+	statistics.losses += result === 'loss' ? 1 : 0;
+	writeStatistics(statistics);
 }
 
 function getEmptyPositions() {
@@ -185,6 +242,7 @@ function move(direction) {
 
 	if (!hasBoardChanged(previousBoard)) {
 		setGameStatus('Dieser Zug ist nicht möglich.');
+		recordMove(false, 0, null);
 		return;
 	}
 
@@ -195,16 +253,20 @@ function move(direction) {
 		saveBestScore();
 	}
 
+	let result = null;
 	if (!hasWon && board.some((row) => row.includes(2048))) {
 		hasWon = true;
+		result = 'win';
 		setGameStatus('2048 erreicht. Du kannst weiterspielen.');
 	} else if (!canMove()) {
 		gameOver = true;
+		result = 'loss';
 		setGameStatus('Kein Zug mehr möglich. Starte ein neues Spiel.');
 	} else {
 		setGameStatus(`Steine nach ${directionLabels[direction]} bewegt.`);
 	}
 
+	recordMove(true, gainedScore, result);
 	updateScore();
 	renderBoard();
 }
@@ -219,6 +281,7 @@ function startGame() {
 	updateScore();
 	renderBoard();
 	setGameStatus('Neues Spiel gestartet.');
+	recordNewGame();
 	boardElement.focus();
 }
 
