@@ -1,6 +1,7 @@
 const boardElement = document.querySelector('#game-board');
 const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
+const scoreElement = document.querySelector('#game-score');
 const boardSize = 4;
 const directions = {
 	ArrowDown: 'down',
@@ -15,6 +16,7 @@ const directionLabels = {
 	up: 'oben'
 };
 let board = [];
+let score = 0;
 let gameOver = false;
 
 function createEmptyBoard() {
@@ -50,11 +52,13 @@ function addRandomTile() {
 function slideLine(line) {
 	const compactLine = line.filter((value) => value !== 0);
 	const mergedLine = [];
+	let gainedScore = 0;
 
 	for (let index = 0; index < compactLine.length; index += 1) {
 		if (compactLine[index] === compactLine[index + 1]) {
 			const mergedValue = compactLine[index] * 2;
 			mergedLine.push(mergedValue);
+			gainedScore += mergedValue;
 			index += 1;
 		} else {
 			mergedLine.push(compactLine[index]);
@@ -65,7 +69,7 @@ function slideLine(line) {
 		mergedLine.push(0);
 	}
 
-	return { line: mergedLine };
+	return { gainedScore, line: mergedLine };
 }
 
 function getLine(direction, index) {
@@ -115,6 +119,10 @@ function canMove() {
 	return false;
 }
 
+function updateScore() {
+	scoreElement.textContent = score;
+}
+
 function getTileLabel(value) {
 	return value === 0 ? 'Leeres Feld' : `Stein mit ${value}`;
 }
@@ -146,9 +154,11 @@ function move(direction) {
 	}
 
 	const previousBoard = board.map((row) => row.slice());
+	let gainedScore = 0;
 
 	for (let index = 0; index < boardSize; index += 1) {
 		const result = slideLine(getLine(direction, index));
+		gainedScore += result.gainedScore;
 		setLine(direction, index, result.line);
 	}
 
@@ -158,6 +168,7 @@ function move(direction) {
 	}
 
 	addRandomTile();
+	score += gainedScore;
 
     if (!canMove()) {
 		gameOver = true;
@@ -166,14 +177,17 @@ function move(direction) {
 		setGameStatus(`Steine nach ${directionLabels[direction]} bewegt.`);
 	}
 
+	updateScore();
 	renderBoard();
 }
 
 function startGame() {
 	board = createEmptyBoard();
+	score = 0;
 	gameOver = false;
 	addRandomTile();
 	addRandomTile();
+	updateScore();
 	renderBoard();
 	setGameStatus('Neues Spiel gestartet.');
 	boardElement.focus();
