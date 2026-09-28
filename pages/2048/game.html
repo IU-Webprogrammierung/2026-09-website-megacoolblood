@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2048 spielen | LycheeLab</title>
   <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/2048.css">
   <link rel="icon" type="image/png" href="../../assets/images/LycheeLab-small.png">
 </head>
 <body>
@@ -21,7 +22,7 @@
   </header>
 
   <main>
-    <section class="game-panel" aria-labelledby="game-heading">
+    <section class="game-panel game-2048" aria-labelledby="game-heading">
       <header class="game-header">
         <div class="game-header-intro">
           <h1 id="game-heading">2048</h1>
@@ -40,8 +41,7 @@
         </dl>
       </header>
 
-      <div id="game-board" class="game-board" role="grid" aria-label="2048-Spielfeld">
-        <p>Das Spielfeld folgt mit der Spielmechanik.</p>
+      <div id="game-board" class="board-2048" role="grid" tabindex="0" aria-label="2048-Spielfeld" aria-describedby="game-status">
       </div>
     </section>
   </main>
