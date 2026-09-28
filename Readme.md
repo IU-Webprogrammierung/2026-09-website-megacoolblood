@@ -6,7 +6,7 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 
 ## Features
 
-- Overview, game, settings, and high-score pages
+- Overview, game, settings, and statistics pages
 - Three difficulty levels:
   - Beginner: 9 × 9 cells and 10 mines
   - Intermediate: 16 × 16 cells and 40 mines
@@ -18,9 +18,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Mouse, Space key, and arrow key controls
 - Visible focus state for board cells
 - Status messages for starting a game, revealing cells, winning, and losing
-- Winning streak and high-score storage using `localStorage`
-- High scores are stored only after a loss and contain the player name,
-  winning streak, difficulty, and date
+- Winning streak and game statistics stored using `localStorage`
+- Statistics are grouped by difficulty and contain cleared mines, success rate,
+  current streak, and best streak
 - No account, server, or tracking required
 
 ## Technical Implementation
@@ -55,7 +55,6 @@ Open tests:
 
 ## Known Limitations
 
-- High scores and settings are available only in the current browser.
-- The high-score list currently has no filtering or delete function.
+- Statistics and settings are available only in the current browser.
 - The board is currently limited to the three predefined difficulty levels.
 - The interface is currently available in German only, and the text content is not yet translatable.

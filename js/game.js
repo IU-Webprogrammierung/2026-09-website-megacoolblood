@@ -3,10 +3,6 @@ const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
 const winningStreakElement = document.querySelector('#winning-streak');
-const highestScoreElement = document.querySelector('#highest-score');
-const highscoreDialog = document.querySelector('#highscore-dialog');
-const highscoreForm = document.querySelector('#highscore-form');
-const playerNameInput = document.querySelector('#player-name');
 const modeButtons = document.querySelectorAll('.mode-button');
 const difficultySettings = {
 	beginner: { columns: 9, mines: 10, rows: 9 },
@@ -28,7 +24,7 @@ const boardSize = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
 const streakStorageKey = 'lycheelab-winning-streak';
-const highscoreStorageKey = 'lycheelab-highscores';
+const statisticsStorageKey = 'lycheelab-statistics';
 const iconPaths = {
 	flag: '../../assets/icons/flag.svg',
 	mine: '../../assets/icons/mine.svg',
@@ -37,7 +33,6 @@ const iconPaths = {
 let cells = [];
 let gameOver = false;
 let activeMode = 'reveal';
-let pendingHighscoreStreak = 0;
 
 function getWinningStreak() {
 	try {
@@ -57,21 +52,36 @@ function setWinningStreak(streak) {
 	}
 }
 
-function getHighestScore() {
+function recordGameResult(won) {
 	try {
-		const storedHighscores = JSON.parse(localStorage.getItem(highscoreStorageKey) || '[]');
-		const highscores = Array.isArray(storedHighscores) ? storedHighscores : [];
+		const storedStatistics = JSON.parse(localStorage.getItem(statisticsStorageKey) || '{}');
+		const statistics = storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
+		const storedDifficultyStatistics = statistics[difficulty] || {};
+		const difficultyStatistics = {
+			bestStreak: Number(storedDifficultyStatistics.bestStreak) || 0,
+			currentStreak: Number(storedDifficultyStatistics.currentStreak) || 0,
+			gamesPlayed: Number(storedDifficultyStatistics.gamesPlayed) || 0,
+			minesCleared: Number(storedDifficultyStatistics.minesCleared) || 0,
+			wins: Number(storedDifficultyStatistics.wins) || 0
+		};
 
-		return highscores
-			.filter((highscore) => highscore.difficulty === difficulty)
-			.reduce((highest, highscore) => Math.max(highest, Number(highscore.streak) || 0), 0);
+		difficultyStatistics.gamesPlayed += 1;
+		if (won) {
+			difficultyStatistics.wins += 1;
+			difficultyStatistics.minesCleared += mineTotal;
+			difficultyStatistics.currentStreak += 1;
+			difficultyStatistics.bestStreak = Math.max(
+				difficultyStatistics.bestStreak,
+				difficultyStatistics.currentStreak
+			);
+		} else {
+			difficultyStatistics.currentStreak = 0;
+		}
+
+		statistics[difficulty] = difficultyStatistics;
+		localStorage.setItem(statisticsStorageKey, JSON.stringify(statistics));
 	} catch {
-		return 0;
 	}
-}
-
-function updateHighestScore() {
-	highestScoreElement.textContent = getHighestScore();
 }
 
 function setCellContent(cell, iconName, fallbackText) {
@@ -87,32 +97,6 @@ function setCellContent(cell, iconName, fallbackText) {
 	icon.src = iconPaths[iconName];
 	icon.alt = '';
 	cell.element.append(icon);
-}
-
-function saveHighscore(streak, playerName) {
-	const highscore = {
-		date: new Date().toISOString().slice(0, 10),
-		difficulty,
-		name: playerName.trim() || 'Spieler',
-		streak
-	};
-
-	try {
-		const storedHighscores = JSON.parse(localStorage.getItem(highscoreStorageKey) || '[]');
-		const highscores = Array.isArray(storedHighscores) ? storedHighscores : [];
-		highscores.push(highscore);
-		highscores.sort((first, second) => second.streak - first.streak);
-		localStorage.setItem(highscoreStorageKey, JSON.stringify(highscores.slice(0, 10)));
-		updateHighestScore();
-	} catch {
-	}
-}
-
-function openHighscoreDialog(streak) {
-	pendingHighscoreStreak = streak;
-	playerNameInput.value = 'Spieler';
-	highscoreDialog.showModal();
-	playerNameInput.select();
 }
 
 function getColumnLabel(columnIndex) {
@@ -177,10 +161,7 @@ function revealCell(cell) {
 		setCellContent(cell, 'mine', '*');
 		cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
 		gameOver = true;
-		const streak = getWinningStreak();
-		if (streak > 0) {
-			openHighscoreDialog(streak);
-		}
+		recordGameResult(false);
 		setWinningStreak(0);
 		gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
 		cells.filter((currentCell) => currentCell.isMine).forEach((mine) => {
@@ -221,6 +202,7 @@ function revealCell(cell) {
 
 	if (cells.every((currentCell) => currentCell.isMine || currentCell.isRevealed)) {
 		gameOver = true;
+		recordGameResult(true);
 		const streak = getWinningStreak() + 1;
 		setWinningStreak(streak);
 		gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt.';
@@ -363,7 +345,6 @@ function createBoard() {
 	gameStatus.textContent = 'Neues Spiel gestartet.';
 	mineCount.textContent = mineTotal;
 	winningStreakElement.textContent = getWinningStreak();
-	updateHighestScore();
 
 	board.style.gridTemplateColumns = `repeat(${boardColumns}, minmax(2rem, 3rem))`;
 
@@ -402,15 +383,5 @@ modeButtons.forEach((button) => {
 board.addEventListener('click', handleCellClick);
 board.addEventListener('keydown', handleCellKeyDown);
 document.addEventListener('keydown', handleModeShortcut);
-highscoreForm.addEventListener('submit', (event) => {
-	if (event.submitter.value === 'save' && pendingHighscoreStreak > 0) {
-		saveHighscore(pendingHighscoreStreak, playerNameInput.value);
-	}
-
-	pendingHighscoreStreak = 0;
-});
-highscoreDialog.addEventListener('cancel', () => {
-	pendingHighscoreStreak = 0;
-});
 newGameButton.addEventListener('click', createBoard);
 createBoard();

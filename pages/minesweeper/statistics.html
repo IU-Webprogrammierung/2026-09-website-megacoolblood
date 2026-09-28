@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Minesweeper-Highscores | LycheeLab</title>
+  <title>Minesweeper-Statistiken | LycheeLab</title>
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="icon" type="image/png" href="../../assets/images/LycheeLab-small.png">
 </head>
@@ -16,35 +16,21 @@
         <li><a href="game.html">Spielen</a></li>
         <li><a href="instructions.html">Spielanleitung</a></li>
         <li><a href="settings.html">Einstellungen</a></li>
-        <li><a href="highscores.html" aria-current="page">Highscores</a></li>
+        <li><a href="statistics.html" aria-current="page">Statistiken</a></li>
       </ul>
     </nav>
   </header>
 
   <main>
-    <h1>Minesweeper-Highscores</h1>
-    <p id="highscore-status" role="status">Lokal gespeicherte Siegesserien.</p>
-    <div class="table-wrapper">
-      <table>
-        <caption>Highscore-Liste nach Siegesserie</caption>
-        <thead>
-          <tr>
-            <th scope="col">Rang</th>
-            <th scope="col">Name</th>
-            <th scope="col">Siegesserie (Winning Streak)</th>
-            <th scope="col">Schwierigkeit</th>
-            <th scope="col">Datum</th>
-          </tr>
-        </thead>
-        <tbody id="highscore-list"></tbody>
-      </table>
-    </div>
+    <h1>Minesweeper-Statistiken</h1>
+    <p id="statistics-status" role="status">Lokal gespeicherte Spielstatistiken.</p>
+    <section id="statistics-list" class="statistics-grid" aria-label="Statistiken nach Schwierigkeitsgrad"></section>
   </main>
 
   <footer>
     <a href="../impressum.html">Impressum</a>
     <a href="../datenschutz.html">Datenschutz</a>
   </footer>
-  <script src="../../js/highscores.js"></script>
+  <script src="../../js/statistics.js"></script>
 </body>
 </html>
