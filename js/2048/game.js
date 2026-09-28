@@ -91,6 +91,10 @@ function setLine(direction, index, line) {
 	});
 }
 
+function hasBoardChanged(previousBoard) {
+	return board.some((row, rowIndex) => row.some((value, columnIndex) => value !== previousBoard[rowIndex][columnIndex]));
+}
+
 function canMove() {
 	if (getEmptyPositions().length > 0) {
 		return true;
@@ -148,8 +152,13 @@ function move(direction) {
 		setLine(direction, index, result.line);
 	}
 
+	if (!hasBoardChanged(previousBoard)) {
+		setGameStatus('Dieser Zug ist nicht möglich.');
+		return;
+	}
+
 	addRandomTile();
-    
+
     if (!canMove()) {
 		gameOver = true;
 		setGameStatus('Kein Zug mehr möglich. Starte ein neues Spiel.');
