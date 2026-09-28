@@ -1,5 +1,6 @@
 const boardElement = document.querySelector('#game-board');
 const newGameButton = document.querySelector('#new-game');
+const gameStatus = document.querySelector('#game-status');
 const boardSize = 4;
 const directions = {
 	ArrowDown: 'down',
@@ -110,6 +111,9 @@ function renderBoard() {
 	});
 }
 
+function setGameStatus(message) {
+	gameStatus.textContent = message;
+}
 
 function move(direction) {
 	const previousBoard = board.map((row) => row.slice());
@@ -120,6 +124,7 @@ function move(direction) {
 	}
 
 	addRandomTile();
+	setGameStatus(`Steine nach ${directionLabels[direction]} bewegt.`);
 	renderBoard();
 }
 
@@ -128,6 +133,7 @@ function startGame() {
 	addRandomTile();
 	addRandomTile();
 	renderBoard();
+	setGameStatus('Neues Spiel gestartet.');
 	boardElement.focus();
 }
 
