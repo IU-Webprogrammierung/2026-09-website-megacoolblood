@@ -231,10 +231,7 @@ function revealCell(cell) {
 		recordGameResult(false);
 		setWinningStreak(0);
 		gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
-		cells.forEach(row => row.filter((currentCell) => currentCell.isMine).forEach((mine) => {
-			setCellContent(mine, 'mine', '*');
-			mine.element.classList.add('is-mine');
-		}));
+		gameOverRevealMines();
 		return;
 	}
 
@@ -493,6 +490,19 @@ function createBoard() {
 	}
 }
 
+function gameOverRevealMines() {
+	cells.forEach(row => row.filter((currentCell) => currentCell.isMine && !currentCell.isFlagged).forEach((mine) => {
+		setCellContent(mine, 'mine', '*');
+		mine.element.classList.add('is-mine');
+	}));
+	cells.forEach(row => row.filter((currentCell) => !currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
+		flag.element.classList.add('is-wrong-flag');
+	}));
+	cells.forEach(row => row.filter((currentCell) => currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
+		flag.element.classList.add('is-correct-flag');
+	}));
+}
+
 function startNewGame() {
 	try {
 		localStorage.removeItem(gameStateStorageKey);
@@ -536,7 +546,7 @@ function loadGameState() {
 			cells[row][column].isRevealed = Boolean(savedCell.isRevealed);
 		});
 	});
-	
+
 	cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
 
 	gameOver = Boolean(savedGameState.gameOver);
@@ -548,6 +558,9 @@ function loadGameState() {
 	gameStatus.textContent = gameOver
 		? 'Gespeichertes Spiel beendet.'
 		: 'Gespeichertes Spiel fortgesetzt.';
+	if (gameOver) {
+		gameOverRevealMines();
+	}
 }
 
 modeButtons.forEach((button) => {
