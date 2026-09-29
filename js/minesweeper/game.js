@@ -160,8 +160,16 @@ function placeMines(firstCell) {
 	});
 }
 
+function countFlags(cells) {
+	return cells.filter((cell) => cell.isFlagged).length;
+}
+
+function countMines(cells) {
+	return cells.filter((cell) => cell.isMine).length;
+}
+
 function countAdjacentMines(cell) {
-	return getNeighbors(cell.row, cell.column).filter((neighbor) => neighbor.isMine).length;
+	return countMines(getNeighbors(cell.row, cell.column));
 }
 
 function revealCell(cell) {
@@ -271,11 +279,31 @@ function setMode(mode) {
 	});
 }
 
+function activeNumber(cell) {
+	let neighbors = getNeighbors(cell.row, cell.column);
+	let flaggedNeighbors = countFlags(neighbors);
+	let adjacentMines = countMines(neighbors);
+	if (flaggedNeighbors === adjacentMines) {
+		neighbors
+			.filter((neighbor) => !neighbor.isRevealed && !neighbor.isFlagged)
+			.forEach((neighbor) => {
+				revealCell(neighbor);
+			})
+			;
+	}
+}
+
 function useActiveMode(cell) {
 	if (newGame) {
 		placeMines(cell);
 		newGame = false;
 	}
+
+	if (cell.isRevealed) {
+		activeNumber(cell);
+		return;
+	}
+
 	if (activeMode === 'flag') {
 		toggleFlag(cell);
 		return;
