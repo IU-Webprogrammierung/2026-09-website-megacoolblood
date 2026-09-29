@@ -33,6 +33,7 @@ const iconPaths = {
 let mineCurrentCount = difficultySettings[difficulty].mines;
 let cells = [];
 let gameOver = false;
+let newGame = true;
 let activeMode = 'reveal';
 
 function getWinningStreak() {
@@ -135,18 +136,26 @@ function getNeighbors(row, column) {
 	return neighbors;
 }
 
-function placeMines() {
+function placeMines(firstCell) {
 	const mineIndexes = new Set();
+	const noMineIndexes = new Set([firstCell.row * boardColumns + firstCell.column]);
+
+	getNeighbors(firstCell.row, firstCell.column).forEach((neighbor) => {
+		noMineIndexes.add(neighbor.row * boardColumns + neighbor.column);
+	});
 
 	while (mineIndexes.size < mineTotal) {
-		mineIndexes.add(Math.floor(Math.random() * boardRows * boardColumns));
+		let index = Math.floor(Math.random() * boardRows * boardColumns);
+		if (!noMineIndexes.has(index)) {
+			mineIndexes.add(index);
+		}
 	}
 	let row;
 	let column;
 
 	mineIndexes.forEach((index) => {
-		row = index % boardRows;
-		column = (index - row) / boardRows;
+		column = index % boardColumns;
+		row = (index - column) / boardColumns;
 		cells[row][column].isMine = true;
 	});
 }
@@ -263,6 +272,10 @@ function setMode(mode) {
 }
 
 function useActiveMode(cell) {
+	if (newGame) {
+		placeMines(cell);
+		newGame = false;
+	}
 	if (activeMode === 'flag') {
 		toggleFlag(cell);
 		return;
@@ -374,6 +387,7 @@ function createBoard() {
 	board.replaceChildren();
 	cells = [];
 	gameOver = false;
+	newGame = true;
 	gameStatus.textContent = 'Neues Spiel gestartet.';
 	mineCurrentCount = mineTotal;
 	mineCount.textContent = mineCurrentCount;
@@ -408,8 +422,6 @@ function createBoard() {
 			board.append(cell);
 		}
 	}
-
-	placeMines();
 }
 
 modeButtons.forEach((button) => {
