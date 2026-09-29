@@ -20,7 +20,7 @@ function getStoredDifficulty() {
 
 const storedDifficulty = getStoredDifficulty();
 const difficulty = difficultySettings[storedDifficulty] ? storedDifficulty : 'beginner';
-const boardSize = difficultySettings[difficulty].rows;
+const boardRows = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
 const streakStorageKey = 'lycheelab-winning-streak';
@@ -30,6 +30,7 @@ const iconPaths = {
 	mine: '../../assets/icons/mine.svg',
 	questionmark: '../../assets/icons/questionmark.svg'
 };
+let mineCurrentCount = difficultySettings[difficulty].mines;
 let cells = [];
 let gameOver = false;
 let activeMode = 'reveal';
@@ -122,11 +123,11 @@ function getNeighbors(row, column) {
 			if (
 				(rowOffset !== 0 || columnOffset !== 0) &&
 				neighborRow >= 0 &&
-				neighborRow < boardSize &&
+				neighborRow < boardRows &&
 				neighborColumn >= 0 &&
 				neighborColumn < boardColumns
 			) {
-				neighbors.push(cells[neighborRow * boardSize + neighborColumn]);
+				neighbors.push(cells[neighborRow][neighborColumn]);
 			}
 		}
 	}
@@ -138,11 +139,15 @@ function placeMines() {
 	const mineIndexes = new Set();
 
 	while (mineIndexes.size < mineTotal) {
-		mineIndexes.add(Math.floor(Math.random() * cells.length));
+		mineIndexes.add(Math.floor(Math.random() * boardRows * boardColumns));
 	}
+	let row;
+	let column;
 
 	mineIndexes.forEach((index) => {
-		cells[index].isMine = true;
+		row = index % boardRows;
+		column = (index - row) / boardRows;
+		cells[row][column].isMine = true;
 	});
 }
 
@@ -164,10 +169,10 @@ function revealCell(cell) {
 		recordGameResult(false);
 		setWinningStreak(0);
 		gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
-		cells.filter((currentCell) => currentCell.isMine).forEach((mine) => {
+		cells.forEach(row => row.filter((currentCell) => currentCell.isMine).forEach((mine) => {
 			setCellContent(mine, 'mine', '*');
 			mine.element.classList.add('is-mine');
-		});
+		}));
 		return;
 	}
 
@@ -200,7 +205,7 @@ function revealCell(cell) {
 		}
 	}
 
-	if (cells.every((currentCell) => currentCell.isMine || currentCell.isRevealed)) {
+	if (cells.every((row) => row.every((currentCell) => currentCell.isMine || currentCell.isRevealed))) {
 		gameOver = true;
 		recordGameResult(true);
 		const streak = getWinningStreak() + 1;
@@ -224,7 +229,8 @@ function toggleFlag(cell) {
 		'aria-label',
 		`${cell.isFlagged ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
 	);
-	mineCount.textContent = mineTotal - cells.filter((currentCell) => currentCell.isFlagged).length;
+	mineCurrentCount = mineCurrentCount + (cell.isFlagged ? -1 : 1);
+	mineCount.textContent = mineCurrentCount;
 	gameStatus.textContent = cell.isFlagged
 		? `Feld ${cell.coordinate} als vermutete Mine markiert.`
 		: `Markierung von Feld ${cell.coordinate} entfernt.`;
@@ -272,7 +278,7 @@ function useActiveMode(cell) {
 
 function handleCellClick(event) {
 	const cellElement = event.target.closest('.game-cell');
-	const cell = cells.find((currentCell) => currentCell.element === cellElement);
+	const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
 	if (cell) {
 		useActiveMode(cell);
@@ -283,7 +289,7 @@ function handleCellContextMenu(event) {
 	event.preventDefault();
 
 	const cellElement = event.target.closest('.game-cell');
-	const cell = cells.find((currentCell) => currentCell.element === cellElement);
+	const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
 	if (!cell) {
 		return;
@@ -305,20 +311,20 @@ function moveFocus(currentCell, rowOffset, columnOffset) {
 
 	if (
 		targetRow < 0 ||
-		targetRow >= boardSize ||
+		targetRow >= boardRows ||
 		targetColumn < 0 ||
 		targetColumn >= boardColumns
 	) {
 		return;
 	}
 
-	const targetCell = cells[targetRow * boardSize + targetColumn];
+	const targetCell = cells[targetRow][targetColumn];
 	targetCell.element.focus();
 }
 
 function handleCellKeyDown(event) {
 	const cellElement = event.target.closest('.game-cell');
-	const cell = cells.find((currentCell) => currentCell.element === cellElement);
+	const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
 	if (cell && event.key.startsWith('Arrow')) {
 		const movement = {
@@ -363,32 +369,36 @@ function createBoard() {
 	cells = [];
 	gameOver = false;
 	gameStatus.textContent = 'Neues Spiel gestartet.';
-	mineCount.textContent = mineTotal;
+	mineCurrentCount = mineTotal;
+	mineCount.textContent = mineCurrentCount;
 	winningStreakElement.textContent = getWinningStreak();
 
 	board.style.gridTemplateColumns = `repeat(${boardColumns}, minmax(2rem, 3rem))`;
 
-	for (let row = 0; row < boardSize; row += 1) {
+	for (let row = 0; row < boardRows; row += 1) {
+		cells[row] = [];
 		for (let column = 0; column < boardColumns; column += 1) {
 			const cell = document.createElement('button');
 			const coordinate = `${getColumnLabel(column)}${row + 1}`;
 			const cellState = {
+				row,
 				column,
 				coordinate,
 				element: cell,
 				isMine: false,
 				isFlagged: false,
 				isMarked: false,
-				isRevealed: false,
-				row
+				isRevealed: false
 			};
 
 			cell.type = 'button';
 			cell.className = 'game-cell';
 			cell.setAttribute('role', 'gridcell');
 			cell.setAttribute('aria-label', `Unaufgedecktes Feld ${coordinate}`);
+			cell.setAttribute('row', `${row}`);
+			cell.setAttribute('column', `${column}`);
 			cell.textContent = '?';
-			cells.push(cellState);
+			cells[row][column] = cellState;
 			board.append(cell);
 		}
 	}
