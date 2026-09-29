@@ -278,6 +278,9 @@ function useActiveMode(cell) {
 
 function handleCellClick(event) {
 	const cellElement = event.target.closest('.game-cell');
+	if (!cellElement) {
+		return;
+	}
 	const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
 	if (cell) {
@@ -289,6 +292,9 @@ function handleCellContextMenu(event) {
 	event.preventDefault();
 
 	const cellElement = event.target.closest('.game-cell');
+	if (!cellElement) {
+		return;
+	}
 	const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
 	if (!cell) {
