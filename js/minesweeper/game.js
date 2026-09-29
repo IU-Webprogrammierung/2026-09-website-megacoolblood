@@ -25,6 +25,7 @@ const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
 const streakStorageKey = 'lycheelab-winning-streak';
 const statisticsStorageKey = 'lycheelab-statistics';
+const gameStateStorageKey = 'lycheelab-minesweeper-game';
 const iconPaths = {
 	flag: '../../assets/icons/flag.svg',
 	mine: '../../assets/icons/mine.svg',
@@ -99,6 +100,50 @@ function setCellContent(cell, iconName, fallbackText) {
 	icon.src = iconPaths[iconName];
 	icon.alt = '';
 	cell.element.append(icon);
+}
+
+function saveGameState() {
+	const gameState = {
+		difficulty,
+		gameOver,
+		newGame,
+		mineCurrentCount,
+		cells: cells.map((row) => row.map((cell) => ({
+			isFlagged: cell.isFlagged,
+			isMarked: cell.isMarked,
+			isMine: cell.isMine,
+			isRevealed: cell.isRevealed
+		})))
+	};
+
+	try {
+		localStorage.setItem(gameStateStorageKey, JSON.stringify(gameState));
+	} catch {
+	}
+}
+
+function restoreCellPresentation(cell) {
+	cell.element.classList.toggle('is-flagged', cell.isFlagged);
+	cell.element.classList.toggle('is-marked', cell.isMarked);
+	cell.element.classList.toggle('is-revealed', cell.isRevealed);
+
+	if (cell.isRevealed) {
+		const adjacentMines = countAdjacentMines(cell);
+		cell.element.textContent = adjacentMines > 0 ? adjacentMines : '';
+		cell.element.setAttribute(
+			'aria-label',
+			`${cell.coordinate}, ${adjacentMines} angrenzende Minen`
+		);
+	} else if (cell.isFlagged) {
+		setCellContent(cell, 'flag', '?');
+		cell.element.setAttribute('aria-label', `Markiertes Feld ${cell.coordinate}`);
+	} else if (cell.isMarked) {
+		setCellContent(cell, 'questionmark', '');
+		cell.element.setAttribute('aria-label', `Markiertes Feld ${cell.coordinate}`);
+	} else {
+		cell.element.textContent = '?';
+		cell.element.setAttribute('aria-label', `Unaufgedecktes Feld ${cell.coordinate}`);
+	}
 }
 
 function getColumnLabel(columnIndex) {
@@ -293,28 +338,27 @@ function activeNumber(cell) {
 	}
 }
 
-function useActiveMode(cell) {
+function useActiveMode(cell, mode = activeMode) {
 	if (newGame) {
+		if (mode !== 'reveal') {
+			return;
+		}
+
 		placeMines(cell);
 		newGame = false;
 	}
 
 	if (cell.isRevealed) {
 		activeNumber(cell);
-		return;
-	}
-
-	if (activeMode === 'flag') {
+	} else if (mode === 'flag') {
 		toggleFlag(cell);
-		return;
-	}
-
-	if (activeMode === 'mark') {
+	} else if (mode === 'mark') {
 		toggleMark(cell);
-		return;
+	} else {
+		revealCell(cell);
 	}
 
-	revealCell(cell);
+	saveGameState();
 }
 
 function handleCellClick(event) {
@@ -342,13 +386,10 @@ function handleCellContextMenu(event) {
 		return;
 	}
 
-	if (activeMode === 'reveal') {
-		toggleFlag(cell);
-		return;
-	}
+	const contextMode = activeMode === 'reveal' ? 'flag' : 'reveal';
 
-	if (activeMode === 'flag') {
-		revealCell(cell);
+	if (activeMode !== 'mark') {
+		useActiveMode(cell, contextMode);
 	}
 }
 
@@ -452,6 +493,63 @@ function createBoard() {
 	}
 }
 
+function startNewGame() {
+	try {
+		localStorage.removeItem(gameStateStorageKey);
+	} catch {
+	}
+
+	createBoard();
+	saveGameState();
+}
+
+function loadGameState() {
+	let savedGameState;
+
+	try {
+		savedGameState = JSON.parse(localStorage.getItem(gameStateStorageKey) || 'null');
+	} catch {
+		savedGameState = null;
+	}
+
+	if (
+		!savedGameState ||
+		savedGameState.difficulty !== difficulty ||
+		!Array.isArray(savedGameState.cells) ||
+		savedGameState.cells.length !== boardRows
+	) {
+		createBoard();
+		return;
+	}
+
+	createBoard();
+
+	savedGameState.cells.forEach((savedRow, row) => {
+		if (!Array.isArray(savedRow) || savedRow.length !== boardColumns) {
+			return;
+		}
+
+		savedRow.forEach((savedCell, column) => {
+			cells[row][column].isMine = Boolean(savedCell.isMine);
+			cells[row][column].isFlagged = Boolean(savedCell.isFlagged);
+			cells[row][column].isMarked = Boolean(savedCell.isMarked);
+			cells[row][column].isRevealed = Boolean(savedCell.isRevealed);
+		});
+	});
+	
+	cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
+
+	gameOver = Boolean(savedGameState.gameOver);
+	newGame = Boolean(savedGameState.newGame);
+	mineCurrentCount = Number.isFinite(savedGameState.mineCurrentCount)
+		? savedGameState.mineCurrentCount
+		: mineTotal;
+	mineCount.textContent = mineCurrentCount;
+	gameStatus.textContent = gameOver
+		? 'Gespeichertes Spiel beendet.'
+		: 'Gespeichertes Spiel fortgesetzt.';
+}
+
 modeButtons.forEach((button) => {
 	button.addEventListener('click', () => setMode(button.dataset.mode));
 });
@@ -460,5 +558,5 @@ board.addEventListener('click', handleCellClick);
 board.addEventListener('contextmenu', handleCellContextMenu);
 board.addEventListener('keydown', handleCellKeyDown);
 document.addEventListener('keydown', handleModeShortcut);
-newGameButton.addEventListener('click', createBoard);
-createBoard();
+newGameButton.addEventListener('click', startNewGame);
+loadGameState();
