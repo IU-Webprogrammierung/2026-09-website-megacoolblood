@@ -23,10 +23,10 @@
   </header>
 
   <main>
-    <section class="game-panel" aria-labelledby="game-info-heading">
+    <section class="game-panel" aria-labelledby="game-heading">
       <header class="game-header">
         <div class="game-header-intro">
-          <h1>Minesweeper</h1>
+          <h1 id="game-heading">Minesweeper</h1>
           <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true">Neustart</button>
           <p id="game-status" role="status">Bereit für ein neues Spiel.</p>
         </div>
@@ -41,7 +41,7 @@
           </div>
         </dl>
       </header>
-      <div id="game-board" class="game-board" role="grid" aria-labelledby="board-heading" aria-describedby="board-description"></div>
+      <div id="game-board" class="game-board" role="grid" aria-labelledby="game-heading" aria-describedby="game-status"></div>
       <footer class="game-footer">
         <div class="game-modes" role="group" aria-label="Eingabemodus">
           <span>Modus:</span>
