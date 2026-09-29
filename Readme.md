@@ -15,7 +15,7 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Automatic revealing of connected empty areas
 - Three input modes: Reveal, Flag, and Mark with a question mark
 - Mode switching through buttons or the `A`, `F`, and `M` keyboard shortcuts
-- Mouse, Space key, and arrow key controls
+- Mouse Left and Right clicks, Space key, and arrow key controls
 - Visible focus state for board cells
 - Status messages for starting a game, revealing cells, winning, and losing
 - Winning streak and game statistics stored using `localStorage`
