@@ -279,6 +279,26 @@ function handleCellClick(event) {
 	}
 }
 
+function handleCellContextMenu(event) {
+	event.preventDefault();
+
+	const cellElement = event.target.closest('.game-cell');
+	const cell = cells.find((currentCell) => currentCell.element === cellElement);
+
+	if (!cell) {
+		return;
+	}
+
+	if (activeMode === 'reveal') {
+		toggleFlag(cell);
+		return;
+	}
+
+	if (activeMode === 'flag') {
+		revealCell(cell);
+	}
+}
+
 function moveFocus(currentCell, rowOffset, columnOffset) {
 	const targetRow = currentCell.row + rowOffset;
 	const targetColumn = currentCell.column + columnOffset;
@@ -381,6 +401,7 @@ modeButtons.forEach((button) => {
 });
 
 board.addEventListener('click', handleCellClick);
+board.addEventListener('contextmenu', handleCellContextMenu);
 board.addEventListener('keydown', handleCellKeyDown);
 document.addEventListener('keydown', handleModeShortcut);
 newGameButton.addEventListener('click', createBoard);
