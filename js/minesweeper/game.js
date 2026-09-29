@@ -459,7 +459,7 @@ function createBoard() {
 	mineCount.textContent = mineCurrentCount;
 	winningStreakElement.textContent = getWinningStreak();
 
-	board.style.gridTemplateColumns = `repeat(${boardColumns}, minmax(2rem, 3rem))`;
+	board.style.gridTemplateColumns = `repeat(${boardColumns}, var(--cell-size))`;
 
 	for (let row = 0; row < boardRows; row += 1) {
 		cells[row] = [];
