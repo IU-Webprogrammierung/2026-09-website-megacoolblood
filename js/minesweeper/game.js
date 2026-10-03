@@ -479,7 +479,6 @@ function createBoard() {
 
 			cell.type = 'button';
 			cell.className = 'game-cell';
-			cell.setAttribute('role', 'gridcell');
 			cell.setAttribute('aria-label', `Unaufgedecktes Feld ${coordinate}`);
 			cell.setAttribute('row', `${row}`);
 			cell.setAttribute('column', `${column}`);
