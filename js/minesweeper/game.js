@@ -137,10 +137,10 @@ function restoreCellPresentation(cell) {
 		);
 	} else if (cell.isFlagged) {
 		setCellContent(cell, 'flag', '?');
-		cell.element.setAttribute('aria-label', `Markiertes Feld ${cell.coordinate}`);
+		cell.element.setAttribute('aria-label', `Als Flagge markiertes Feld ${cell.coordinate}`);
 	} else if (cell.isMarked) {
 		setCellContent(cell, 'questionmark', '');
-		cell.element.setAttribute('aria-label', `Markiertes Feld ${cell.coordinate}`);
+		cell.element.setAttribute('aria-label', `Als Fragezeichen markiertes Feld ${cell.coordinate}`);
 	} else {
 		cell.element.textContent = '?';
 		cell.element.setAttribute('aria-label', `Unaufgedecktes Feld ${cell.coordinate}`);
