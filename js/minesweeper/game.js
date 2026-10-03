@@ -36,6 +36,7 @@ let cells = [];
 let gameOver = false;
 let newGame = true;
 let activeMode = 'reveal';
+let activeCell = null;
 
 function getWinningStreak() {
 	try {
@@ -366,6 +367,7 @@ function handleCellClick(event) {
 	const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
 	if (cell) {
+		setActiveCell(cell);
 		useActiveMode(cell);
 	}
 }
@@ -383,10 +385,27 @@ function handleCellContextMenu(event) {
 		return;
 	}
 
+	setActiveCell(cell);
+
 	const contextMode = activeMode === 'reveal' ? 'flag' : 'reveal';
 
 	if (activeMode !== 'mark') {
 		useActiveMode(cell, contextMode);
+	}
+}
+
+function setActiveCell(nextCell, shouldFocus = false) {
+	if (activeCell !== nextCell) {
+		if (activeCell) {
+			activeCell.element.tabIndex = -1;
+		}
+
+		activeCell = nextCell;
+		activeCell.element.tabIndex = 0;
+	}
+
+	if (shouldFocus) {
+		activeCell.element.focus();
 	}
 }
 
@@ -404,7 +423,7 @@ function moveFocus(currentCell, rowOffset, columnOffset) {
 	}
 
 	const targetCell = cells[targetRow][targetColumn];
-	targetCell.element.focus();
+	setActiveCell(targetCell, true);
 }
 
 function handleCellKeyDown(event) {
@@ -452,6 +471,7 @@ function handleModeShortcut(event) {
 function createBoard() {
 	board.replaceChildren();
 	cells = [];
+	activeCell = null;
 	gameOver = false;
 	newGame = true;
 	gameStatus.textContent = 'Neues Spiel gestartet.';
@@ -479,6 +499,7 @@ function createBoard() {
 
 			cell.type = 'button';
 			cell.className = 'game-cell';
+			cell.tabIndex = -1;
 			cell.setAttribute('aria-label', `Unaufgedecktes Feld ${coordinate}`);
 			cell.setAttribute('row', `${row}`);
 			cell.setAttribute('column', `${column}`);
@@ -487,6 +508,8 @@ function createBoard() {
 			board.append(cell);
 		}
 	}
+
+	setActiveCell(cells[0][0]);
 }
 
 function gameOverRevealMines() {
