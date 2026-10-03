@@ -13,3 +13,12 @@
 	color: var(--color-text);
 	background: var(--color-background);
 }
+
+.skip-link {
+    position: absolute;
+    transform: translateY(-200%);
+}
+
+.skip-link:focus {
+	transform: translateY(0);
+}
