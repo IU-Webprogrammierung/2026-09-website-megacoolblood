@@ -515,6 +515,7 @@ function createBoard() {
 function gameOverRevealMines() {
 	cells.forEach(row => row.filter((currentCell) => currentCell.isMine && !currentCell.isFlagged).forEach((mine) => {
 		setCellContent(mine, 'mine', '*');
+		mine.element.setAttribute('aria-label', `Mine auf Feld ${mine.coordinate}`);
 		mine.element.classList.add('is-mine');
 	}));
 	cells.forEach(row => row.filter((currentCell) => !currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
