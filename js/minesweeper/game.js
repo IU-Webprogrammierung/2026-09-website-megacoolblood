@@ -519,9 +519,11 @@ function gameOverRevealMines() {
 		mine.element.classList.add('is-mine');
 	}));
 	cells.forEach(row => row.filter((currentCell) => !currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
+		flag.element.setAttribute('aria-label', `Falsch als Flagge markiertes Feld ${flag.coordinate}`);
 		flag.element.classList.add('is-wrong-flag');
 	}));
 	cells.forEach(row => row.filter((currentCell) => currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
+		flag.element.setAttribute('aria-label', `Richtig als Flagge markiertes Feld ${flag.coordinate}`);
 		flag.element.classList.add('is-correct-flag');
 	}));
 }
