@@ -7,20 +7,10 @@
   <link rel="stylesheet" href="../../css/style.css">
   <link rel="stylesheet" href="../../css/2048.css">
   <link rel="icon" type="image/png" href="../../assets/images/LycheeLab-small.png">
+  <script src="../../js/components.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
-  <header>
-    <a class="site-logo" href="../../index.html"><img src="../../assets/images/LycheeLab-small.png" alt="LycheeLab"></a>
-    <nav aria-label="Hauptnavigation">
-      <ul>
-        <li><a href="../../index.html">Übersicht</a></li>
-        <li><a href="game.html">Spielen</a></li>
-        <li><a href="instructions.html">Spielanleitung</a></li>
-        <li><a href="statistics.html" aria-current="page">Statistiken</a></li>
-      </ul>
-    </nav>
-  </header>
+  <component path="../../components/header.html"></component>
 
   <main id="main-content" tabindex="-1">
     <h1>2048-Statistiken</h1>
@@ -29,10 +19,7 @@
     </section>
   </main>
 
-  <footer>
-    <a href="../impressum.html">Impressum</a>
-    <a href="../datenschutz.html">Datenschutz</a>
-  </footer>
+  <component path="../../components/footer.html"></component>
   <script src="../../js/2048/statistics.js"></script>
 </body>
 </html>

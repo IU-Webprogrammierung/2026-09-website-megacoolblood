@@ -6,15 +6,10 @@
   <title>Impressum | LycheeLab</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" type="image/png" href="../assets/images/LycheeLab-small.png">
+  <script src="../js/components.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Zum Hauptinhalt springen</a>
-  <header>
-    <a class="site-logo" href="../index.html"><img src="../assets/images/LycheeLab-small.png" alt="LycheeLab"></a>
-    <nav aria-label="Hauptnavigation">
-      <a href="../index.html">Übersicht</a>
-    </nav>
-  </header>
+  <component path="../components/header.html"></component>
 
   <main id="main-content" tabindex="-1">
     <section aria-labelledby="imprint-heading">
@@ -33,10 +28,6 @@
     </section>
   </main>
 
-  <footer>
-    <nav aria-label="Rechtliche Informationen">
-      <a href="datenschutz.html">Datenschutz</a>
-    </nav>
-  </footer>
+  <component path="../components/footer.html"></component>
 </body>
 </html>
