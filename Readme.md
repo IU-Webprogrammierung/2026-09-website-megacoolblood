@@ -24,3 +24,17 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Statistics are grouped by difficulty and contain cleared mines, success rate,
   current streak, and best streak
 - No account, server, or tracking required
+
+### 2048
+
+- Classic 4 × 4 board with randomly placed 2 and 4 tiles
+- Arrow-key controls for moving tiles in all four directions
+- Swipe controls for touch devices
+- Matching tiles merge into a tile with double the value
+- Score, best score, and game status are displayed during play
+- One-step undo function for the latest valid move
+- The game can be continued after reaching the 2048 tile
+- A game ends when no valid move remains
+- Statistics include started games, valid and invalid moves, undos, wins,
+  losses, highest tile, and total score
+- Best score and statistics are stored locally using `localStorage`
