@@ -1,10 +1,12 @@
-# LycheeLab – Minesweeper
+# LycheeLab
 
-LycheeLab is a static website with a playable Minesweeper application.
+LycheeLab is a static website with progressive web application features.
 The project was created as part of the IU Web Programming course using
 semantic HTML, custom CSS, and vanilla JavaScript.
 
 ## Features
+
+### Minesweeper
 
 - Overview, game, settings, and statistics pages
 - Three difficulty levels:
@@ -22,39 +24,3 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Statistics are grouped by difficulty and contain cleared mines, success rate,
   current streak, and best streak
 - No account, server, or tracking required
-
-## Technical Implementation
-
-- HTML5 with semantic elements and WAI-ARIA status regions
-- CSS variables, Flexbox, CSS Grid, and media queries
-- Responsive layout for smartphones, tablets, and desktop computers
-- Dynamic board columns based on the selected difficulty
-- Event delegation for board mouse and keyboard interactions
-- Error handling for unavailable or invalid `localStorage`
-- No external libraries or frameworks
-
-## Accessibility
-
-- `lang="de"` and unique page titles
-- Visible labels for form controls
-- Keyboard-operable buttons and board cells
-- Arrow-key navigation within the board
-- Understandable cell coordinates such as `A1`, `B6`, or `AA1`
-- Visible focus outline
-- Text-based status messages in addition to visual states
-- Important states are not communicated through color alone
-
-
-## Validation
-
-Open tests:
-
-- testing at 360 px, 768 px and 1280 px
-- Testing with at least one screen reader
-- Touch and performance testing with a 100 × 100 board
-
-## Known Limitations
-
-- Statistics and settings are available only in the current browser.
-- The board is currently limited to the three predefined difficulty levels.
-- The interface is currently available in German only, and the text content is not yet translatable.
