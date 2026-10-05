@@ -1,10 +1,3 @@
-const subpages = [
-    ['game.html', 'Spielen'],
-    ['instructions.html', 'Spielanleitung'],
-    ['settings.html', 'Einstellungen'],
-    ['statistics.html', 'Statistiken']
-];
-
 function markCurrentPage(link) {
     const linkUrl = new URL(link.href, window.location.href);
     const currentUrl = new URL(window.location.href);
@@ -15,56 +8,33 @@ function markCurrentPage(link) {
 }
 
 async function createSubnavigation(template) {
-    const navigation = template.content.querySelector('[data-subnavigation]');
     const gameDirectory = window.location.pathname.match(
         /^(.*\/pages\/[^/]+\/)/
     );
 
-    if (!navigation || !gameDirectory) {
-        navigation?.remove();
+    if (!gameDirectory) {
         return;
     }
 
-    const directoryUrl = new URL(gameDirectory[1], window.location.origin);
-    const links = await Promise.all(
-        subpages.map(async ([filename, label]) => {
-            const url = new URL(filename, directoryUrl);
-            const response = await fetch(url);
+    const navigation = template.content.querySelector('[data-subnavigation]');
 
-            if (!response.ok) {
-                return null;
-            }
+    const subnavigationPath = `${gameDirectory[1]}subnavigation.html`;
+    let response = await fetch(subnavigationPath);
 
-            const link = document.createElement('a');
-            link.href = url.href;
-            link.textContent = label;
+    const subnavigation = document.createElement('template');
+    subnavigation.innerHTML = await response.text();
 
-            markCurrentPage(link);
+    subnavigation.content.querySelectorAll('a[href]').forEach((link) => {
+        const url = new URL(link.getAttribute('href'), response.url);
+        link.href = url.href;
+        markCurrentPage(link);
+    });
 
-            const item = document.createElement('li');
-            item.append(link);
-            return item;
-        })
-    );
-
-    const list = navigation.querySelector('ul');
-    links.filter(Boolean).forEach((link) => list.append(link));
-
-    if (list.children.length > 0) {
-        navigation.hidden = false;
-    } else {
-        navigation.remove();
-    }
+    navigation.replaceChildren(...subnavigation.content.childNodes);
+    navigation.hidden = false;
 }
 
-async function loadComponent(component) {
-    const path = component.getAttribute('path');
-    const response = await fetch(path);
-    const template = document.createElement('template');
-    template.innerHTML = await response.text();
-
-    const rootPath = path.slice(0, path.indexOf('components/'));
-
+function resolveComponentPaths(template, rootPath) {
     template.content.querySelectorAll('[href], [src]').forEach((element) => {
         const attribute = element.hasAttribute('href') ? 'href' : 'src';
         const value = element.getAttribute(attribute);
@@ -76,6 +46,17 @@ async function loadComponent(component) {
             element.setAttribute(attribute, rootPath + value);
         }
     });
+}
+
+async function loadComponent(component) {
+    const path = component.getAttribute('path');
+    const response = await fetch(path);
+    const template = document.createElement('template');
+    template.innerHTML = await response.text();
+
+    const rootPath = path.slice(0, path.indexOf('components/'));
+
+    resolveComponentPaths(template, rootPath);
 
     template.content.querySelectorAll('a[href]').forEach((link) => {
         markCurrentPage(link);
