@@ -5,6 +5,15 @@ const subpages = [
     ['statistics.html', 'Statistiken']
 ];
 
+function markCurrentPage(link) {
+    const linkUrl = new URL(link.href, window.location.href);
+    const currentUrl = new URL(window.location.href);
+
+    if (linkUrl.pathname === currentUrl.pathname) {
+        link.setAttribute('aria-current', 'page');
+    }
+}
+
 async function createSubnavigation(template) {
     const navigation = template.content.querySelector('[data-subnavigation]');
     const gameDirectory = window.location.pathname.match(
@@ -30,9 +39,7 @@ async function createSubnavigation(template) {
             link.href = url.href;
             link.textContent = label;
 
-            if (url.pathname === window.location.pathname) {
-                link.setAttribute('aria-current', 'page');
-            }
+            markCurrentPage(link);
 
             const item = document.createElement('li');
             item.append(link);
@@ -71,11 +78,7 @@ async function loadComponent(component) {
     });
 
     template.content.querySelectorAll('a[href]').forEach((link) => {
-        const url = new URL(link.href, window.location.href);
-
-        if (url.pathname === window.location.pathname) {
-            link.setAttribute('aria-current', 'page');
-        }
+        markCurrentPage(link);
     });
 
     await createSubnavigation(template);
