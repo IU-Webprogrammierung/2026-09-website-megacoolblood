@@ -70,6 +70,14 @@ async function loadComponent(component) {
         }
     });
 
+    template.content.querySelectorAll('a[href]').forEach((link) => {
+        const url = new URL(link.href, window.location.href);
+
+        if (url.pathname === window.location.pathname) {
+            link.setAttribute('aria-current', 'page');
+        }
+    });
+
     await createSubnavigation(template);
     component.replaceWith(template.content);
 }
