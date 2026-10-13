@@ -87,6 +87,12 @@ p {
     flex-wrap: wrap;
     gap: var(--space-small);
   }
+
+  > .game-footer {
+    width: auto;
+    margin: var(--space-large) 0 0;
+    padding: 0;
+  }
 }
 
 .skip-link {
