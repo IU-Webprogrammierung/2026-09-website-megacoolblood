@@ -107,6 +107,12 @@ p {
   }
 }
 
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-medium);
+}
+
 .skip-link {
   position: absolute;
   transform: translateY(-200%);
