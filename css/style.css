@@ -40,9 +40,9 @@ a:focus-visible {
   outline-offset: 0.2rem;
 }
 
-header {
+body > header {
   position: relative;
-  z-index: 1;
+  z-index: 10;
   display: flex;
   align-items: center;
   gap: var(--space-medium);
@@ -123,6 +123,7 @@ header {
 
 nav[data-main-navigation] {
   position: absolute;
+  z-index: 11;
   top: 100%;
   left: 0;
   width: 100%;
@@ -139,6 +140,16 @@ nav[data-main-navigation] ul {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+nav[data-subnavigation] {
+  margin-top: var(--space-small);
+  padding-top: var(--space-small);
+  border-top: 1px solid var(--color-border);
+}
+
+nav[data-subnavigation] ul {
+  gap: 0.25rem;
 }
 
 nav[data-main-navigation] a {
@@ -164,6 +175,16 @@ nav[data-main-navigation] a {
   nav[data-main-navigation] ul {
     flex-direction: row;
     align-items: center;
+  }
+
+  nav[data-subnavigation] {
+    margin: 0 0 0 var(--space-medium);
+    padding: 0;
+    border-top: 0;
+  }
+
+  nav[data-subnavigation] ul {
+    flex-direction: row;
   }
 }
 
