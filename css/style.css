@@ -22,3 +22,9 @@
 .skip-link:focus {
   transform: translateY(0);
 }
+
+.brand-image {
+  display: block;
+  width: min(100%, 16rem);
+  height: auto;
+}
