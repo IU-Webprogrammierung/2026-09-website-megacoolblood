@@ -32,6 +32,7 @@
   .game-cell {
     display: grid;
     place-items: center;
+    position: relative;
     min-width: 0;
     padding: 0;
     color: var(--cell-text-color);
@@ -39,6 +40,12 @@
     border: 0.2rem outset var(--cell-border-light);
     border-radius: 0.15rem;
     font-weight: 700;
+
+    &:focus-visible {
+      z-index: 1;
+      outline: 0.2rem solid var(--cell-text-color);
+      outline-offset: 0.1rem;
+    }
 
     &.is-revealed {
       background: var(--cell-revealed-color);
