@@ -34,6 +34,12 @@ main {
   margin: 0 auto;
 }
 
+h1,
+h2,
+p {
+  margin-block: 0 var(--space-medium);
+}
+
 .skip-link {
   position: absolute;
   transform: translateY(-200%);
