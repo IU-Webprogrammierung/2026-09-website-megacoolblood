@@ -53,12 +53,12 @@
       border-color: var(--cell-border-dark);
     }
   }
-}
 
-.game-cell-icon {
-  display: block;
-  width: 65%;
-  height: 65%;
-  margin: auto;
-  object-fit: contain;
+  .game-cell-icon {
+    display: block;
+    width: 65%;
+    height: 65%;
+    margin: auto;
+    object-fit: contain;
+  }
 }
