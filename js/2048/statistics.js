@@ -47,7 +47,7 @@ function renderStatistics() {
   const hasPlayed = statistics.gamesStarted > 0 || statistics.actions > 0;
   const values = document.createElement('dl');
 
-  values.className = 'statistics-values';
+  values.className = 'statistics-card';
   values.append(
   createStatistic('Gestartete Spiele', statistics.gamesStarted),
   createStatistic('Züge', statistics.moves),
