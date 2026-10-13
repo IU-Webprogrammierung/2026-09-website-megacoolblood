@@ -23,13 +23,13 @@
 }
 
 .game-board {
-    --cell-size: clamp(2rem, 8vw, 3rem);
-    display: grid;
-    grid-template-columns: repeat(9, var(--cell-size));
-    grid-auto-rows: var(--cell-size);
-    gap: 0.15rem; width: max-content;
-    max-width: 100%; margin: 1.5rem auto;
-    overflow: auto; padding: 0.25rem;
-    border-radius: 0.5rem;
-    background: #315846;
+  --cell-size: clamp(2rem, 8vw, 3rem);
+  display: grid;
+  grid-template-columns: repeat(9, var(--cell-size));
+  grid-auto-rows: var(--cell-size);
+  gap: 0.15rem; width: max-content;
+  max-width: 100%; margin: 1.5rem auto;
+  overflow: auto; padding: 0.25rem;
+  border-radius: 0.5rem;
+  background: #315846;
 }

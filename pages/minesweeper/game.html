@@ -13,34 +13,34 @@
   <component path="../../components/header.html"></component>
 
   <main id="main-content" tabindex="-1">
-    <section class="game-panel" aria-labelledby="game-heading">
-      <header class="game-header">
-        <div class="game-header-intro">
-          <h1 id="game-heading">Minesweeper</h1>
-          <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true">Neustart</button>
-          <p id="game-status" role="status" aria-live="polite" aria-atomic="true">Bereit für ein neues Spiel.</p>
-        </div>
-        <dl>
-          <div>
-            <dt><img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true">Verbleibende Minen</dt>
-            <dd id="mine-count">0</dd>
-          </div>
-          <div>
-            <dt><img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true">Aktuelle Siegesserie</dt>
-            <dd id="winning-streak">0</dd>
-          </div>
-        </dl>
-      </header>
-      <div id="game-board" class="game-board" role="grid" aria-labelledby="game-heading" aria-describedby="game-status"></div>
-      <footer class="game-footer">
-        <div class="game-modes" role="group" aria-label="Eingabemodus">
-          <span>Modus:</span>
-          <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true"><img class="mode-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true">Aufdecken (A)</button>
-          <button type="button" class="mode-button" data-mode="flag" aria-pressed="false"><img class="mode-icon" src="../../assets/icons/flag.svg" alt="" aria-hidden="true">Flagge (F)</button>
-          <button type="button" class="mode-button" data-mode="mark" aria-pressed="false"><img class="mode-icon" src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true">Markieren (M)</button>
-        </div>
-      </footer>
-    </section>
+  <section class="game-panel" aria-labelledby="game-heading">
+   <header class="game-header">
+    <div class="game-header-intro">
+     <h1 id="game-heading">Minesweeper</h1>
+     <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true">Neustart</button>
+     <p id="game-status" role="status" aria-live="polite" aria-atomic="true">Bereit für ein neues Spiel.</p>
+    </div>
+    <dl>
+     <div>
+      <dt><img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true">Verbleibende Minen</dt>
+      <dd id="mine-count">0</dd>
+     </div>
+     <div>
+      <dt><img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true">Aktuelle Siegesserie</dt>
+      <dd id="winning-streak">0</dd>
+     </div>
+    </dl>
+   </header>
+   <div id="game-board" class="game-board" role="grid" aria-labelledby="game-heading" aria-describedby="game-status"></div>
+   <footer class="game-footer">
+    <div class="game-modes" role="group" aria-label="Eingabemodus">
+     <span>Modus:</span>
+     <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true"><img class="mode-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true">Aufdecken (A)</button>
+     <button type="button" class="mode-button" data-mode="flag" aria-pressed="false"><img class="mode-icon" src="../../assets/icons/flag.svg" alt="" aria-hidden="true">Flagge (F)</button>
+     <button type="button" class="mode-button" data-mode="mark" aria-pressed="false"><img class="mode-icon" src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true">Markieren (M)</button>
+    </div>
+   </footer>
+  </section>
   </main>
 
   <component path="../../components/footer.html"></component>

@@ -13,31 +13,31 @@
   <component path="../../components/header.html"></component>
 
   <main id="main-content" tabindex="-1">
-    <section class="game-panel game-2048" aria-labelledby="game-heading">
-      <header class="game-header">
-        <div class="game-header-intro">
-          <h1 id="game-heading">2048</h1>
-          <div class="game-controls" role="group" aria-label="Spielsteuerung">
-            <button type="button" id="new-game">Neustart</button>
-            <button type="button" id="undo-move" disabled>Zurück</button>
-          </div>
-          <p id="game-status" role="status" aria-live="polite" aria-atomic="true">Bereit für ein neues Spiel.</p>
-        </div>
-        <dl>
-          <div>
-            <dt>Punktestand</dt>
-            <dd id="game-score">0</dd>
-          </div>
-          <div>
-            <dt>Bestwert</dt>
-            <dd id="best-score">0</dd>
-          </div>
-        </dl>
-      </header>
+  <section class="game-panel game-2048" aria-labelledby="game-heading">
+   <header class="game-header">
+    <div class="game-header-intro">
+     <h1 id="game-heading">2048</h1>
+     <div class="game-controls" role="group" aria-label="Spielsteuerung">
+      <button type="button" id="new-game">Neustart</button>
+      <button type="button" id="undo-move" disabled>Zurück</button>
+     </div>
+     <p id="game-status" role="status" aria-live="polite" aria-atomic="true">Bereit für ein neues Spiel.</p>
+    </div>
+    <dl>
+     <div>
+      <dt>Punktestand</dt>
+      <dd id="game-score">0</dd>
+     </div>
+     <div>
+      <dt>Bestwert</dt>
+      <dd id="best-score">0</dd>
+     </div>
+    </dl>
+   </header>
 
-      <div id="game-board" class="board-2048" role="grid" tabindex="0" aria-label="2048-Spielfeld" aria-describedby="game-status">
-      </div>
-    </section>
+   <div id="game-board" class="board-2048" role="grid" tabindex="0" aria-label="2048-Spielfeld" aria-describedby="game-status">
+   </div>
+  </section>
   </main>
 
   <component path="../../components/footer.html"></component>

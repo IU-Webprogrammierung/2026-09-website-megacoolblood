@@ -5,9 +5,9 @@ const storageKey = 'lycheelab-difficulty';
 
 function readDifficulty() {
   try {
-    return localStorage.getItem(storageKey) || 'beginner';
+  return localStorage.getItem(storageKey) || 'beginner';
   } catch {
-    return 'beginner';
+  return 'beginner';
   }
 }
 
@@ -15,10 +15,10 @@ function saveDifficulty(event) {
   event.preventDefault();
 
   try {
-    localStorage.setItem(storageKey, difficultySelect.value);
-    settingsStatus.textContent = 'Einstellungen gespeichert.';
+  localStorage.setItem(storageKey, difficultySelect.value);
+  settingsStatus.textContent = 'Einstellungen gespeichert.';
   } catch {
-    settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
+  settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
   }
 }
 

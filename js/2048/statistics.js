@@ -15,15 +15,15 @@ const defaultStatistics = {
 
 function readStatistics() {
   try {
-    const storedStatistics = JSON.parse(localStorage.getItem(statisticsKey) || '{}');
+  const storedStatistics = JSON.parse(localStorage.getItem(statisticsKey) || '{}');
 
-    return Object.keys(defaultStatistics).reduce((statistics, key) => {
-      const value = Number(storedStatistics[key]);
-      statistics[key] = Number.isFinite(value) && value >= 0 ? value : defaultStatistics[key];
-      return statistics;
-    }, { ...defaultStatistics });
+  return Object.keys(defaultStatistics).reduce((statistics, key) => {
+   const value = Number(storedStatistics[key]);
+   statistics[key] = Number.isFinite(value) && value >= 0 ? value : defaultStatistics[key];
+   return statistics;
+  }, { ...defaultStatistics });
   } catch {
-    return { ...defaultStatistics };
+  return { ...defaultStatistics };
   }
 }
 
@@ -49,21 +49,21 @@ function renderStatistics() {
 
   values.className = 'statistics-values';
   values.append(
-    createStatistic('Gestartete Spiele', statistics.gamesStarted),
-    createStatistic('Züge', statistics.moves),
-    createStatistic('Ungültige Züge', statistics.invalidMoves),
-    createStatistic('Aktionen gesamt', statistics.actions),
-    createStatistic('Zurückgenommene Züge', statistics.undos),
-    createStatistic('Siege mit 2048', statistics.wins),
-    createStatistic('Niederlagen', statistics.losses),
-    createStatistic('Höchster Stein', statistics.highestTile),
-    createStatistic('Gesamtpunkte', statistics.totalScore)
+  createStatistic('Gestartete Spiele', statistics.gamesStarted),
+  createStatistic('Züge', statistics.moves),
+  createStatistic('Ungültige Züge', statistics.invalidMoves),
+  createStatistic('Aktionen gesamt', statistics.actions),
+  createStatistic('Zurückgenommene Züge', statistics.undos),
+  createStatistic('Siege mit 2048', statistics.wins),
+  createStatistic('Niederlagen', statistics.losses),
+  createStatistic('Höchster Stein', statistics.highestTile),
+  createStatistic('Gesamtpunkte', statistics.totalScore)
   );
 
   statisticsList.replaceChildren(values);
   statisticsStatus.textContent = hasPlayed
-    ? 'Die Werte werden nach jedem Spielzug lokal aktualisiert.'
-    : 'Noch keine 2048-Aktionen gespeichert.';
+  ? 'Die Werte werden nach jedem Spielzug lokal aktualisiert.'
+  : 'Noch keine 2048-Aktionen gespeichert.';
 }
 
 renderStatistics();

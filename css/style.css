@@ -15,8 +15,8 @@
 }
 
 .skip-link {
-    position: absolute;
-    transform: translateY(-200%);
+  position: absolute;
+  transform: translateY(-200%);
 }
 
 .skip-link:focus {

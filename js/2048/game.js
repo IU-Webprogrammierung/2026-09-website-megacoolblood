@@ -33,52 +33,52 @@ function createEmptyBoard() {
 
 function readBestScore() {
   try {
-    const storedScore = Number.parseInt(localStorage.getItem(bestScoreKey), 10);
-    return Number.isNaN(storedScore) || storedScore < 0 ? 0 : storedScore;
+  const storedScore = Number.parseInt(localStorage.getItem(bestScoreKey), 10);
+  return Number.isNaN(storedScore) || storedScore < 0 ? 0 : storedScore;
   } catch {
-    return 0;
+  return 0;
   }
 }
 
 function saveBestScore() {
   try {
-    localStorage.setItem(bestScoreKey, String(bestScore));
+  localStorage.setItem(bestScoreKey, String(bestScore));
   } catch {
   }
 }
 
 function getDefaultStatistics() {
   return {
-    actions: 0,
-    gamesStarted: 0,
-    highestTile: 0,
-    invalidMoves: 0,
-    losses: 0,
-    moves: 0,
-    totalScore: 0,
-    undos: 0,
-    wins: 0
+  actions: 0,
+  gamesStarted: 0,
+  highestTile: 0,
+  invalidMoves: 0,
+  losses: 0,
+  moves: 0,
+  totalScore: 0,
+  undos: 0,
+  wins: 0
   };
 }
 
 function readStatistics() {
   try {
-    const storedStatistics = JSON.parse(localStorage.getItem(statisticsKey) || '{}');
-    const defaults = getDefaultStatistics();
+  const storedStatistics = JSON.parse(localStorage.getItem(statisticsKey) || '{}');
+  const defaults = getDefaultStatistics();
 
-    return Object.keys(defaults).reduce((statistics, key) => {
-      const value = Number(storedStatistics[key]);
-      statistics[key] = Number.isFinite(value) && value >= 0 ? value : defaults[key];
-      return statistics;
-    }, defaults);
+  return Object.keys(defaults).reduce((statistics, key) => {
+   const value = Number(storedStatistics[key]);
+   statistics[key] = Number.isFinite(value) && value >= 0 ? value : defaults[key];
+   return statistics;
+  }, defaults);
   } catch {
-    return getDefaultStatistics();
+  return getDefaultStatistics();
   }
 }
 
 function writeStatistics(statistics) {
   try {
-    localStorage.setItem(statisticsKey, JSON.stringify(statistics));
+  localStorage.setItem(statisticsKey, JSON.stringify(statistics));
   } catch {
   }
 }
@@ -93,9 +93,9 @@ function recordMove(isValid, gainedScore, result) {
   const statistics = readStatistics();
   statistics.actions += 1;
   if (isValid) {
-    statistics.moves += 1;
+  statistics.moves += 1;
   } else {
-    statistics.invalidMoves += 1;
+  statistics.invalidMoves += 1;
   }
   statistics.totalScore += gainedScore;
   statistics.highestTile = Math.max(statistics.highestTile, ...board.flat());
@@ -115,11 +115,11 @@ function getEmptyPositions() {
   const positions = [];
 
   board.forEach((row, rowIndex) => {
-    row.forEach((value, columnIndex) => {
-      if (value === 0) {
-        positions.push({ columnIndex, rowIndex });
-      }
-    });
+  row.forEach((value, columnIndex) => {
+   if (value === 0) {
+    positions.push({ columnIndex, rowIndex });
+   }
+  });
   });
 
   return positions;
@@ -129,7 +129,7 @@ function addRandomTile() {
   const emptyPositions = getEmptyPositions();
 
   if (emptyPositions.length === 0) {
-    return;
+  return;
   }
 
   const position = emptyPositions[Math.floor(Math.random() * emptyPositions.length)];
@@ -142,18 +142,18 @@ function slideLine(line) {
   let gainedScore = 0;
 
   for (let index = 0; index < compactLine.length; index += 1) {
-    if (compactLine[index] === compactLine[index + 1]) {
-      const mergedValue = compactLine[index] * 2;
-      mergedLine.push(mergedValue);
-      gainedScore += mergedValue;
-      index += 1;
-    } else {
-      mergedLine.push(compactLine[index]);
-    }
+  if (compactLine[index] === compactLine[index + 1]) {
+   const mergedValue = compactLine[index] * 2;
+   mergedLine.push(mergedValue);
+   gainedScore += mergedValue;
+   index += 1;
+  } else {
+   mergedLine.push(compactLine[index]);
+  }
   }
 
   while (mergedLine.length < boardSize) {
-    mergedLine.push(0);
+  mergedLine.push(0);
   }
 
   return { gainedScore, line: mergedLine };
@@ -161,8 +161,8 @@ function slideLine(line) {
 
 function getLine(direction, index) {
   if (direction === 'left' || direction === 'right') {
-    const line = board[index].slice();
-    return direction === 'right' ? line.reverse() : line;
+  const line = board[index].slice();
+  return direction === 'right' ? line.reverse() : line;
   }
 
   const line = board.map((row) => row[index]);
@@ -173,12 +173,12 @@ function setLine(direction, index, line) {
   const outputLine = direction === 'left' || direction === 'up' ? line : line.reverse();
 
   if (direction === 'left' || direction === 'right') {
-    board[index] = outputLine;
-    return;
+  board[index] = outputLine;
+  return;
   }
 
   outputLine.forEach((value, rowIndex) => {
-    board[rowIndex][index] = value;
+  board[rowIndex][index] = value;
   });
 }
 
@@ -188,19 +188,19 @@ function hasBoardChanged(previousBoard) {
 
 function canMove() {
   if (getEmptyPositions().length > 0) {
-    return true;
+  return true;
   }
 
   for (let rowIndex = 0; rowIndex < boardSize; rowIndex += 1) {
-    for (let columnIndex = 0; columnIndex < boardSize; columnIndex += 1) {
-      const value = board[rowIndex][columnIndex];
-      const rightValue = board[rowIndex][columnIndex + 1];
-      const bottomValue = board[rowIndex + 1]?.[columnIndex];
+  for (let columnIndex = 0; columnIndex < boardSize; columnIndex += 1) {
+   const value = board[rowIndex][columnIndex];
+   const rightValue = board[rowIndex][columnIndex + 1];
+   const bottomValue = board[rowIndex + 1]?.[columnIndex];
 
-      if (value === rightValue || value === bottomValue) {
-        return true;
-      }
-    }
+   if (value === rightValue || value === bottomValue) {
+    return true;
+   }
+  }
   }
 
   return false;
@@ -223,16 +223,16 @@ function renderBoard() {
   boardElement.replaceChildren();
 
   board.forEach((row, rowIndex) => {
-    row.forEach((value, columnIndex) => {
-      const tile = document.createElement('div');
-      tile.className = `tile tile-${value}`;
-      tile.setAttribute('role', 'gridcell');
-      tile.setAttribute('aria-rowindex', rowIndex + 1);
-      tile.setAttribute('aria-colindex', columnIndex + 1);
-      tile.setAttribute('aria-label', getTileLabel(value));
-      tile.textContent = value === 0 ? '' : value;
-      boardElement.append(tile);
-    });
+  row.forEach((value, columnIndex) => {
+   const tile = document.createElement('div');
+   tile.className = `tile tile-${value}`;
+   tile.setAttribute('role', 'gridcell');
+   tile.setAttribute('aria-rowindex', rowIndex + 1);
+   tile.setAttribute('aria-colindex', columnIndex + 1);
+   tile.setAttribute('aria-label', getTileLabel(value));
+   tile.textContent = value === 0 ? '' : value;
+   boardElement.append(tile);
+  });
   });
 }
 
@@ -242,49 +242,49 @@ function setGameStatus(message) {
 
 function move(direction) {
   if (gameOver) {
-    return;
+  return;
   }
 
   const previousBoard = board.map((row) => row.slice());
   const stateBeforeMove = {
-    board: previousBoard,
-    hasWon,
-    gameOver,
-    score
+  board: previousBoard,
+  hasWon,
+  gameOver,
+  score
   };
   let gainedScore = 0;
 
   for (let index = 0; index < boardSize; index += 1) {
-    const result = slideLine(getLine(direction, index));
-    gainedScore += result.gainedScore;
-    setLine(direction, index, result.line);
+  const result = slideLine(getLine(direction, index));
+  gainedScore += result.gainedScore;
+  setLine(direction, index, result.line);
   }
 
   if (!hasBoardChanged(previousBoard)) {
-    setGameStatus('Dieser Zug ist nicht möglich.');
-    recordMove(false, 0, null);
-    return;
+  setGameStatus('Dieser Zug ist nicht möglich.');
+  recordMove(false, 0, null);
+  return;
   }
 
   previousState = stateBeforeMove;
   addRandomTile();
   score += gainedScore;
   if (score > bestScore) {
-    bestScore = score;
-    saveBestScore();
+  bestScore = score;
+  saveBestScore();
   }
 
   let result = null;
   if (!hasWon && board.some((row) => row.includes(2048))) {
-    hasWon = true;
-    result = 'win';
-    setGameStatus('2048 erreicht. Du kannst weiterspielen.');
+  hasWon = true;
+  result = 'win';
+  setGameStatus('2048 erreicht. Du kannst weiterspielen.');
   } else if (!canMove()) {
-    gameOver = true;
-    result = 'loss';
-    setGameStatus('Kein Zug mehr möglich. Starte ein neues Spiel.');
+  gameOver = true;
+  result = 'loss';
+  setGameStatus('Kein Zug mehr möglich. Starte ein neues Spiel.');
   } else {
-    setGameStatus(`Steine nach ${directionLabels[direction]} bewegt.`);
+  setGameStatus(`Steine nach ${directionLabels[direction]} bewegt.`);
   }
 
   recordMove(true, gainedScore, result);
@@ -311,7 +311,7 @@ function startGame() {
 
 function undoMove() {
   if (!previousState) {
-    return;
+  return;
   }
 
   board = previousState.board;
@@ -331,7 +331,7 @@ function handleKeyDown(event) {
   const direction = directions[event.key];
 
   if (!direction) {
-    return;
+  return;
   }
 
   event.preventDefault();
@@ -344,7 +344,7 @@ function handlePointerDown(event) {
 
 function handlePointerUp(event) {
   if (!pointerStart) {
-    return;
+  return;
   }
 
   const deltaX = event.clientX - pointerStart.x;
@@ -352,12 +352,12 @@ function handlePointerUp(event) {
   pointerStart = null;
 
   if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) < 24) {
-    return;
+  return;
   }
 
   const direction = Math.abs(deltaX) > Math.abs(deltaY)
-    ? (deltaX > 0 ? 'right' : 'left')
-    : (deltaY > 0 ? 'down' : 'up');
+  ? (deltaX > 0 ? 'right' : 'left')
+  : (deltaY > 0 ? 'down' : 'up');
   move(direction);
 }
 
