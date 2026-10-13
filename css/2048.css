@@ -3,6 +3,20 @@
   --board-gap: 0.5rem;
   --board-padding: 0.5rem;
   --empty-tile-color: #cdc1b4;
+  --tile-light-text: #776e65;
+  --tile-dark-text: #f9f6f2;
+  --tile-2-color: #eee4da;
+  --tile-4-color: #ede0c8;
+  --tile-8-color: #f2b179;
+  --tile-16-color: #f59563;
+  --tile-32-color: #f67c5f;
+  --tile-64-color: #f65e3b;
+  --tile-128-color: #edcf72;
+  --tile-256-color: #e8b923;
+  --tile-512-color: #d99a1f;
+  --tile-1024-color: #c96b1b;
+  --tile-2048-color: #a83d16;
+  --tile-4096-color: #3c3a32;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: 1fr;
@@ -18,6 +32,7 @@
     place-items: center;
     min-width: 0;
     aspect-ratio: 1;
+    color: var(--tile-light-text);
     border-radius: 0.25rem;
     font-size: clamp(1rem, 5vw, 2rem);
     font-weight: 700;
@@ -26,5 +41,63 @@
   .tile-0 {
     color: transparent;
     background: var(--empty-tile-color);
+  }
+
+  .tile-2 {
+    background: var(--tile-2-color);
+  }
+
+  .tile-4 {
+    background: var(--tile-4-color);
+  }
+
+  .tile-8 {
+    color: var(--tile-dark-text);
+    background: var(--tile-8-color);
+  }
+
+  .tile-16 {
+    color: var(--tile-dark-text);
+    background: var(--tile-16-color);
+  }
+
+  .tile-32 {
+    color: var(--tile-dark-text);
+    background: var(--tile-32-color);
+  }
+
+  .tile-64 {
+    color: var(--tile-dark-text);
+    background: var(--tile-64-color);
+  }
+
+  .tile-128 {
+    color: var(--tile-dark-text);
+    background: var(--tile-128-color);
+  }
+
+  .tile-256 {
+    color: var(--tile-dark-text);
+    background: var(--tile-256-color);
+  }
+
+  .tile-512 {
+    color: var(--tile-dark-text);
+    background: var(--tile-512-color);
+  }
+
+  .tile-1024 {
+    color: var(--tile-dark-text);
+    background: var(--tile-1024-color);
+  }
+
+  .tile-2048 {
+    color: var(--tile-dark-text);
+    background: var(--tile-2048-color);
+  }
+
+  .tile-4096 {
+    color: var(--tile-dark-text);
+    background: var(--tile-4096-color);
   }
 }
