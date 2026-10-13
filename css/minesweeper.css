@@ -9,6 +9,13 @@
 
 .game-board {
   --cell-size: clamp(2rem, 8vw, 3rem);
+  --board-color: #c0c0c0;
+  --cell-color: #c0c0c0;
+  --cell-revealed-color: #d3d3d3;
+  --cell-text-color: #000;
+  --cell-border-light: #f0f0f0;
+  --cell-border-dark: #808080;
+  --cell-flag-border: #fff;
   display: grid;
   grid-template-columns: repeat(9, var(--cell-size));
   grid-auto-rows: var(--cell-size);
@@ -19,31 +26,31 @@
   padding: 0.25rem;
   overflow: auto;
   border-radius: 0.5rem;
-  background: #c0c0c0;
+  background: var(--board-color);
 
   .game-cell {
     display: grid;
     place-items: center;
     min-width: 0;
     padding: 0;
-    color: #000;
-    background: #c0c0c0;
-    border: 0.2rem outset #f0f0f0;
+    color: var(--cell-text-color);
+    background: var(--cell-color);
+    border: 0.2rem outset var(--cell-border-light);
     border-radius: 0.15rem;
     font-weight: 700;
 
     &.is-revealed {
-      background: #d3d3d3;
-      border: 1px solid #808080;
+      background: var(--cell-revealed-color);
+      border: 1px solid var(--cell-border-dark);
     }
 
     &.is-flagged {
-      border-color: #ffffff;
+      border-color: var(--cell-flag-border);
     }
 
     &.is-marked {
-      background: #d3d3d3;
-      border-color: #808080;
+      background: var(--cell-revealed-color);
+      border-color: var(--cell-border-dark);
     }
   }
 }
