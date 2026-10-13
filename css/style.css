@@ -91,6 +91,14 @@ body>header {
       height: 3rem;
     }
   }
+
+  .menu-toggle {
+    .menu-icon {
+      position: relative;
+      width: 1.5rem;
+      height: 1.25rem;
+    }
+  }
 }
 
 .menu-toggle {
@@ -110,12 +118,6 @@ body>header {
 .menu-icon,
 .menu-icon span {
   display: block;
-}
-
-.menu-icon {
-  position: relative;
-  width: 1.5rem;
-  height: 1.25rem;
 }
 
 .menu-icon span {
