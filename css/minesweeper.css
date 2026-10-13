@@ -17,6 +17,9 @@
   --cell-border-light: #f0f0f0;
   --cell-border-dark: #808080;
   --cell-flag-border: #fff;
+  --cell-mine-color: #f00;
+  --cell-correct-flag-color: #c6efce;
+  --cell-wrong-flag-color: #ffc7ce;
   display: grid;
   grid-template-columns: repeat(9, var(--cell-size));
   grid-auto-rows: var(--cell-size);
@@ -59,6 +62,19 @@
     &.is-marked {
       background: var(--cell-marked-color);
       border-color: var(--cell-border-dark);
+    }
+
+    &.is-mine {
+      background: var(--cell-mine-color);
+      border-color: var(--cell-mine-color);
+    }
+
+    &.is-correct-flag {
+      background: var(--cell-correct-flag-color);
+    }
+
+    &.is-wrong-flag {
+      background: var(--cell-wrong-flag-color);
     }
   }
 
