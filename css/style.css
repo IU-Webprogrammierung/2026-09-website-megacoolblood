@@ -111,6 +111,13 @@ p {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
   gap: var(--space-medium);
+
+  .statistics-card {
+    padding: var(--space-medium);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+  }
 }
 
 .skip-link {
