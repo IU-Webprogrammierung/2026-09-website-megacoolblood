@@ -1,17 +1,17 @@
 :root {
-	--color-background: #f4f1ea;
-	--color-surface: #fffdf8;
-	--color-text: #20231f;
-	--color-muted: #5c655b;
-	--color-accent: #236b52;
-	--color-accent-dark: #174936;
-	--color-border: #cbd4c8;
-	--space-small: 0.5rem;
-	--space-medium: 1rem;
-	--space-large: 1.5rem;
-	--content-width: 72rem;
-	color: var(--color-text);
-	background: var(--color-background);
+  --color-background: #f4f1ea;
+  --color-surface: #fffdf8;
+  --color-text: #20231f;
+  --color-muted: #5c655b;
+  --color-accent: #236b52;
+  --color-accent-dark: #174936;
+  --color-border: #cbd4c8;
+  --space-small: 0.5rem;
+  --space-medium: 1rem;
+  --space-large: 1.5rem;
+  --content-width: 72rem;
+  color: var(--color-text);
+  background: var(--color-background);
 }
 
 .skip-link {
@@ -20,5 +20,5 @@
 }
 
 .skip-link:focus {
-	transform: translateY(0);
+  transform: translateY(0);
 }
