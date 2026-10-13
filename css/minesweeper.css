@@ -17,7 +17,9 @@
   --cell-border-light: #f0f0f0;
   --cell-border-dark: #808080;
   --cell-flag-border: #fff;
-  --cell-mine-color: #f00;
+  --cell-mine-color: #f4cccc;
+  --cell-triggered-mine-color: #f00;
+  --cell-triggered-mine-border-color: #800000;
   --cell-correct-flag-color: #c6efce;
   --cell-wrong-flag-color: #ffc7ce;
   display: grid;
@@ -67,6 +69,13 @@
     &.is-mine {
       background: var(--cell-mine-color);
       border-color: var(--cell-mine-color);
+    }
+
+    &.is-revealed.is-mine {
+      background: var(--cell-triggered-mine-color);
+      border: 0.2rem solid var(--cell-triggered-mine-border-color);
+      outline: 0.15rem solid var(--cell-triggered-mine-color);
+      outline-offset: 0.05rem;
     }
 
     &.is-correct-flag {
