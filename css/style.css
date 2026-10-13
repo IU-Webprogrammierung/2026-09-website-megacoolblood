@@ -88,6 +88,18 @@ p {
     gap: var(--space-small);
   }
 
+  .game-modes {
+    .mode-button {
+      display: inline-flex;
+      align-items: center;
+
+      &.is-active {
+        color: var(--color-text);
+        background: var(--color-surface);
+      }
+    }
+  }
+
   > .game-footer {
     width: auto;
     margin: var(--space-large) 0 0;
