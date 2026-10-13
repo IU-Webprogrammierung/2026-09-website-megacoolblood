@@ -5,6 +5,7 @@
   --empty-tile-color: #cdc1b4;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
   gap: var(--board-gap);
   width: min(88vw, 32rem);
   padding: var(--board-padding);
@@ -16,6 +17,7 @@
     display: grid;
     place-items: center;
     min-width: 0;
+    aspect-ratio: 1;
     border-radius: 0.25rem;
     font-size: clamp(1rem, 5vw, 2rem);
     font-weight: 700;
