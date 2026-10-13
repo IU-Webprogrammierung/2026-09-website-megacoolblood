@@ -12,6 +12,7 @@
   --board-color: #c0c0c0;
   --cell-color: #c0c0c0;
   --cell-revealed-color: #d3d3d3;
+  --cell-marked-color: #f9edaa;
   --cell-text-color: #000;
   --cell-border-light: #f0f0f0;
   --cell-border-dark: #808080;
@@ -49,7 +50,7 @@
     }
 
     &.is-marked {
-      background: var(--cell-revealed-color);
+      background: var(--cell-marked-color);
       border-color: var(--cell-border-dark);
     }
   }
