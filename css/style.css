@@ -80,6 +80,13 @@ p {
       min-width: 7rem;
     }
   }
+
+  .game-controls,
+  .game-modes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-small);
+  }
 }
 
 .skip-link {
