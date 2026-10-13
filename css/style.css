@@ -67,6 +67,18 @@ p {
         margin: 0;
       }
     }
+
+    dl {
+      display: flex;
+      flex: 1 1 16rem;
+      flex-wrap: wrap;
+      gap: var(--space-medium);
+      margin: 0;
+    }
+
+    dl > div {
+      min-width: 7rem;
+    }
   }
 }
 
