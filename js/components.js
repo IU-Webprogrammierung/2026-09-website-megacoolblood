@@ -7,6 +7,65 @@ function markCurrentPage(link) {
   }
 }
 
+function initializeMainNavigation(template) {
+  const button = template.content.querySelector('[data-menu-toggle]');
+  const navigation = template.content.querySelector('[data-main-navigation]');
+
+  if (!button || !navigation) {
+    return;
+  }
+
+  const mobileQuery = window.matchMedia('(max-width: 767px)');
+  let isOpen = false;
+
+  function updateNavigation() {
+    const isMobile = mobileQuery.matches;
+    button.hidden = !isMobile;
+    navigation.hidden = isMobile ? !isOpen : false;
+    button.setAttribute('aria-expanded', String(isMobile && isOpen));
+    button.setAttribute('aria-label', isOpen ? 'Menü schließen' : 'Menü öffnen');
+  }
+
+  function closeNavigation() {
+    isOpen = false;
+    updateNavigation();
+  }
+
+  button.addEventListener('click', () => {
+    isOpen = !isOpen;
+    updateNavigation();
+    if (isOpen) {
+      navigation.querySelector('a')?.focus();
+    }
+  });
+
+  navigation.addEventListener('click', (event) => {
+    if (event.target.closest('a')) {
+      closeNavigation();
+    }
+  });
+
+  button.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeNavigation();
+    }
+  });
+
+  navigation.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeNavigation();
+      button.focus();
+    }
+  });
+
+  mobileQuery.addEventListener('change', () => {
+    isOpen = false;
+    updateNavigation();
+  });
+
+  updateNavigation();
+}
+
 async function createSubnavigation(template) {
   const gameDirectory = window.location.pathname.match(
     /^(.*\/pages\/[^/]+\/)/
@@ -62,6 +121,7 @@ async function loadComponent(component) {
     markCurrentPage(link);
   });
 
+  initializeMainNavigation(template);
   await createSubnavigation(template);
   component.replaceWith(template.content);
 }
