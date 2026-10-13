@@ -1,10 +1,13 @@
 .board-2048 {
+  --board-color: #bbada0;
+  --board-gap: 0.5rem;
+  --board-padding: 0.5rem;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: var(--board-gap);
   width: min(88vw, 32rem);
-  padding: 0.5rem;
-  background: #bbada0;
+  padding: var(--board-padding);
+  background: var(--board-color);
   border-radius: 0.5rem;
   aspect-ratio: 1;
 }
