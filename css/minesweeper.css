@@ -16,8 +16,8 @@
   width: max-content;
   max-width: 100%;
   margin: 1.5rem auto;
-  overflow: auto;
   padding: 0.25rem;
+  overflow: auto;
   border-radius: 0.5rem;
   background: #315846;
 }
