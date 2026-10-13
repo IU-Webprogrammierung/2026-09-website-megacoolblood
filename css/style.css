@@ -55,6 +55,18 @@ p {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: var(--space-large);
+
+    .game-header-intro {
+      display: flex;
+      flex: 1 1 16rem;
+      flex-direction: column;
+      gap: var(--space-small);
+
+      h1,
+      p {
+        margin: 0;
+      }
+    }
   }
 }
 
