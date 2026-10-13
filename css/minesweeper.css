@@ -19,7 +19,19 @@
   padding: 0.25rem;
   overflow: auto;
   border-radius: 0.5rem;
-  background: #315846;
+  background: #c0c0c0;
+
+  .game-cell {
+    display: grid;
+    place-items: center;
+    min-width: 0;
+    padding: 0;
+    color: #000;
+    background: #c0c0c0;
+    border: 0.2rem outset #f0f0f0;
+    border-radius: 0.15rem;
+    font-weight: 700;
+  }
 }
 
 .game-cell-icon {
