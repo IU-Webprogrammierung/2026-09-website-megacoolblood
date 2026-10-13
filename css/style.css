@@ -117,6 +117,27 @@ p {
     background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 0.5rem;
+
+    dl {
+      display: grid;
+      gap: var(--space-small);
+      margin: 0;
+    }
+
+    dl > div {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-medium);
+    }
+
+    dt,
+    dd {
+      margin: 0;
+    }
+
+    dd {
+      font-weight: 700;
+    }
   }
 }
 
