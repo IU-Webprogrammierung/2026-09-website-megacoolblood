@@ -76,6 +76,11 @@
       border: 0.2rem solid var(--cell-triggered-mine-border-color);
       outline: 0.15rem solid var(--cell-triggered-mine-color);
       outline-offset: 0.05rem;
+
+      &:focus-visible {
+        outline: 0.2rem solid var(--cell-text-color);
+        outline-offset: 0.1rem;
+      }
     }
 
     &.is-correct-flag {
