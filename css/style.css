@@ -10,6 +10,8 @@
   --space-medium: 1rem;
   --space-large: 1.5rem;
   --content-width: 72rem;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
   color: var(--color-text);
   background: var(--color-background);
 }
