@@ -28,6 +28,12 @@ body {
   background: var(--color-background);
 }
 
+main {
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
 .skip-link {
   position: absolute;
   transform: translateY(-200%);
