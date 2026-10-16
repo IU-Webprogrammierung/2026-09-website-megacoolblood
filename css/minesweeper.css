@@ -8,6 +8,21 @@
 }
 
 @media (max-width: 480px) {
+  #new-game {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+  }
+
+  .game-header .control-icon,
+  .game-header .info-icon {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+  }
+
   .game-panel .game-modes .mode-button {
     display: grid;
     flex: 1 1 48px;
@@ -24,7 +39,8 @@
     padding: 0;
   }
 
-  .mode-button-label {
+  .mode-button-label,
+  .game-header-label {
     position: absolute;
     width: 1px;
     height: 1px;
