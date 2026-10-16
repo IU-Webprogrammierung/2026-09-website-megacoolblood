@@ -8,11 +8,12 @@
 }
 
 @media (max-width: 480px) {
-  .mode-button {
+  .game-panel .game-modes .mode-button {
     display: grid;
-    flex: 0 0 48px;
+    flex: 1 1 48px;
+    min-width: 48px;
     place-items: center;
-    width: 48px;
+    width: auto;
     height: 48px;
     padding: 0;
   }
