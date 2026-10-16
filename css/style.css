@@ -101,7 +101,7 @@ p {
       display: flex;
       align-items: center;
       gap: var(--space-small);
-      min-width: 7rem;
+      min-width: 3rem;
     }
 
     dl dt,

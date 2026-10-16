@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="de">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,41 +11,51 @@
   <script src="../../js/components.js" defer></script>
   <script src="../../js/minesweeper/game.js" defer></script>
 </head>
+
 <body>
   <component path="../../components/header.html"></component>
 
   <main id="main-content" class="minesweeper-game-page" tabindex="-1">
-  <section class="game-panel" aria-labelledby="game-heading">
-   <header class="game-header">
-    <div class="game-header-intro">
-     <h1 id="game-heading">Minesweeper</h1>
-     <p id="game-status" role="status" aria-live="polite" aria-atomic="true">Bereit für ein neues Spiel.</p>
-    </div>
-      <div class="game-header-actions">
-       <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true"><span class="game-header-label">Neustart</span></button>
-       <dl>
-        <div>
-         <dt><img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true"><span class="game-header-label">Verbleibende Minen</span></dt>
-         <dd id="mine-count">0</dd>
+    <section class="game-panel" aria-labelledby="game-heading">
+      <header class="game-header">
+        <div class="game-header-intro">
+          <h1 id="game-heading">Minesweeper</h1>
+          <p id="game-status" role="status" aria-live="polite" aria-atomic="true">Bereit für ein neues Spiel.</p>
         </div>
-        <div>
-         <dt><img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true"><span class="game-header-label">Aktuelle Siegesserie</span></dt>
-         <dd id="winning-streak">0</dd>
-        </div>
-       </dl>
+        <dl class="game-header-actions">
+          <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt=""
+              aria-hidden="true"><span class="game-header-label">Neustart</span></button>
+          <div>
+            <dt><img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true"><span
+                class="game-header-label">Verbleibende Minen</span></dt>
+            <dd id="mine-count">0</dd>
+          </div>
+          <div>
+            <dt><img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true"><span
+                class="game-header-label">Aktuelle Siegesserie</span></dt>
+            <dd id="winning-streak">0</dd>
+          </div>
+        </dl>
+      </header>
+      <div id="game-board" class="game-board" role="grid" aria-labelledby="game-heading" aria-describedby="game-status">
       </div>
-   </header>
-   <div id="game-board" class="game-board" role="grid" aria-labelledby="game-heading" aria-describedby="game-status"></div>
-   <footer class="game-footer">
-    <div class="game-modes" role="group" aria-label="Eingabemodus">
-     <span>Modus:</span>
-    <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true"><img class="mode-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true"><span class="mode-button-label">Aufdecken (A)</span></button>
-    <button type="button" class="mode-button" data-mode="flag" aria-pressed="false"><img class="mode-icon" src="../../assets/icons/flag.svg" alt="" aria-hidden="true"><span class="mode-button-label">Flagge (F)</span></button>
-    <button type="button" class="mode-button" data-mode="mark" aria-pressed="false"><img class="mode-icon" src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true"><span class="mode-button-label">Markieren (M)</span></button>
-    </div>
-   </footer>
-  </section>
+      <footer class="game-footer">
+        <div class="game-modes" role="group" aria-label="Eingabemodus">
+          <span>Modus:</span>
+          <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true"><img
+              class="mode-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true"><span
+              class="mode-button-label">Aufdecken (A)</span></button>
+          <button type="button" class="mode-button" data-mode="flag" aria-pressed="false"><img class="mode-icon"
+              src="../../assets/icons/flag.svg" alt="" aria-hidden="true"><span class="mode-button-label">Flagge
+              (F)</span></button>
+          <button type="button" class="mode-button" data-mode="mark" aria-pressed="false"><img class="mode-icon"
+              src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true"><span
+              class="mode-button-label">Markieren (M)</span></button>
+        </div>
+      </footer>
+    </section>
   </main>
   <component path="../../components/footer.html"></component>
-  </body>
+</body>
+
 </html>
