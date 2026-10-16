@@ -307,6 +307,10 @@ nav[data-subnavigation] ul {
 }
 
 @media (min-width: 768px) {
+  body>header {
+    flex-wrap: wrap;
+  }
+
   .menu-toggle {
     display: none;
   }
@@ -323,6 +327,7 @@ nav[data-subnavigation] ul {
 
   nav[data-main-navigation] ul {
     flex-direction: row;
+    flex-wrap: wrap;
     align-items: center;
   }
 
