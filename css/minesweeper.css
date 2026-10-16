@@ -8,12 +8,34 @@
 }
 
 @media (max-width: 480px) {
-  #new-game {
+  .game-panel .game-header > .game-header-actions {
+    display: grid;
+    flex: 1 0 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+    gap: var(--space-small);
+    width: 100%;
+  }
+
+  .game-panel .game-header > .game-header-actions > #new-game {
     display: grid;
     place-items: center;
-    width: 48px;
+    width: 100%;
+    min-width: 48px;
     height: 48px;
     padding: 0;
+  }
+
+  .game-panel .game-header > .game-header-actions > dl {
+    display: grid;
+    grid-column: 2 / 4;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-small);
+  }
+
+  .game-panel .game-header > .game-header-actions > dl > div {
+    justify-content: center;
+    min-width: 0;
   }
 
   .game-header .control-icon,

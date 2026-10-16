@@ -89,6 +89,26 @@ p {
       }
     }
 
+    .game-header-actions {
+      display: flex;
+      flex: 0 1 auto;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-medium);
+      min-width: 0;
+
+      > #new-game {
+        flex: 0 0 auto;
+        width: max-content;
+      }
+
+      > dl {
+        flex: 0 1 auto;
+        min-width: 0;
+        gap: var(--space-small);
+      }
+    }
+
     dl {
       display: flex;
       flex: 1 1 16rem;
