@@ -21,7 +21,7 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: 1fr;
   gap: var(--board-gap);
-  width: min(88vw, 32rem);
+  width: min(100%, 32rem);
   margin-inline: auto;
   padding: var(--board-padding);
   background: var(--board-color);
