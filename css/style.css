@@ -31,7 +31,8 @@ body {
 main {
   width: 100%;
   max-width: var(--content-width);
-  margin: 0 auto;
+  margin: var(--space-medium) auto 0;
+  padding-inline: var(--space-medium);
 }
 
 h1,
