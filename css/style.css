@@ -98,7 +98,15 @@ p {
     }
 
     dl > div {
+      display: flex;
+      align-items: center;
+      gap: var(--space-small);
       min-width: 7rem;
+    }
+
+    dl dt,
+    dl dd {
+      margin: 0;
     }
   }
 
