@@ -91,6 +91,8 @@ p {
   }
 
   .game-modes {
+    justify-content: center;
+
     .mode-button {
       display: inline-flex;
       align-items: center;
