@@ -44,7 +44,8 @@ p {
 .game-panel {
   width: 100%;
   margin: 0 auto;
-  padding: var(--space-large);
+  padding-block: var(--space-large);
+  padding-inline: clamp(var(--space-small), 2vw, var(--space-large));
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 0.5rem;
