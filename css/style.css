@@ -303,7 +303,7 @@ nav[data-subnavigation] {
 }
 
 nav[data-subnavigation] ul {
-  gap: 0.25rem;
+  gap: var(--space-small);
 }
 
 @media (min-width: 768px) {
@@ -327,9 +327,9 @@ nav[data-subnavigation] ul {
   }
 
   nav[data-subnavigation] {
-    margin: 0 0 0 var(--space-medium);
-    padding: 0;
-    border-top: 0;
+    margin: var(--space-small) 0 0 var(--space-medium);
+    padding-top: var(--space-small);
+    border-top: 1px solid var(--color-border);
   }
 
   nav[data-subnavigation] ul {
