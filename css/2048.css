@@ -22,6 +22,7 @@
   grid-auto-rows: 1fr;
   gap: var(--board-gap);
   width: min(88vw, 32rem);
+  margin-inline: auto;
   padding: var(--board-padding);
   background: var(--board-color);
   border-radius: 0.5rem;
