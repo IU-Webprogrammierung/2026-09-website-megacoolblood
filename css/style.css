@@ -38,6 +38,13 @@ main {
 main.minesweeper-game-page {
   padding-bottom: calc(5rem + env(safe-area-inset-bottom));
 
+  .game-panel > .game-header {
+    position: sticky;
+    top: 0;
+    z-index: 19;
+    background: var(--color-surface);
+  }
+
   .game-panel > .game-footer {
     position: fixed;
     z-index: 20;
