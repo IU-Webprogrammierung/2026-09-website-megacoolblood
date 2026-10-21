@@ -37,6 +37,7 @@ let gameOver = false;
 let newGame = true;
 let activeMode = 'reveal';
 let activeCell = null;
+let boardPanzoom = null;
 
 function getWinningStreak() {
   try {
@@ -599,3 +600,33 @@ board.addEventListener('keydown', handleCellKeyDown);
 document.addEventListener('keydown', handleModeShortcut);
 newGameButton.addEventListener('click', startNewGame);
 loadGameState();
+
+async function initializeBoardPanzoom() {
+  const boardWorld = document.querySelector('.game-board-world');
+
+  if (!boardWorld) {
+  return;
+  }
+
+  try {
+  const { default: Panzoom } = await import(
+   '../../node_modules/@panzoom/panzoom/dist/panzoom.es.js'
+  );
+
+  boardPanzoom = Panzoom(boardWorld, {
+   startX: 0,
+   startY: 0,
+   startScale: 1,
+   minScale: 0.125,
+   maxScale: 4,
+   contain: 'outside',
+   panOnlyWhenZoomed: false,
+   overflow: 'auto'
+  });
+  } catch (error) {
+  console.error('Panzoom konnte nicht geladen werden.', error);
+  gameStatus.textContent = 'Pan-/Zoom-Ansicht nicht verfügbar; das Spielfeld bleibt scrollbar.';
+  }
+}
+
+initializeBoardPanzoom();
