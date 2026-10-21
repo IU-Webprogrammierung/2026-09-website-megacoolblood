@@ -8,7 +8,7 @@
 }
 
 @media (max-width: 480px) {
-  .game-panel .game-header > .game-header-actions {
+  main.minesweeper-game-page .game-panel .game-header > .game-header-actions {
     display: grid;
     flex: 1 0 100%;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -17,7 +17,7 @@
     width: 100%;
   }
 
-  .game-panel .game-header > .game-header-actions > #new-game {
+  main.minesweeper-game-page .game-panel .game-header > .game-header-actions > #new-game {
     display: grid;
     place-items: center;
     width: 100%;
@@ -26,26 +26,26 @@
     padding: 0;
   }
 
-  .game-panel .game-header > .game-header-actions > dl {
+  main.minesweeper-game-page .game-panel .game-header > .game-header-actions > dl {
     display: grid;
     grid-column: 2 / 4;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-small);
   }
 
-  .game-panel .game-header > .game-header-actions > dl > div {
+  main.minesweeper-game-page .game-panel .game-header > .game-header-actions > dl > div {
     justify-content: center;
     min-width: 0;
   }
 
-  .game-header .control-icon,
-  .game-header .info-icon {
+  main.minesweeper-game-page .game-header .control-icon,
+  main.minesweeper-game-page .game-header .info-icon {
     width: 24px;
     height: 24px;
     padding: 0;
   }
 
-  .game-panel .game-modes .mode-button {
+  main.minesweeper-game-page .game-panel .game-modes .mode-button {
     display: grid;
     flex: 1 1 48px;
     min-width: 48px;
@@ -55,14 +55,14 @@
     padding: 0;
   }
 
-  .mode-icon {
+  main.minesweeper-game-page .mode-icon {
     width: 24px;
     height: 24px;
     padding: 0;
   }
 
-  .mode-button-label,
-  .game-header-label {
+  main.minesweeper-game-page .mode-button-label,
+  main.minesweeper-game-page .game-header-label {
     position: absolute;
     width: 1px;
     height: 1px;
