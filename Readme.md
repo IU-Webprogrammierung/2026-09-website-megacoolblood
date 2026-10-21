@@ -4,6 +4,13 @@ LycheeLab is a static website with progressive web application features.
 The project was created as part of the IU Web Programming course using
 semantic HTML, custom CSS, and vanilla JavaScript.
 
+## Dependency
+
+- `@panzoom/panzoom` 4.6.2 (MIT), from
+  [the official repository](https://github.com/timmywil/panzoom), is added on
+  the `implementation-of-panzoom` branch for the planned Minesweeper board
+  viewport integration. Install the pinned dependency with `npm ci`.
+
 ## Features
 
 ### Minesweeper
