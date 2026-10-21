@@ -64,11 +64,20 @@ main.minesweeper-game-page {
     margin-bottom: 0;
   }
 
-  .game-panel > .game-board {
-    align-self: start;
+  .game-panel > .game-board-viewport {
+    width: 100%;
+    min-width: 0;
     min-height: 0;
-    max-height: 100%;
-    margin: 0 auto;
+    margin: 0;
+    overflow: auto;
+  }
+
+  .game-board-world {
+    display: grid;
+    justify-items: center;
+    width: max-content;
+    min-width: 100%;
+    min-height: 100%;
   }
 
   .game-panel > .game-footer {
