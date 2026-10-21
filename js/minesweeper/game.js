@@ -406,6 +406,7 @@ function setActiveCell(nextCell, shouldFocus = false) {
 
   if (shouldFocus) {
   activeCell.element.focus();
+  activeCell.element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 }
 

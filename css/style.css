@@ -34,7 +34,10 @@ body.minesweeper-game-shell {
   height: 100vh;
   height: 100svh;
   overflow: hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
 }
 
 main {
@@ -70,6 +73,7 @@ main.minesweeper-game-page {
     min-height: 0;
     margin: 0;
     overflow: auto;
+    scroll-padding: var(--space-small);
   }
 
   .game-board-world {
@@ -84,6 +88,22 @@ main.minesweeper-game-page {
     width: auto;
     margin: 0;
     padding: 0;
+  }
+}
+
+@media (max-height: 40rem) {
+  body.minesweeper-game-shell main.minesweeper-game-page {
+    padding-block: var(--space-small);
+  }
+
+  main.minesweeper-game-page .game-panel {
+    gap: var(--space-small);
+    padding-block: var(--space-small);
+  }
+
+  main.minesweeper-game-page .game-header,
+  main.minesweeper-game-page .game-header-actions {
+    gap: var(--space-small);
   }
 }
 
