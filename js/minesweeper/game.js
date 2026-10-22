@@ -42,6 +42,12 @@ let newGame = true;
 let activeMode = 'reveal';
 let activeCell = null;
 let boardPanzoom = null;
+let boardPointerGesture = null;
+let suppressedPanClick = null;
+const activeBoardPointers = new Set();
+const boardPanThreshold = 2;
+const panClickSuppressionMs = 500;
+const panClickSuppressionRadius = 16;
 
 function getWinningStreak() {
   try {
@@ -399,6 +405,90 @@ function handleCellContextMenu(event) {
   }
 }
 
+function handleBoardPointerDown(event) {
+  if (event.pointerType === 'mouse' && event.button !== 0) {
+  return;
+  }
+
+  activeBoardPointers.add(event.pointerId);
+
+  if (!boardPointerGesture) {
+  boardPointerGesture = {
+   startX: event.clientX,
+   startY: event.clientY,
+   moved: false
+  };
+  } else {
+  boardPointerGesture.moved = true;
+  }
+}
+
+function handleBoardPointerMove(event) {
+  if (!boardPointerGesture || !activeBoardPointers.has(event.pointerId)) {
+  return;
+  }
+
+  const distance = Math.hypot(
+  event.clientX - boardPointerGesture.startX,
+  event.clientY - boardPointerGesture.startY
+  );
+
+  if (distance >= boardPanThreshold) {
+  boardPointerGesture.moved = true;
+  }
+}
+
+function handleBoardPointerEnd(event) {
+  if (!boardPointerGesture || !activeBoardPointers.has(event.pointerId)) {
+  return;
+  }
+
+  activeBoardPointers.delete(event.pointerId);
+
+  if (event.type === 'pointercancel') {
+  activeBoardPointers.clear();
+  boardPointerGesture = null;
+  return;
+  }
+
+  if (activeBoardPointers.size > 0) {
+  return;
+  }
+
+  if (boardPointerGesture.moved) {
+  suppressedPanClick = {
+   expiresAt: performance.now() + panClickSuppressionMs,
+   x: event.clientX,
+   y: event.clientY
+  };
+  }
+
+  boardPointerGesture = null;
+}
+
+function preventClickAfterPan(event) {
+  if (!event.detail || !suppressedPanClick) {
+  return;
+  }
+
+  if (performance.now() > suppressedPanClick.expiresAt) {
+  suppressedPanClick = null;
+  return;
+  }
+
+  const cellElement = event.target.closest('.game-cell');
+  const releaseDistance = Math.hypot(
+  event.clientX - suppressedPanClick.x,
+  event.clientY - suppressedPanClick.y
+  );
+
+  if (cellElement && releaseDistance <= panClickSuppressionRadius) {
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  suppressedPanClick = null;
+  }
+}
+
 function setActiveCell(nextCell, shouldFocus = false) {
   if (activeCell !== nextCell) {
   if (activeCell) {
@@ -597,6 +687,12 @@ function loadGameState() {
 modeButtons.forEach((button) => {
   button.addEventListener('click', () => setMode(button.dataset.mode));
 });
+
+boardViewport.addEventListener('pointerdown', handleBoardPointerDown, true);
+document.addEventListener('pointermove', handleBoardPointerMove, true);
+document.addEventListener('pointerup', handleBoardPointerEnd, true);
+document.addEventListener('pointercancel', handleBoardPointerEnd, true);
+board.addEventListener('click', preventClickAfterPan, true);
 
 zoomInButton.addEventListener('click', () => boardPanzoom?.zoomIn());
 zoomOutButton.addEventListener('click', () => boardPanzoom?.zoomOut());
