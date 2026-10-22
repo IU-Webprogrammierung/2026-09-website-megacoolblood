@@ -78,7 +78,9 @@ main.minesweeper-game-page {
   }
 
   .game-panel > .game-header {
+    position: relative;
     margin-bottom: 0;
+    padding-inline-end: calc(48px + var(--space-small));
   }
 
   .game-header-actions {
@@ -86,7 +88,7 @@ main.minesweeper-game-page {
     flex: 0 1 auto;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-medium);
+    gap: var(--space-small);
     min-width: 0;
 
     > #new-game {
@@ -164,11 +166,6 @@ main.minesweeper-game-page {
   main.minesweeper-game-page .game-panel {
     gap: var(--space-small);
   }
-
-  main.minesweeper-game-page .game-header,
-  main.minesweeper-game-page .game-header-actions {
-    gap: var(--space-small);
-  }
 }
 
 h1,
@@ -188,8 +185,8 @@ p {
 
   > .game-header {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-large);
+    flex-wrap: wrap;    
+    gap: var(--space-small);
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: var(--space-large);
