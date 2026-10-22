@@ -8,6 +8,32 @@
 }
 
 main.minesweeper-game-page {
+  .game-header-title-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-small);
+  }
+
+  .game-chrome-toggle {
+    display: grid;
+    flex: 0 0 48px;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    color: var(--color-accent-dark);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+
+  .game-chrome-toggle img {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+  }
+
   .game-board-viewport {
     position: relative;
   }

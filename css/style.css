@@ -38,6 +38,15 @@ body.minesweeper-game-shell {
   padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
+
+  &.is-immersive {
+    grid-template-rows: minmax(0, 1fr);
+
+    > #site-header,
+    > #site-footer {
+      display: none;
+    }
+  }
 }
 
 main {

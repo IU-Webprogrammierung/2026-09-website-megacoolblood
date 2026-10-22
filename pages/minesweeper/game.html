@@ -19,7 +19,14 @@
     <section class="game-panel" aria-labelledby="game-heading">
       <header class="game-header">
         <div class="game-header-intro">
-          <h1 id="game-heading">Minesweeper</h1>
+          <div class="game-header-title-row">
+            <h1 id="game-heading">Minesweeper</h1>
+            <button type="button" id="game-chrome-toggle" class="game-chrome-toggle"
+              aria-label="Website-Navigation und Footer ausblenden" aria-controls="site-header site-footer"
+              aria-expanded="true" title="Website-Navigation und Footer ausblenden">
+              <img src="../../assets/icons/website-layout.svg" alt="" aria-hidden="true">
+            </button>
+          </div>
           <p id="game-status" role="status" aria-live="polite" aria-atomic="true">Bereit für ein neues Spiel.</p>
         </div>
         <div class="game-header-actions">

@@ -27,6 +27,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Mouse Left and Right clicks, Space key, and arrow key controls
 - The board supports mouse-wheel zoom, mouse dragging, touch dragging, and
   pinch zoom; separate controls provide zoom in, zoom out, and reset
+- The game starts in immersive mode below 768 px; a button toggles the global
+  website header and footer. On wider screens, the site chrome is visible by
+  default and can be hidden with the same control
 - Pan/zoom operates on the board viewport; keyboard cell navigation remains
   independent of the visual zoom level
 - Visible focus state for board cells

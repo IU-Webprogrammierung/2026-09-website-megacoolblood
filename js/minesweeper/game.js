@@ -5,10 +5,13 @@ const zoomInButton = document.querySelector('#zoom-in');
 const zoomOutButton = document.querySelector('#zoom-out');
 const resetViewButton = document.querySelector('#reset-view');
 const newGameButton = document.querySelector('#new-game');
+const gameChromeToggle = document.querySelector('#game-chrome-toggle');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
 const winningStreakElement = document.querySelector('#winning-streak');
 const modeButtons = document.querySelectorAll('.mode-button');
+const mobileLayout = window.matchMedia('(max-width: 767px)');
+let hasUserSelectedImmersiveMode = false;
 const difficultySettings = {
   beginner: { columns: 9, mines: 10, rows: 9 },
   intermediate: { columns: 16, mines: 40, rows: 16 },
@@ -37,6 +40,27 @@ const iconPaths = {
   mine: '../../assets/icons/mine.svg',
   questionmark: '../../assets/icons/questionmark.svg'
 };
+
+function setImmersiveMode(isImmersive) {
+  document.body.classList.toggle('is-immersive', isImmersive);
+  const action = isImmersive ? 'einblenden' : 'ausblenden';
+  const accessibleName = `Website-Navigation und Footer ${action}`;
+
+  gameChromeToggle.setAttribute('aria-expanded', String(!isImmersive));
+  gameChromeToggle.setAttribute('aria-label', accessibleName);
+  gameChromeToggle.title = accessibleName;
+}
+
+setImmersiveMode(mobileLayout.matches);
+mobileLayout.addEventListener('change', (event) => {
+  if (!hasUserSelectedImmersiveMode) {
+    setImmersiveMode(event.matches);
+  }
+});
+gameChromeToggle.addEventListener('click', () => {
+  hasUserSelectedImmersiveMode = true;
+  setImmersiveMode(!document.body.classList.contains('is-immersive'));
+});
 let mineCurrentCount = difficultySettings[difficulty].mines;
 let cells = [];
 let gameOver = false;
