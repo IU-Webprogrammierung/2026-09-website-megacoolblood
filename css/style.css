@@ -42,6 +42,11 @@ body.minesweeper-game-shell {
   &.is-immersive {
     grid-template-rows: minmax(0, 1fr);
 
+    > main.minesweeper-game-page {
+      max-width: none;
+      padding: 0;
+    }
+
     > #site-header,
     > #site-footer {
       display: none;
