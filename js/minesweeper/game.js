@@ -49,7 +49,7 @@ let zoomAnnouncementTimeout = null;
 let zoomAnnouncementPending = false;
 let lastAnnouncedZoomLevel = null;
 const activeBoardPointers = new Set();
-const boardPanThreshold = 2;
+const boardPanThreshold = 5;
 const panClickSuppressionMs = 500;
 const panClickSuppressionRadius = 16;
 
@@ -437,9 +437,12 @@ function handleBoardPointerMove(event) {
   event.clientY - boardPointerGesture.startY
   );
 
-  if (distance >= boardPanThreshold) {
-  boardPointerGesture.moved = true;
+  if (!boardPointerGesture.moved && distance <= boardPanThreshold) {
+  event.stopImmediatePropagation();
+  return;
   }
+
+  boardPointerGesture.moved = true;
 }
 
 function handleBoardPointerEnd(event) {
