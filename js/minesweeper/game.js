@@ -170,11 +170,7 @@ function restoreCellPresentation(cell) {
 
   if (cell.isRevealed) {
   const adjacentMines = countAdjacentMines(cell);
-  cell.element.textContent = adjacentMines > 0 ? adjacentMines : '';
-  cell.element.setAttribute(
-   'aria-label',
-   `${cell.coordinate}, ${adjacentMines} angrenzende Minen`
-  );
+  setAdjacentMineCount(cell, adjacentMines);
   } else if (cell.isFlagged) {
   setCellContent(cell, 'flag', '?');
   cell.element.setAttribute('aria-label', `Als Flagge markiertes Feld ${cell.coordinate}`);
@@ -258,6 +254,19 @@ function countAdjacentMines(cell) {
   return countMines(getNeighbors(cell.row, cell.column));
 }
 
+function setAdjacentMineCount(cell, adjacentMines) {
+  cell.element.textContent = adjacentMines > 0 ? adjacentMines : '';
+  if (adjacentMines > 0) {
+  cell.element.dataset.adjacentMines = adjacentMines;
+  } else {
+  delete cell.element.dataset.adjacentMines;
+  }
+  cell.element.setAttribute(
+  'aria-label',
+  `${cell.coordinate}, ${adjacentMines} angrenzende Minen`
+  );
+}
+
 function revealCell(cell) {
   if (gameOver || cell.isRevealed || cell.isFlagged || cell.isMarked) {
   return;
@@ -290,11 +299,7 @@ function revealCell(cell) {
   currentCell.isRevealed = true;
   currentCell.element.classList.add('is-revealed');
   const adjacentMines = countAdjacentMines(currentCell);
-  currentCell.element.textContent = adjacentMines > 0 ? adjacentMines : '';
-  currentCell.element.setAttribute(
-   'aria-label',
-   `${currentCell.coordinate}, ${adjacentMines} angrenzende Minen`
-  );
+  setAdjacentMineCount(currentCell, adjacentMines);
 
   if (adjacentMines === 0) {
    getNeighbors(currentCell.row, currentCell.column).forEach((neighbor) => {
