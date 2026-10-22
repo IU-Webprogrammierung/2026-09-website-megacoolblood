@@ -7,7 +7,72 @@
   object-fit: contain;
 }
 
+main.minesweeper-game-page {
+  .game-zoom-controls {
+    display: flex;
+    flex: 0 0 auto;
+    gap: var(--space-small);
+
+    button {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      font-size: 1.25rem;
+    }
+
+    img {
+      width: 24px;
+      height: 24px;
+      padding: 0;
+    }
+  }
+}
+
+
+@media (max-width: 767px) {
+  main.minesweeper-game-page .game-modes > span {
+    display: none;
+  }
+  
+
+  main.minesweeper-game-page .game-panel .game-modes .mode-button {
+    display: grid;
+    flex: 1 1 48px;
+    min-width: 48px;
+    place-items: center;
+    width: auto;
+    height: 48px;
+    padding: 0;
+  }
+  
+  main.minesweeper-game-page .mode-icon {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+  }
+
+  main.minesweeper-game-page .mode-button-label,
+  main.minesweeper-game-page .game-header-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
 @media (max-width: 480px) {
+  main.minesweeper-game-page .game-zoom-controls {
+    flex: 0 0 auto;
+    gap: 0.25rem;
+  }
+
   main.minesweeper-game-page .game-panel .game-header > .game-header-actions {
     display: grid;
     flex: 1 0 100%;
@@ -43,35 +108,6 @@
     width: 24px;
     height: 24px;
     padding: 0;
-  }
-
-  main.minesweeper-game-page .game-panel .game-modes .mode-button {
-    display: grid;
-    flex: 1 1 48px;
-    min-width: 48px;
-    place-items: center;
-    width: auto;
-    height: 48px;
-    padding: 0;
-  }
-
-  main.minesweeper-game-page .mode-icon {
-    width: 24px;
-    height: 24px;
-    padding: 0;
-  }
-
-  main.minesweeper-game-page .mode-button-label,
-  main.minesweeper-game-page .game-header-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
   }
 }
 

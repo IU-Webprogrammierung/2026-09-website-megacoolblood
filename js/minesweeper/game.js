@@ -1,5 +1,8 @@
 const board = document.querySelector('#game-board');
 const boardViewport = document.querySelector('.game-board-viewport');
+const zoomInButton = document.querySelector('#zoom-in');
+const zoomOutButton = document.querySelector('#zoom-out');
+const resetViewButton = document.querySelector('#reset-view');
 const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
@@ -595,6 +598,10 @@ modeButtons.forEach((button) => {
   button.addEventListener('click', () => setMode(button.dataset.mode));
 });
 
+zoomInButton.addEventListener('click', () => boardPanzoom?.zoomIn());
+zoomOutButton.addEventListener('click', () => boardPanzoom?.zoomOut());
+resetViewButton.addEventListener('click', () => boardPanzoom?.reset());
+
 board.addEventListener('click', handleCellClick);
 board.addEventListener('contextmenu', handleCellContextMenu);
 board.addEventListener('keydown', handleCellKeyDown);
@@ -624,6 +631,10 @@ async function initializeBoardPanzoom() {
    panOnlyWhenZoomed: false,
   touchAction: 'none',
    overflow: 'auto'
+  });
+
+  [zoomInButton, zoomOutButton, resetViewButton].forEach((button) => {
+   button.disabled = false;
   });
 
   boardViewport.addEventListener(
