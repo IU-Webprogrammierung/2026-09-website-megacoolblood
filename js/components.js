@@ -77,6 +77,10 @@ async function createSubnavigation(template) {
 
   const navigation = template.content.querySelector('[data-subnavigation]');
 
+  if (!navigation) {
+    return;
+  }
+
   const subnavigationPath = `${gameDirectory[1]}subnavigation.html`;
   let response = await fetch(subnavigationPath);
 
