@@ -3,7 +3,8 @@ const statisticsStorageKey = 'lycheelab-statistics';
 const difficultyLabels = {
   beginner: 'Anfänger',
   intermediate: 'Fortgeschritten',
-  expert: 'Experte'
+  expert: 'Experte',
+  maximum: 'Maximal (100 × 100)'
 };
 
 function getStatistics() {

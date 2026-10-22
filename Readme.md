@@ -16,10 +16,11 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 ### Minesweeper
 
 - Overview, game, settings, and statistics pages
-- Three difficulty levels:
+- Four difficulty levels:
   - Beginner: 9 × 9 cells and 10 mines
   - Intermediate: 16 × 16 cells and 40 mines
   - Expert: 30 × 16 cells and 99 mines
+  - Maximum: 100 × 100 cells and 2,000 mines
 - Random mine placement and display of adjacent mine counts
 - Automatic revealing of connected empty areas
 - Three input modes: Reveal, Flag, and Mark with a question mark

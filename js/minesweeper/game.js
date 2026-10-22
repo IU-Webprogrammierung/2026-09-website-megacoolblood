@@ -12,7 +12,8 @@ const modeButtons = document.querySelectorAll('.mode-button');
 const difficultySettings = {
   beginner: { columns: 9, mines: 10, rows: 9 },
   intermediate: { columns: 16, mines: 40, rows: 16 },
-  expert: { columns: 30, mines: 99, rows: 16 }
+  expert: { columns: 30, mines: 99, rows: 16 },
+  maximum: { columns: 100, mines: 2000, rows: 100 }
 };
 
 function getStoredDifficulty() {
