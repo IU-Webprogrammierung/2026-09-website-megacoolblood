@@ -7,9 +7,8 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 ## Dependency
 
 - `@panzoom/panzoom` 4.6.2 (MIT), from
-  [the official repository](https://github.com/timmywil/panzoom), is added on
-  the `implementation-of-panzoom` branch for the planned Minesweeper board
-  viewport integration. Install the pinned dependency with `npm ci`.
+  [the official repository](https://github.com/timmywil/panzoom), is added for the Minesweeper board viewport.
+  Install the pinned dependency with `npm ci`.
 
 ## Features
 
@@ -26,12 +25,18 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Three input modes: Reveal, Flag, and Mark with a question mark
 - Mode switching through buttons or the `A`, `F`, and `M` keyboard shortcuts
 - Mouse Left and Right clicks, Space key, and arrow key controls
+- The board supports mouse-wheel zoom, mouse dragging, touch dragging, and
+  pinch zoom; separate controls provide zoom in, zoom out, and reset
+- Pan/zoom operates on the board viewport; keyboard cell navigation remains
+  independent of the visual zoom level
 - Visible focus state for board cells
 - Status messages for starting a game, revealing cells, winning, and losing
 - Winning streak and game statistics stored using `localStorage`
 - Statistics are grouped by difficulty and contain cleared mines, success rate,
   current streak, and best streak
-- No account, server, or tracking required
+- No account, application backend, or tracking required
+- Serve the static files over HTTP; component loading and the local Panzoom ESM
+  import are not supported by a plain `file://` launch
 
 ### 2048
 
