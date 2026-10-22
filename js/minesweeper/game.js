@@ -794,7 +794,7 @@ async function initializeBoardPanzoom() {
    contain: 'outside',
    panOnlyWhenZoomed: false,
   touchAction: 'none',
-   overflow: 'auto'
+    overflow: 'hidden'
   });
   boardWorld.addEventListener('panzoomzoom', scheduleZoomLevelAnnouncement);
   boardWorld.addEventListener('panzoomreset', scheduleZoomLevelAnnouncement);
@@ -811,6 +811,7 @@ async function initializeBoardPanzoom() {
   { passive: false }
   );
   } catch (error) {
+  boardViewport.style.overflow = 'auto';
   console.error('Panzoom konnte nicht geladen werden.', error);
   gameStatus.textContent = 'Pan-/Zoom-Ansicht nicht verfügbar; das Spielfeld bleibt scrollbar.';
   }
