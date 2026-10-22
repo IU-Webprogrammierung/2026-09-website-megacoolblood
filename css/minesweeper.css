@@ -8,6 +8,11 @@
 }
 
 main.minesweeper-game-page {
+  .game-board-world {
+    --board-color: #c0c0c0;
+    background: var(--board-color);
+  }
+
   .game-header-title-row {
     display: flex;
     align-items: center;
@@ -165,7 +170,6 @@ main.minesweeper-game-page {
 
 .game-board {
   --cell-size: clamp(2rem, 8vw, 3rem);
-  --board-color: #c0c0c0;
   --cell-color: #c0c0c0;
   --cell-revealed-color: #d3d3d3;
   --cell-marked-color: #f9edaa;
