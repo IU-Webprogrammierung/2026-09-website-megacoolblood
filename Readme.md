@@ -8,7 +8,8 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 
 - `@panzoom/panzoom` 4.6.2 (MIT), from
   [the official repository](https://github.com/timmywil/panzoom), is added for the Minesweeper board viewport.
-  Install the pinned dependency with `npm ci`.
+  Its ESM build and MIT license are included in `assets/vendor`, so static hosting does not require `node_modules`.
+  Install the pinned dependency with `npm ci` when updating the vendored build.
 
 ## Features
 

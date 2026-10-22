@@ -787,7 +787,7 @@ async function initializeBoardPanzoom() {
 
   try {
   const { default: Panzoom } = await import(
-   '../../node_modules/@panzoom/panzoom/dist/panzoom.es.js'
+    '../../assets/vendor/panzoom.es.js'
   );
 
   boardPanzoom = Panzoom(boardWorld, {
