@@ -163,7 +163,6 @@ main.minesweeper-game-page {
 
   main.minesweeper-game-page .game-panel {
     gap: var(--space-small);
-    padding-block: var(--space-small);
   }
 
   main.minesweeper-game-page .game-header,
@@ -181,7 +180,7 @@ p {
 .game-panel {
   width: 100%;
   margin: 0 auto;
-  padding-block: var(--space-large);
+  padding-block: var(--space-small);
   padding-inline: clamp(var(--space-small), 2vw, var(--space-large));
   background: var(--color-surface);
   border: 1px solid var(--color-border);
