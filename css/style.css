@@ -113,6 +113,7 @@ main.minesweeper-game-page {
 
   .game-board-world {
     display: grid;
+    align-items: start;
     justify-items: center;
     width: max-content;
     min-width: 100%;
