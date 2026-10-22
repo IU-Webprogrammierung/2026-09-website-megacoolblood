@@ -1,5 +1,6 @@
 const board = document.querySelector('#game-board');
 const boardViewport = document.querySelector('.game-board-viewport');
+const zoomLevelOutput = document.querySelector('#zoom-level');
 const zoomInButton = document.querySelector('#zoom-in');
 const zoomOutButton = document.querySelector('#zoom-out');
 const resetViewButton = document.querySelector('#reset-view');
@@ -44,6 +45,9 @@ let activeCell = null;
 let boardPanzoom = null;
 let boardPointerGesture = null;
 let suppressedPanClick = null;
+let zoomAnnouncementTimeout = null;
+let zoomAnnouncementPending = false;
+let lastAnnouncedZoomLevel = null;
 const activeBoardPointers = new Set();
 const boardPanThreshold = 2;
 const panClickSuppressionMs = 500;
@@ -489,6 +493,42 @@ function preventClickAfterPan(event) {
   }
 }
 
+function updateZoomLevelText() {
+  if (!boardPanzoom || !zoomLevelOutput) {
+    return;
+  }
+
+  const zoomLevel = `${Math.round(boardPanzoom.getScale() * 100)}%`;
+  if (zoomLevel === lastAnnouncedZoomLevel) {
+    return;
+  }
+
+  lastAnnouncedZoomLevel = zoomLevel;
+  zoomLevelOutput.textContent = zoomLevel;
+}
+
+function scheduleZoomLevelAnnouncement() {
+  window.clearTimeout(zoomAnnouncementTimeout);
+  zoomAnnouncementPending = true;
+  zoomAnnouncementTimeout = window.setTimeout(announceZoomLevel, 700);
+}
+
+function announceZoomLevel() {
+  window.clearTimeout(zoomAnnouncementTimeout);
+  if (!zoomAnnouncementPending) {
+    return;
+  }
+
+  zoomAnnouncementPending = false;
+  updateZoomLevelText();
+}
+
+function finishZoomLevelAnnouncement() {
+  if (zoomAnnouncementPending) {
+    announceZoomLevel();
+  }
+}
+
 function setActiveCell(nextCell, shouldFocus = false) {
   if (activeCell !== nextCell) {
   if (activeCell) {
@@ -728,6 +768,10 @@ async function initializeBoardPanzoom() {
   touchAction: 'none',
    overflow: 'auto'
   });
+  boardWorld.addEventListener('panzoomzoom', scheduleZoomLevelAnnouncement);
+  boardWorld.addEventListener('panzoomreset', scheduleZoomLevelAnnouncement);
+  boardWorld.addEventListener('panzoomend', finishZoomLevelAnnouncement);
+  updateZoomLevelText();
 
   [zoomInButton, zoomOutButton, resetViewButton].forEach((button) => {
    button.disabled = false;
