@@ -217,6 +217,11 @@ main.minesweeper-game-page {
       border: 1px solid var(--cell-border-dark);
     }
 
+    &[data-adjacent-mines] {
+      font-size: clamp(1.25rem, 5vw, 2rem);
+      line-height: 1;
+    }
+
     &[data-adjacent-mines='1'] {
       color: #0000c8;
     }
