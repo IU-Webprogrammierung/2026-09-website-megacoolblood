@@ -1,4 +1,5 @@
 const board = document.querySelector('#game-board');
+const boardViewport = document.querySelector('.game-board-viewport');
 const newGameButton = document.querySelector('#new-game');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
@@ -604,7 +605,7 @@ loadGameState();
 async function initializeBoardPanzoom() {
   const boardWorld = document.querySelector('.game-board-world');
 
-  if (!boardWorld) {
+  if (!boardViewport || !boardWorld) {
   return;
   }
 
@@ -621,8 +622,15 @@ async function initializeBoardPanzoom() {
    maxScale: 4,
    contain: 'outside',
    panOnlyWhenZoomed: false,
+  touchAction: 'none',
    overflow: 'auto'
   });
+
+  boardViewport.addEventListener(
+  'wheel',
+  boardPanzoom.zoomWithWheel,
+  { passive: false }
+  );
   } catch (error) {
   console.error('Panzoom konnte nicht geladen werden.', error);
   gameStatus.textContent = 'Pan-/Zoom-Ansicht nicht verfügbar; das Spielfeld bleibt scrollbar.';
