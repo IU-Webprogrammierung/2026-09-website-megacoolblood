@@ -8,7 +8,7 @@ const newGameButton = document.querySelector('#new-game');
 const gameChromeToggle = document.querySelector('#game-chrome-toggle');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
-const winningStreakElement = document.querySelector('#winning-streak');
+const seriesRevealedFieldsElement = document.querySelector('#series-revealed-fields');
 const modeButtons = document.querySelectorAll('.mode-button');
 const mobileLayout = window.matchMedia('(max-width: 767px)');
 let hasUserSelectedImmersiveMode = false;
@@ -34,7 +34,6 @@ const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
 const maxExtraLives = 3;
 const initialCheckCharges = 3;
-const streakStorageKey = 'lycheelab-winning-streak';
 const gameStateStorageKey = minesweeperRunState.storageKeys.gameState;
 const iconPaths = {
   flag: '../../assets/icons/flag.svg',
@@ -79,24 +78,6 @@ const activeBoardPointers = new Set();
 const boardPanThreshold = 5;
 const panClickSuppressionMs = 500;
 const panClickSuppressionRadius = 16;
-
-function getWinningStreak() {
-  try {
-  const storedStreak = Number.parseInt(localStorage.getItem(streakStorageKey), 10);
-  return Number.isNaN(storedStreak) || storedStreak < 0 ? 0 : storedStreak;
-  } catch {
-  return 0;
-  }
-}
-
-function setWinningStreak(streak) {
-  winningStreakElement.textContent = streak;
-
-  try {
-  localStorage.setItem(streakStorageKey, String(streak));
-  } catch {
-  }
-}
 
 function recordGameResult(won) {
   const statistics = minesweeperRunState.readStatistics();
@@ -162,6 +143,14 @@ function normalizeSeries(savedSeries) {
     revealProgress: normalizeCount(source.revealProgress, defaults.revealProgress),
     revealedFields: normalizeCount(source.revealedFields, defaults.revealedFields)
   };
+}
+
+function addRevealedSafeFields(count) {
+  series.revealedFields += count;
+}
+
+function updateSeriesDisplay() {
+  seriesRevealedFieldsElement.textContent = series.revealedFields.toLocaleString('de-DE');
 }
 
 function saveGameState() {
@@ -302,7 +291,6 @@ function revealCell(cell) {
   cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
   gameOver = true;
   recordGameResult(false);
-  setWinningStreak(0);
   gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
   gameOverRevealMines();
   return;
@@ -310,6 +298,7 @@ function revealCell(cell) {
 
   const cellsToReveal = [cell];
   let currentIndex = 0;
+  let revealedCount = 0;
 
   while (currentIndex < cellsToReveal.length) {
   const currentCell = cellsToReveal[currentIndex];
@@ -320,6 +309,7 @@ function revealCell(cell) {
   }
 
   currentCell.isRevealed = true;
+  revealedCount += 1;
   currentCell.element.classList.add('is-revealed');
   const adjacentMines = countAdjacentMines(currentCell);
   setAdjacentMineCount(currentCell, adjacentMines);
@@ -333,11 +323,11 @@ function revealCell(cell) {
   }
   }
 
+  addRevealedSafeFields(revealedCount);
+
   if (cells.every((row) => row.every((currentCell) => currentCell.isMine || currentCell.isRevealed))) {
   gameOver = true;
   recordGameResult(true);
-  const streak = getWinningStreak() + 1;
-  setWinningStreak(streak);
   gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt.';
   return;
   }
@@ -424,6 +414,7 @@ function useActiveMode(cell, mode = activeMode) {
   revealCell(cell);
   }
 
+  updateSeriesDisplay();
   saveGameState();
 }
 
@@ -669,7 +660,7 @@ function createBoard() {
   gameStatus.textContent = 'Neues Spiel gestartet.';
   mineCurrentCount = mineTotal;
   mineCount.textContent = mineCurrentCount;
-  winningStreakElement.textContent = getWinningStreak();
+  updateSeriesDisplay();
 
   board.style.gridTemplateColumns = `repeat(${boardColumns}, var(--cell-size))`;
 
@@ -763,6 +754,7 @@ function loadGameState() {
   cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
 
   series = normalizeSeries(savedGameState.series);
+  updateSeriesDisplay();
   gameOver = Boolean(savedGameState.gameOver);
   newGame = Boolean(savedGameState.newGame);
   mineCurrentCount = Number.isFinite(savedGameState.mineCurrentCount)
