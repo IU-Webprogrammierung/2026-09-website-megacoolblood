@@ -32,6 +32,8 @@ const difficulty = difficultySettings[storedDifficulty] ? storedDifficulty : 'be
 const boardRows = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
+const maxExtraLives = 3;
+const initialCheckCharges = 3;
 const streakStorageKey = 'lycheelab-winning-streak';
 const gameStateStorageKey = minesweeperRunState.storageKeys.gameState;
 const iconPaths = {
@@ -61,6 +63,7 @@ gameChromeToggle.addEventListener('click', () => {
   setImmersiveMode(!document.body.classList.contains('is-immersive'));
 });
 let mineCurrentCount = difficultySettings[difficulty].mines;
+let series = createDefaultSeries();
 let cells = [];
 let gameOver = false;
 let newGame = true;
@@ -136,17 +139,44 @@ function setCellContent(cell, iconName, fallbackText) {
   cell.element.append(icon);
 }
 
+function createDefaultSeries() {
+  return {
+    extraLives: maxExtraLives,
+    checkCharges: initialCheckCharges,
+    revealProgress: 0,
+    revealedFields: 0
+  };
+}
+
+function normalizeCount(value, fallback, maximum = Number.MAX_SAFE_INTEGER) {
+  return Number.isInteger(value) && value >= 0 && value <= maximum ? value : fallback;
+}
+
+function normalizeSeries(savedSeries) {
+  const defaults = createDefaultSeries();
+  const source = savedSeries && typeof savedSeries === 'object' ? savedSeries : {};
+
+  return {
+    extraLives: normalizeCount(source.extraLives, defaults.extraLives, maxExtraLives),
+    checkCharges: normalizeCount(source.checkCharges, defaults.checkCharges),
+    revealProgress: normalizeCount(source.revealProgress, defaults.revealProgress),
+    revealedFields: normalizeCount(source.revealedFields, defaults.revealedFields)
+  };
+}
+
 function saveGameState() {
   const gameState = {
   difficulty,
   gameOver,
   newGame,
   mineCurrentCount,
+  series,
   cells: cells.map((row) => row.map((cell) => ({
    isFlagged: cell.isFlagged,
    isMarked: cell.isMarked,
    isMine: cell.isMine,
-   isRevealed: cell.isRevealed
+   isRevealed: cell.isRevealed,
+   isWrongFlag: cell.isWrongFlag
   })))
   };
 
@@ -656,7 +686,8 @@ function createBoard() {
     isMine: false,
     isFlagged: false,
     isMarked: false,
-    isRevealed: false
+    isRevealed: false,
+    isWrongFlag: false
    };
 
    cell.type = 'button';
@@ -693,6 +724,7 @@ function gameOverRevealMines() {
 function startNewGame() {
   minesweeperRunState.removeSavedGame();
 
+  series = createDefaultSeries();
   createBoard();
   saveGameState();
 }
@@ -722,11 +754,15 @@ function loadGameState() {
    cells[row][column].isFlagged = Boolean(savedCell.isFlagged);
    cells[row][column].isMarked = Boolean(savedCell.isMarked);
    cells[row][column].isRevealed = Boolean(savedCell.isRevealed);
+   cells[row][column].isWrongFlag = Boolean(savedCell.isWrongFlag)
+    && cells[row][column].isFlagged
+    && !cells[row][column].isMine;
   });
   });
 
   cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
 
+  series = normalizeSeries(savedGameState.series);
   gameOver = Boolean(savedGameState.gameOver);
   newGame = Boolean(savedGameState.newGame);
   mineCurrentCount = Number.isFinite(savedGameState.mineCurrentCount)
