@@ -33,8 +33,7 @@ const boardRows = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
 const streakStorageKey = 'lycheelab-winning-streak';
-const statisticsStorageKey = 'lycheelab-statistics';
-const gameStateStorageKey = 'lycheelab-minesweeper-game';
+const gameStateStorageKey = minesweeperRunState.storageKeys.gameState;
 const iconPaths = {
   flag: '../../assets/icons/flag.svg',
   mine: '../../assets/icons/mine.svg',
@@ -97,35 +96,29 @@ function setWinningStreak(streak) {
 }
 
 function recordGameResult(won) {
-  try {
-  const storedStatistics = JSON.parse(localStorage.getItem(statisticsStorageKey) || '{}');
-  const statistics = storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
-  const storedDifficultyStatistics = statistics[difficulty] || {};
-  const difficultyStatistics = {
-   bestStreak: Number(storedDifficultyStatistics.bestStreak) || 0,
-   currentStreak: Number(storedDifficultyStatistics.currentStreak) || 0,
-   gamesPlayed: Number(storedDifficultyStatistics.gamesPlayed) || 0,
-   minesCleared: Number(storedDifficultyStatistics.minesCleared) || 0,
-   wins: Number(storedDifficultyStatistics.wins) || 0
-  };
+  const statistics = minesweeperRunState.readStatistics();
+
+  if (!statistics) {
+    return;
+  }
+
+  const difficultyStatistics = minesweeperRunState.readDifficultyStatistics(statistics, difficulty);
 
   difficultyStatistics.gamesPlayed += 1;
   if (won) {
-   difficultyStatistics.wins += 1;
-   difficultyStatistics.minesCleared += mineTotal;
-   difficultyStatistics.currentStreak += 1;
-   difficultyStatistics.bestStreak = Math.max(
-    difficultyStatistics.bestStreak,
-    difficultyStatistics.currentStreak
-   );
+    difficultyStatistics.wins += 1;
+    difficultyStatistics.minesCleared += mineTotal;
+    difficultyStatistics.currentStreak += 1;
+    difficultyStatistics.bestStreak = Math.max(
+      difficultyStatistics.bestStreak,
+      difficultyStatistics.currentStreak
+    );
   } else {
-   difficultyStatistics.currentStreak = 0;
+    difficultyStatistics.currentStreak = 0;
   }
 
   statistics[difficulty] = difficultyStatistics;
-  localStorage.setItem(statisticsStorageKey, JSON.stringify(statistics));
-  } catch {
-  }
+  minesweeperRunState.writeStatistics(statistics);
 }
 
 function setCellContent(cell, iconName, fallbackText) {
@@ -698,23 +691,14 @@ function gameOverRevealMines() {
 }
 
 function startNewGame() {
-  try {
-  localStorage.removeItem(gameStateStorageKey);
-  } catch {
-  }
+  minesweeperRunState.removeSavedGame();
 
   createBoard();
   saveGameState();
 }
 
 function loadGameState() {
-  let savedGameState;
-
-  try {
-  savedGameState = JSON.parse(localStorage.getItem(gameStateStorageKey) || 'null');
-  } catch {
-  savedGameState = null;
-  }
+  const savedGameState = minesweeperRunState.readSavedGame();
 
   if (
   !savedGameState ||
