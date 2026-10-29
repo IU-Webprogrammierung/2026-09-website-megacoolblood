@@ -30,7 +30,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - If a life reward is earned at the maximum of three extra lives, it becomes
   another check charge instead
 - Remaining check charges are saved with the game and carried into the next
-  round after a win; restarting or changing difficulty resets them
+  round after a win; restarting resets the active difficulty's series
+- Each difficulty has its own saved board and series; changing difficulty
+  preserves the previous save and resumes it when selected again.
 - Right-click in Check mode toggles a question mark
 - Mouse Left and Right clicks, Space key, and arrow key controls
 - The board supports mouse-wheel zoom, mouse dragging, touch dragging, and

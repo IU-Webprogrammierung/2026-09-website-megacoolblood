@@ -1,10 +1,19 @@
 const minesweeperRunState = (() => {
   const storageKeys = Object.freeze({
-    gameState: 'lycheelab-minesweeper-game',
+    gameStatePrefix: 'lycheelab-minesweeper-game',
     statistics: 'lycheelab-statistics'
   });
+  const difficulties = Object.freeze(['beginner', 'intermediate', 'expert', 'maximum']);
   const maxExtraLives = 3;
   const initialCheckCharges = 3;
+
+  function getGameStateStorageKey(difficulty) {
+    if (!difficulties.includes(difficulty)) {
+      throw new RangeError(`Unbekannter Schwierigkeitsgrad: ${difficulty}`);
+    }
+
+    return `${storageKeys.gameStatePrefix}:${difficulty}`;
+  }
 
   function toCount(value) {
     const number = Number(value);
@@ -82,18 +91,35 @@ const minesweeperRunState = (() => {
     return hasChanged;
   }
 
-  function readSavedGame() {
+  function readSavedGame(difficulty) {
+    const gameStateStorageKey = getGameStateStorageKey(difficulty);
+
     try {
-      return JSON.parse(localStorage.getItem(storageKeys.gameState) || 'null');
+      return JSON.parse(localStorage.getItem(gameStateStorageKey) || 'null');
     } catch {
       return null;
     }
   }
 
-  function removeSavedGame() {
+  function writeSavedGame(difficulty, gameState) {
+    const gameStateStorageKey = getGameStateStorageKey(difficulty);
+
     try {
-      localStorage.removeItem(storageKeys.gameState);
+      localStorage.setItem(gameStateStorageKey, JSON.stringify(gameState));
+      return true;
     } catch {
+      return false;
+    }
+  }
+
+  function removeSavedGame(difficulty) {
+    const gameStateStorageKey = getGameStateStorageKey(difficulty);
+
+    try {
+      localStorage.removeItem(gameStateStorageKey);
+      return true;
+    } catch {
+      return false;
     }
   }
 
@@ -114,7 +140,7 @@ const minesweeperRunState = (() => {
       }
     }
 
-    removeSavedGame();
+    removeSavedGame(difficulty);
   }
 
   function getSeriesLossMessage({ series, roundInProgress }) {
@@ -154,7 +180,9 @@ const minesweeperRunState = (() => {
 
   return Object.freeze({
     storageKeys,
+    difficulties,
     maxExtraLives,
+    getGameStateStorageKey,
     createDefaultSeries,
     normalizeSeries,
     readStatistics,
@@ -162,6 +190,7 @@ const minesweeperRunState = (() => {
     readDifficultyStatistics,
     updateBestSeriesRevealedFields,
     readSavedGame,
+    writeSavedGame,
     removeSavedGame,
     endSeries,
     getSeriesLossMessage,

@@ -55,7 +55,6 @@ const difficulty = difficultySettings[storedDifficulty] ? storedDifficulty : 'be
 const boardRows = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
-const gameStateStorageKey = minesweeperRunState.storageKeys.gameState;
 const maxExtraLives = minesweeperRunState.maxExtraLives;
 const iconPaths = {
   flag: '../../assets/icons/flag.svg',
@@ -234,9 +233,8 @@ function saveGameState() {
     })))
   };
 
-  try {
-    localStorage.setItem(gameStateStorageKey, JSON.stringify(gameState));
-  } catch {
+  if (!minesweeperRunState.writeSavedGame(difficulty, gameState)) {
+    gameStatus.textContent = 'Spielstand konnte nicht gespeichert werden.';
   }
 }
 
@@ -933,7 +931,7 @@ async function startNewGame() {
     }
   }
 
-  minesweeperRunState.removeSavedGame();
+  minesweeperRunState.removeSavedGame(difficulty);
 
   if (!isNextRound) {
     series = minesweeperRunState.createDefaultSeries();
@@ -950,7 +948,7 @@ async function startNewGame() {
 }
 
 function loadGameState() {
-  const savedGameState = minesweeperRunState.readSavedGame();
+  const savedGameState = minesweeperRunState.readSavedGame(difficulty);
 
   if (
     !savedGameState ||

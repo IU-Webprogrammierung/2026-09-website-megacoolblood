@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../../css/minesweeper.css">
   <link rel="icon" type="image/png" href="../../assets/images/LycheeLab.png">
   <script src="../../js/components.js" defer></script>
+  <script src="../../js/minesweeper/run-state.js" defer></script>
   <script src="../../js/minesweeper/settings.js" defer></script>
 </head>
 <body>
@@ -19,12 +20,14 @@
    <fieldset>
     <legend>Schwierigkeitsgrad</legend>
     <label for="difficulty">Auswahl</label>
-    <select id="difficulty" name="difficulty">
+    <select id="difficulty" name="difficulty" aria-describedby="difficulty-help">
      <option value="beginner">Anfänger</option>
      <option value="intermediate">Fortgeschritten</option>
      <option value="expert">Experte</option>
     <option value="maximum">Maximal (100 × 100, 2.000 Minen)</option>
     </select>
+    <p id="difficulty-help">Jeder Schwierigkeitsgrad hat einen eigenen Spielstand. Beim Wechsel bleibt dein Spiel
+     erhalten und wird fortgesetzt, wenn du zu dieser Stufe zurückwechselst.</p>
    </fieldset>
    <button type="submit">Einstellungen speichern</button>
    <p id="settings-status" role="status" aria-live="polite"></p>
