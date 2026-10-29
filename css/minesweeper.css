@@ -297,3 +297,40 @@ main.minesweeper-game-page {
     object-fit: contain;
   }
 }
+
+.confirm-dialog {
+  width: min(28rem, calc(100vw - 2 * var(--space-medium)));
+  max-height: calc(100dvh - 2 * var(--space-medium));
+  padding: var(--space-large);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+
+  &::backdrop {
+    background: rgb(32 35 31 / 0.6);
+  }
+
+  h2 {
+    margin: 0 0 var(--space-small);
+    font-size: 1.25rem;
+  }
+
+  p {
+    margin: 0 0 var(--space-large);
+  }
+
+  .confirm-dialog-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--space-small);
+  }
+
+  button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+  }
+}

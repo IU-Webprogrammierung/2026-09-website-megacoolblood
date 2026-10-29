@@ -3,10 +3,37 @@ const minesweeperRunState = (() => {
     gameState: 'lycheelab-minesweeper-game',
     statistics: 'lycheelab-statistics'
   });
+  const maxExtraLives = 3;
+  const initialCheckCharges = 3;
 
   function toCount(value) {
     const number = Number(value);
     return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
+  }
+
+  function createDefaultSeries() {
+    return {
+      extraLives: maxExtraLives,
+      checkCharges: initialCheckCharges,
+      revealProgress: 0,
+      revealedFields: 0
+    };
+  }
+
+  function normalizeCount(value, fallback, maximum = Number.MAX_SAFE_INTEGER) {
+    return Number.isInteger(value) && value >= 0 && value <= maximum ? value : fallback;
+  }
+
+  function normalizeSeries(savedSeries) {
+    const defaults = createDefaultSeries();
+    const source = savedSeries && typeof savedSeries === 'object' ? savedSeries : {};
+
+    return {
+      extraLives: normalizeCount(source.extraLives, defaults.extraLives, maxExtraLives),
+      checkCharges: normalizeCount(source.checkCharges, defaults.checkCharges),
+      revealProgress: normalizeCount(source.revealProgress, defaults.revealProgress),
+      revealedFields: normalizeCount(source.revealedFields, defaults.revealedFields)
+    };
   }
 
   // Returns null when stored statistics cannot be read, so callers do not overwrite them.
@@ -58,12 +85,71 @@ const minesweeperRunState = (() => {
     }
   }
 
+  function endSeries(difficulty, { countAsLoss = false } = {}) {
+    const statistics = readStatistics();
+
+    if (statistics) {
+      const difficultyStatistics = readDifficultyStatistics(statistics, difficulty);
+
+      if (countAsLoss || difficultyStatistics.currentStreak > 0) {
+        difficultyStatistics.currentStreak = 0;
+        if (countAsLoss) {
+          difficultyStatistics.gamesPlayed += 1;
+        }
+        statistics[difficulty] = difficultyStatistics;
+        writeStatistics(statistics);
+      }
+    }
+
+    removeSavedGame();
+  }
+
+  function getSeriesLossMessage({ series, roundInProgress }) {
+    const parts = [];
+
+    if (series.revealedFields > 0) {
+      parts.push(`Dein Score von ${series.revealedFields.toLocaleString('de-DE')} geht verloren.`);
+    }
+    if (series.extraLives !== maxExtraLives || series.checkCharges !== initialCheckCharges) {
+      parts.push(`Extraleben werden auf ${maxExtraLives} und Prüfungen auf ${initialCheckCharges} zurückgesetzt.`);
+    }
+    if (roundInProgress) {
+      parts.push('Das laufende Spiel zählt in der Statistik als Niederlage.');
+    }
+
+    return parts.join(' ');
+  }
+
+  function confirmSeriesReset(dialog, message) {
+    const title = document.getElementById(dialog?.getAttribute('aria-labelledby'))?.textContent ?? '';
+
+    if (typeof dialog?.showModal !== 'function') {
+      return Promise.resolve(window.confirm(`${title}\n\n${message}`.trim()));
+    }
+    if (dialog.open) {
+      return Promise.resolve(false);
+    }
+
+    document.getElementById(dialog.getAttribute('aria-describedby')).textContent = message;
+    dialog.returnValue = '';
+
+    return new Promise((resolve) => {
+      dialog.addEventListener('close', () => resolve(dialog.returnValue === 'confirm'), { once: true });
+      dialog.showModal();
+    });
+  }
+
   return Object.freeze({
     storageKeys,
+    createDefaultSeries,
+    normalizeSeries,
     readStatistics,
     writeStatistics,
     readDifficultyStatistics,
     readSavedGame,
-    removeSavedGame
+    removeSavedGame,
+    endSeries,
+    getSeriesLossMessage,
+    confirmSeriesReset
   });
 })();

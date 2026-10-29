@@ -11,6 +11,7 @@ const gameChromeToggle = document.querySelector('#game-chrome-toggle');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
 const seriesRevealedFieldsElement = document.querySelector('#series-revealed-fields');
+const seriesResetDialog = document.querySelector('#series-reset-dialog');
 const modeButtons = document.querySelectorAll('.mode-button');
 const mobileLayout = window.matchMedia('(max-width: 767px)');
 let hasUserSelectedImmersiveMode = false;
@@ -34,8 +35,6 @@ const difficulty = difficultySettings[storedDifficulty] ? storedDifficulty : 'be
 const boardRows = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
-const maxExtraLives = 3;
-const initialCheckCharges = 3;
 const gameStateStorageKey = minesweeperRunState.storageKeys.gameState;
 const iconPaths = {
   flag: '../../assets/icons/flag.svg',
@@ -66,7 +65,7 @@ gameChromeToggle.addEventListener('click', () => {
   setImmersiveMode(!document.body.classList.contains('is-immersive'));
 });
 let mineCurrentCount = difficultySettings[difficulty].mines;
-let series = createDefaultSeries();
+let series = minesweeperRunState.createDefaultSeries();
 let cells = [];
 let gameOver = false;
 let newGame = true;
@@ -122,31 +121,6 @@ function setCellContent(cell, iconName, fallbackText) {
   icon.src = iconPaths[iconName];
   icon.alt = '';
   cell.element.append(icon);
-}
-
-function createDefaultSeries() {
-  return {
-    extraLives: maxExtraLives,
-    checkCharges: initialCheckCharges,
-    revealProgress: 0,
-    revealedFields: 0
-  };
-}
-
-function normalizeCount(value, fallback, maximum = Number.MAX_SAFE_INTEGER) {
-  return Number.isInteger(value) && value >= 0 && value <= maximum ? value : fallback;
-}
-
-function normalizeSeries(savedSeries) {
-  const defaults = createDefaultSeries();
-  const source = savedSeries && typeof savedSeries === 'object' ? savedSeries : {};
-
-  return {
-    extraLives: normalizeCount(source.extraLives, defaults.extraLives, maxExtraLives),
-    checkCharges: normalizeCount(source.checkCharges, defaults.checkCharges),
-    revealProgress: normalizeCount(source.revealProgress, defaults.revealProgress),
-    revealedFields: normalizeCount(source.revealedFields, defaults.revealedFields)
-  };
 }
 
 function addRevealedSafeFields(count) {
@@ -666,7 +640,7 @@ function handleModeShortcut(event) {
   const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark' };
   const mode = modeShortcuts[event.key.toLowerCase()];
 
-  if (!mode || event.target.matches('input, select, textarea')) {
+  if (!mode || event.target.matches('input, select, textarea') || event.target.closest('dialog[open]')) {
     return;
   }
 
@@ -736,13 +710,29 @@ function gameOverRevealMines() {
   }));
 }
 
-function startNewGame() {
+async function startNewGame() {
   const isNextRound = canStartNextRound();
+
+  if (!isNextRound && !gameOver) {
+    const roundInProgress = !newGame;
+    const message = minesweeperRunState.getSeriesLossMessage({ series, roundInProgress });
+
+    if (message) {
+      const confirmed = await minesweeperRunState.confirmSeriesReset(seriesResetDialog, message);
+
+      if (!confirmed) {
+        gameStatus.textContent = 'Neustart abgebrochen.';
+        return;
+      }
+
+      minesweeperRunState.endSeries(difficulty, { countAsLoss: roundInProgress });
+    }
+  }
 
   minesweeperRunState.removeSavedGame();
 
   if (!isNextRound) {
-    series = createDefaultSeries();
+    series = minesweeperRunState.createDefaultSeries();
   }
   createBoard();
 
@@ -785,7 +775,7 @@ function loadGameState() {
 
   cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
 
-  series = normalizeSeries(savedGameState.series);
+  series = minesweeperRunState.normalizeSeries(savedGameState.series);
   updateSeriesDisplay();
   gameOver = Boolean(savedGameState.gameOver);
   newGame = Boolean(savedGameState.newGame);
