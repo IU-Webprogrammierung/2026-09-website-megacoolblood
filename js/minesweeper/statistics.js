@@ -1,5 +1,4 @@
 const statisticsList = document.querySelector('#statistics-list');
-const statisticsStorageKey = 'lycheelab-statistics';
 const difficultyLabels = {
   beginner: 'Anfänger',
   intermediate: 'Fortgeschritten',
@@ -8,12 +7,7 @@ const difficultyLabels = {
 };
 
 function getStatistics() {
-  try {
-  const storedStatistics = JSON.parse(localStorage.getItem(statisticsStorageKey) || '{}');
-  return storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
-  } catch {
-  return {};
-  }
+  return minesweeperRunState.readStatistics() ?? {};
 }
 
 function createStatistic(label, value) {
@@ -39,21 +33,21 @@ function renderStatistics() {
   }
 
   availableDifficulties.forEach((difficulty) => {
-  const data = statistics[difficulty];
+  const data = minesweeperRunState.readDifficultyStatistics(statistics, difficulty);
   const card = document.createElement('article');
   const heading = document.createElement('h2');
   const values = document.createElement('dl');
-  const gamesPlayed = Number(data.gamesPlayed) || 0;
-  const wins = Number(data.wins) || 0;
+  const gamesPlayed = data.gamesPlayed;
+  const wins = data.wins;
   const successRate = gamesPlayed > 0 ? Math.round((wins / gamesPlayed) * 100) : 0;
 
   card.className = 'statistics-card';
   heading.textContent = difficultyLabels[difficulty];
   values.append(
-   createStatistic('Minen geräumt', Number(data.minesCleared) || 0),
+   createStatistic('Minen geräumt', data.minesCleared),
    createStatistic('Erfolgsquote', `${successRate} %`),
-   createStatistic('Aktuelle Serie', Number(data.currentStreak) || 0),
-   createStatistic('Beste Serie', Number(data.bestStreak) || 0)
+   createStatistic('Aktuelle Serie', data.currentStreak),
+   createStatistic('Höchster Score', data.bestSeriesRevealedFields.toLocaleString('de-DE'))
   );
   card.append(heading, values);
   statisticsList.append(card);

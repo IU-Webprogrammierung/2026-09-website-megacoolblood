@@ -91,15 +91,12 @@ function recordGameResult(won) {
 
   const difficultyStatistics = minesweeperRunState.readDifficultyStatistics(statistics, difficulty);
 
+  minesweeperRunState.updateBestSeriesRevealedFields(difficultyStatistics, series.revealedFields);
   difficultyStatistics.gamesPlayed += 1;
   if (won) {
     difficultyStatistics.wins += 1;
     difficultyStatistics.minesCleared += mineTotal;
     difficultyStatistics.currentStreak += 1;
-    difficultyStatistics.bestStreak = Math.max(
-      difficultyStatistics.bestStreak,
-      difficultyStatistics.currentStreak
-    );
   } else {
     difficultyStatistics.currentStreak = 0;
   }
@@ -725,7 +722,10 @@ async function startNewGame() {
         return;
       }
 
-      minesweeperRunState.endSeries(difficulty, { countAsLoss: roundInProgress });
+      minesweeperRunState.endSeries(difficulty, {
+        countAsLoss: roundInProgress,
+        revealedFields: series.revealedFields
+      });
     }
   }
 

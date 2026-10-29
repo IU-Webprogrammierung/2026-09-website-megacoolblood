@@ -63,11 +63,23 @@ const minesweeperRunState = (() => {
 
     return {
       bestStreak: toCount(source.bestStreak),
+      bestSeriesRevealedFields: toCount(source.bestSeriesRevealedFields),
       currentStreak: toCount(source.currentStreak),
       gamesPlayed: toCount(source.gamesPlayed),
       minesCleared: toCount(source.minesCleared),
       wins: toCount(source.wins)
     };
+  }
+
+  function updateBestSeriesRevealedFields(difficultyStatistics, revealedFields) {
+    const bestScore = Math.max(
+      difficultyStatistics.bestSeriesRevealedFields,
+      toCount(revealedFields)
+    );
+    const hasChanged = bestScore !== difficultyStatistics.bestSeriesRevealedFields;
+
+    difficultyStatistics.bestSeriesRevealedFields = bestScore;
+    return hasChanged;
   }
 
   function readSavedGame() {
@@ -85,13 +97,14 @@ const minesweeperRunState = (() => {
     }
   }
 
-  function endSeries(difficulty, { countAsLoss = false } = {}) {
+  function endSeries(difficulty, { countAsLoss = false, revealedFields = 0 } = {}) {
     const statistics = readStatistics();
 
     if (statistics) {
       const difficultyStatistics = readDifficultyStatistics(statistics, difficulty);
+      const scoreChanged = updateBestSeriesRevealedFields(difficultyStatistics, revealedFields);
 
-      if (countAsLoss || difficultyStatistics.currentStreak > 0) {
+      if (scoreChanged || countAsLoss || difficultyStatistics.currentStreak > 0) {
         difficultyStatistics.currentStreak = 0;
         if (countAsLoss) {
           difficultyStatistics.gamesPlayed += 1;
@@ -146,6 +159,7 @@ const minesweeperRunState = (() => {
     readStatistics,
     writeStatistics,
     readDifficultyStatistics,
+    updateBestSeriesRevealedFields,
     readSavedGame,
     removeSavedGame,
     endSeries,
