@@ -14,6 +14,8 @@ const extraLivesElement = document.querySelector('#extra-lives');
 const seriesRevealedFieldsElement = document.querySelector('#series-revealed-fields');
 const seriesResetDialog = document.querySelector('#series-reset-dialog');
 const modeButtons = document.querySelectorAll('.mode-button');
+const checkModeButton = document.querySelector('[data-mode="check"]');
+const checkChargesElement = document.querySelector('#check-charges');
 const mobileLayout = window.matchMedia('(max-width: 767px)');
 let hasUserSelectedImmersiveMode = false;
 const difficultySettings = {
@@ -40,6 +42,7 @@ const gameStateStorageKey = minesweeperRunState.storageKeys.gameState;
 const maxExtraLives = minesweeperRunState.maxExtraLives;
 const iconPaths = {
   flag: '../../assets/icons/flag.svg',
+  check: '../../assets/icons/check.svg',
   mine: '../../assets/icons/mine.svg',
   nextRound: '../../assets/icons/next-round.svg',
   questionmark: '../../assets/icons/questionmark.svg',
@@ -135,6 +138,14 @@ function updateExtraLivesDisplay() {
     `${series.extraLives}/${maxExtraLives}`;
   extraLivesElement.querySelector('.visually-hidden').textContent =
     `${series.extraLives} von ${maxExtraLives}`;
+}
+
+function updateCheckChargesDisplay() {
+  const checkCharges = series.checkCharges;
+
+  checkChargesElement.textContent = checkCharges.toLocaleString('de-DE');
+  checkModeButton.setAttribute('aria-label', `Prüfen (P), ${checkCharges} verbleibend`);
+  checkModeButton.setAttribute('aria-disabled', String(checkCharges === 0));
 }
 
 function isTriggeredMine(cell) {
@@ -403,12 +414,67 @@ function toggleMark(cell) {
 }
 
 function setMode(mode) {
+  if (mode === 'check' && series.checkCharges === 0) {
+    gameStatus.textContent = 'Keine Prüfungen übrig.';
+    return false;
+  }
+
   activeMode = mode;
   modeButtons.forEach((button) => {
     const isActive = button.dataset.mode === activeMode;
     button.classList.toggle('is-active', isActive);
     button.setAttribute('aria-pressed', String(isActive));
   });
+  return true;
+}
+
+function useCheckMode(cell) {
+  if (gameOver) {
+    return;
+  }
+
+  if (newGame) {
+    gameStatus.textContent = 'Prüfen ist erst nach dem ersten Aufdecken möglich.';
+    return;
+  }
+
+  if (cell.isFlagged) {
+    gameStatus.textContent = `Entferne zuerst die Flagge auf Feld ${cell.coordinate}.`;
+    return;
+  }
+
+  if (series.checkCharges === 0) {
+    gameStatus.textContent = 'Keine Prüfungen übrig.';
+    setMode('reveal');
+    return;
+  }
+
+  series.checkCharges -= 1;
+  updateCheckChargesDisplay();
+
+  if (cell.isMarked) {
+    cell.isMarked = false;
+    cell.element.classList.remove('is-marked');
+    setCellContent(cell, null, '?');
+    cell.element.setAttribute('aria-label', `Unaufgedecktes Feld ${cell.coordinate}`);
+  }
+
+  if (cell.isMine) {
+    toggleFlag(cell);
+    gameStatus.textContent = `Prüfung: Auf Feld ${cell.coordinate} liegt eine Mine. Flagge gesetzt.`;
+    if (series.checkCharges === 0) {
+      setMode('reveal');
+    }
+    return;
+  }
+
+  revealCell(cell);
+  if (!gameOver) {
+    gameStatus.textContent = `Prüfung: Feld ${cell.coordinate} ist sicher und wurde aufgedeckt.`;
+  }
+  if (series.checkCharges === 0) {
+    setMode('reveal');
+  }
 }
 
 function activeNumber(cell) {
@@ -447,6 +513,8 @@ function activeNumber(cell) {
 function useActiveMode(cell, mode = activeMode) {
   if (isTriggeredMine(cell)) {
     gameStatus.textContent = `Auf Feld ${cell.coordinate} liegt eine ausgelöste Mine.`;
+  } else if (newGame && mode === 'check') {
+    gameStatus.textContent = 'Prüfen ist erst nach dem ersten Aufdecken möglich.';
   } else {
     if (newGame) {
       if (mode !== 'reveal') {
@@ -463,11 +531,14 @@ function useActiveMode(cell, mode = activeMode) {
       toggleFlag(cell);
     } else if (mode === 'mark') {
       toggleMark(cell);
+    } else if (mode === 'check') {
+      useCheckMode(cell);
     } else {
       revealCell(cell);
     }
   }
 
+  updateCheckChargesDisplay();
   updateExtraLivesDisplay();
   updateSeriesDisplay();
   updateNewGameButton();
@@ -501,6 +572,16 @@ function handleCellContextMenu(event) {
   }
 
   setActiveCell(cell);
+
+  if (activeMode === 'check') {
+    toggleMark(cell);
+    updateCheckChargesDisplay();
+    updateExtraLivesDisplay();
+    updateSeriesDisplay();
+    updateNewGameButton();
+    saveGameState();
+    return;
+  }
 
   const contextMode = activeMode === 'reveal' ? 'flag' : 'reveal';
 
@@ -696,7 +777,7 @@ function handleCellKeyDown(event) {
 
 
 function handleModeShortcut(event) {
-  const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark' };
+  const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark', p: 'check' };
   const mode = modeShortcuts[event.key.toLowerCase()];
 
   if (!mode || event.target.matches('input, select, textarea') || event.target.closest('dialog[open]')) {
@@ -716,6 +797,7 @@ function createBoard() {
   gameStatus.textContent = 'Neues Spiel gestartet.';
   mineCurrentCount = mineTotal;
   mineCount.textContent = mineCurrentCount;
+  updateCheckChargesDisplay();
   updateExtraLivesDisplay();
   updateSeriesDisplay();
   updateNewGameButton();
@@ -803,7 +885,10 @@ async function startNewGame() {
   createBoard();
 
   if (isNextRound) {
-    gameStatus.textContent = `Nächste Runde gestartet. Score von ${series.revealedFields.toLocaleString('de-DE')} übernommen.`;
+    const checkChargeLabel = series.checkCharges === 1 ? 'Prüfung' : 'Prüfungen';
+    const carriedLives = `${series.extraLives} von ${maxExtraLives} Extraleben`;
+    const carriedChecks = `${series.checkCharges} ${checkChargeLabel}`;
+    gameStatus.textContent = `Nächste Runde gestartet. Score von ${series.revealedFields.toLocaleString('de-DE')} übernommen. ${carriedLives} und ${carriedChecks} übernommen.`;
   }
   saveGameState();
 }
@@ -842,6 +927,7 @@ function loadGameState() {
   cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
 
   series = minesweeperRunState.normalizeSeries(savedGameState.series);
+  updateCheckChargesDisplay();
   updateExtraLivesDisplay();
   updateSeriesDisplay();
   gameOver = Boolean(savedGameState.gameOver);

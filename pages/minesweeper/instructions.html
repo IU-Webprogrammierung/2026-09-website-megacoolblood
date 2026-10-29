@@ -20,7 +20,8 @@
 
     <section aria-labelledby="goal-heading">
       <h2 id="goal-heading">Spielziel</h2>
-      <p>Du gewinnst, wenn alle Felder ohne Mine aufgedeckt wurden. Eine aufgedeckte Mine beendet das Spiel.</p>
+      <p>Du gewinnst, wenn alle Felder ohne Mine aufgedeckt wurden. Du startest mit 3 Extraleben. Ein Minentreffer
+        verbraucht ein Extraleben; erst ein weiterer Treffer bei 0 Extraleben beendet das Spiel.</p>
     </section>
 
     <section aria-labelledby="controls-heading">
@@ -38,10 +39,20 @@
           <dt>Fragezeichen</dt>
           <dd>Kennzeichnet ein Feld, bei dem du noch unsicher bist.</dd>
         </div>
+        <div>
+          <dt>Prüfen</dt>
+          <dd>Verbraucht eine Prüfung: Eine Mine wird mit einer Flagge markiert, ein sicheres Feld wird aufgedeckt.
+            Ein mit „?“ markiertes Feld kann geprüft werden; eine Flagge muss vorher entfernt werden.</dd>
+        </div>
       </dl>
       <p>Auf dem Spielfeld kannst du ein Feld mit der Maus oder per Touch auswählen. Im Modus „Aufdecken“ setzt du mit
-        der rechten Maustaste eine Flagge. Im Modus „Flagge“ deckt die rechte Maustaste das Feld auf. Mit der Tastatur
-        bewegst du den Fokus mit den Pfeiltasten und löst die ausgewählte Aktion mit der Leertaste aus.</p>
+        der rechten Maustaste eine Flagge. Im Modus „Flagge“ deckt die rechte Maustaste das Feld auf. Im Modus „Prüfen“
+        setzt oder entfernt die rechte Maustaste ein Fragezeichen. Mit der Tastatur bewegst du den Fokus mit den
+        Pfeiltasten und löst die ausgewählte Aktion mit der Leertaste aus. Prüfen ist erst nach dem ersten Aufdecken
+        möglich und verbraucht eine von anfangs 3 Prüfungen. Wenn bei 3 von 3 Extraleben ein weiteres Extraleben
+        fällig wird, erhältst du stattdessen eine zusätzliche Prüfung.</p>
+      <p>Extraleben und Prüfungen werden innerhalb einer Siegesserie gespeichert und nach einem Sieg in die nächste
+        Runde übernommen. „Neustart“ und ein Wechsel des Schwierigkeitsgrads setzen beide Werte auf 3 zurück.</p>
       <h3>Tastaturkürzel</h3>
       <dl>
         <div>
@@ -55,6 +66,10 @@
         <div>
           <dt><kbd>M</kbd></dt>
           <dd>Fragezeichen beziehungsweise Markieren auswählen</dd>
+        </div>
+        <div>
+          <dt><kbd>P</kbd></dt>
+          <dd>Prüfen auswählen</dd>
         </div>
         <div>
           <dt><kbd>Pfeiltasten</kbd></dt>

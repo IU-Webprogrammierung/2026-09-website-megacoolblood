@@ -23,8 +23,15 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   - Maximum: 100 × 100 cells and 2,000 mines
 - Random mine placement and display of adjacent mine counts
 - Automatic revealing of connected empty areas
-- Three input modes: Reveal, Flag, and Mark with a question mark
-- Mode switching through buttons or the `A`, `F`, and `M` keyboard shortcuts
+- Four input modes: Reveal, Flag, Mark with a question mark, and limited Check
+- Mode switching through buttons or the `A`, `F`, `M`, and `P` keyboard shortcuts
+- Check mode starts with three charges and uses one to flag a mine or reveal a safe cell;
+  marked question cells can be checked, while flags must be removed first
+- If a life reward is earned at the maximum of three extra lives, it becomes
+  another check charge instead
+- Remaining check charges are saved with the game and carried into the next
+  round after a win; restarting or changing difficulty resets them
+- Right-click in Check mode toggles a question mark
 - Mouse Left and Right clicks, Space key, and arrow key controls
 - The board supports mouse-wheel zoom, mouse dragging, touch dragging, and
   pinch zoom; separate controls provide zoom in, zoom out, and reset
@@ -37,7 +44,7 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Status messages for starting a game, revealing cells, winning, and losing
 - Winning streak and game statistics stored using `localStorage`
 - Statistics are grouped by difficulty and contain cleared mines, success rate,
-  current streak, and best streak
+  current streak, and the highest Score achieved within a series
 - No account, application backend, or tracking required
 - Serve the static files over HTTP; component loading and the local Panzoom ESM
   import are not supported by a plain `file://` launch

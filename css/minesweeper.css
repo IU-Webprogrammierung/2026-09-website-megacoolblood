@@ -83,6 +83,36 @@ main.minesweeper-game-page {
       padding: 0;
     }
   }
+
+  .check-mode-icon {
+    position: relative;
+    display: inline-grid;
+    flex: 0 0 1.875rem;
+    place-items: center;
+  }
+
+  .check-mode-icon .mode-icon {
+    padding: 0;
+  }
+
+  .check-charge-count {
+    position: absolute;
+    top: -0.45rem;
+    right: 0;
+    display: grid;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    place-items: center;
+    padding-inline: 0.2rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 
@@ -132,6 +162,21 @@ main.minesweeper-game-page {
 }
 
 @media (max-width: 480px) {
+  main.minesweeper-game-page .game-panel .game-modes {
+    gap: 0.125rem;
+  }
+
+  main.minesweeper-game-page .game-zoom-controls button {
+    width: 44px;
+    height: 44px;
+  }
+
+  main.minesweeper-game-page .game-panel .game-modes .mode-button {
+    flex-basis: 44px;
+    min-width: 44px;
+    height: 44px;
+  }
+
   main.minesweeper-game-page .game-zoom-controls {
     flex: 0 0 auto;
     gap: 0.25rem;
