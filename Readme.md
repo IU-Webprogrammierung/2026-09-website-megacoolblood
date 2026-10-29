@@ -25,16 +25,24 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Automatic revealing of connected empty areas
 - Four input modes: Reveal, Flag, Mark with a question mark, and limited Check
 - Mode switching through buttons or the `A`, `F`, `M`, and `P` keyboard shortcuts
-- Check mode starts with three charges and uses one to flag a mine or reveal a safe cell;
-  marked question cells can be checked, while flags must be removed first
-- If a life reward is earned at the maximum of three extra lives, it becomes
-  another check charge instead
-- Remaining check charges are saved with the game and carried into the next
-  round after a win; restarting resets the active difficulty's series
-- Each difficulty has its own saved board and series; changing difficulty
-  preserves the previous save and resumes it when selected again.
+- Three starting extra lives; revealing a mine consumes one, and another mine
+  hit at zero lives ends the game
+- Safe reveals grant a reward for each difficulty-specific threshold:
+  `ceil(totalFields / (mines * (mines / totalFields)^3 * 5 / 4))`
+  (Beginner: 3,444; Intermediate: 1,343; Expert: 443; Maximum: 500 fields).
+  Rewards restore an extra life up to three; at full lives, a reward adds a
+  Check charge instead
+- Check mode starts with three charges and uses one to flag a mine or reveal a
+  safe cell; it becomes available after the first reveal. Marked question cells
+  can be checked, while flags must be removed first
+- After a win, Score, extra lives, Check charges, and reward progress carry into
+  the next round. Restarting resets the active difficulty's series; a loss ends
+  it. Each difficulty has its own saved board and series, so changing difficulty
+  preserves the previous save and resumes it when selected again
 - Right-click in Check mode toggles a question mark
 - Mouse Left and Right clicks, Space key, and arrow key controls
+- The game header shows remaining mines, series Score, and extra lives; the
+  mode controls show remaining Check charges
 - The board supports mouse-wheel zoom, mouse dragging, touch dragging, and
   pinch zoom; separate controls provide zoom in, zoom out, and reset
 - The game starts in immersive mode below 768 px; a button toggles the global

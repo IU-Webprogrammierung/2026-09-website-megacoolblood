@@ -41,16 +41,16 @@
         </div>
         <div>
           <dt>Prüfen</dt>
-          <dd>Verbraucht eine Prüfung: Eine Mine wird mit einer Flagge markiert, ein sicheres Feld wird aufgedeckt.
-            Ein mit „?“ markiertes Feld kann geprüft werden; eine Flagge muss vorher entfernt werden.</dd>
+          <dd>Verbraucht eine der anfangs 3 Prüfungen: Eine Mine wird mit einer Flagge markiert, ein sicheres Feld
+            wird aufgedeckt. Ein mit „?“ markiertes Feld kann geprüft werden; eine Flagge muss vorher entfernt werden.
+          </dd>
         </div>
       </dl>
       <p>Auf dem Spielfeld kannst du ein Feld mit der Maus oder per Touch auswählen. Im Modus „Aufdecken“ setzt du mit
         der rechten Maustaste eine Flagge. Im Modus „Flagge“ deckt die rechte Maustaste das Feld auf. Im Modus „Prüfen“
         setzt oder entfernt die rechte Maustaste ein Fragezeichen. Mit der Tastatur bewegst du den Fokus mit den
-        Pfeiltasten und löst die ausgewählte Aktion mit der Leertaste aus. Prüfen ist erst nach dem ersten Aufdecken
-        möglich und verbraucht eine von anfangs 3 Prüfungen. Wenn bei 3 von 3 Extraleben ein weiteres Extraleben
-        fällig wird, erhältst du stattdessen eine zusätzliche Prüfung.</p>
+        Pfeiltasten und löst die ausgewählte Aktion mit der Leertaste aus. „Prüfen“ ist erst nach dem ersten Aufdecken
+        möglich.</p>
       <p>Extraleben und Prüfungen werden pro Schwierigkeitsgrad gespeichert und nach einem Sieg in die nächste Runde
         übernommen. Jede Stufe hat einen eigenen Spielstand. Beim Wechsel bleibt die Runde erhalten und wird
         fortgesetzt, wenn du zu dieser Stufe zurückkehrst. „Neustart“ setzt nur den Spielstand der aktuellen Stufe
@@ -86,11 +86,32 @@
         aktiv ist.</p>
     </section>
 
+    <section aria-labelledby="lives-heading">
+      <h2 id="lives-heading">Extraleben und Belohnungen</h2>
+      <p>Du startest mit 3 Extraleben. Eine aufgedeckte Mine kostet ein Extraleben. Erst wenn du bei 0 Extraleben eine
+        weitere Mine auslöst, ist das Spiel verloren. Beim Aufdecken eines sicheren Feldes steigt dein Score und dein
+        Belohnungsfortschritt jeweils um 1. Der Fortschritt wird in der Siegesserie pro Schwierigkeitsgrad gesammelt
+        und über die nächste Runde hinweg gespeichert.</p>
+      <p>Für jedes erreichte Schwellenziel erhältst du ein Extraleben, höchstens bis zum Stand von 3. Bist du bereits
+        bei 3 von 3, wird daraus stattdessen eine zusätzliche Prüfung. Die Schwelle wird je Stufe mit dieser Formel
+        berechnet; <code>ceil</code> rundet auf die nächste ganze Feldzahl auf:</p>
+      <p><code>ceil(totalFields / (Mines * (Mines / totalFields)^3 * 5 / 4))</code></p>
+      <p><code>totalFields</code> ist die Gesamtzahl der Felder der Stufe, <code>Mines</code> deren Minenzahl.</p>
+      <ul>
+        <li>Anfänger: 3.444 sichere Felder</li>
+        <li>Fortgeschritten: 1.343 sichere Felder</li>
+        <li>Experte: 443 sichere Felder</li>
+        <li>Maximal: 500 sichere Felder</li>
+      </ul>
+    </section>
+
     <section aria-labelledby="numbers-heading">
       <h2 id="numbers-heading">Zahlen verstehen</h2>
       <p>Eine Zahl zeigt an, wie viele Minen direkt an ein aufgedecktes Feld angrenzen. Dazu zählen die acht Felder
         oberhalb, unterhalb und neben dem Feld. Nutze diese Information, um sichere Felder zu ermitteln und Minen zu
-        markieren.</p>
+        markieren. Klickst du eine Zahl erneut an, werden die übrigen Nachbarfelder nur aufgedeckt, wenn die Zahl durch
+        Flaggen und bereits ausgelöste Minen korrekt abgedeckt ist. Ist dabei noch eine Mine verdeckt, wird kein
+        weiteres Feld geöffnet: Falsch gesetzte Flaggen werden markiert und du verlierst nur ein Extraleben.</p>
     </section>
 
     <section aria-labelledby="score-heading">
@@ -103,16 +124,26 @@
         Spielfeld weiter, und dein Score wird übernommen. Nach zwei gewonnenen Runden auf der Stufe Anfänger steht er
         also bei 142.</p>
       <p>Der Score wird mit dem Spielstand gespeichert und bleibt beim Neuladen der Seite erhalten. Nach einer
-        Niederlage oder mit „Neustart“ beginnt er wieder bei 0.</p>
+        Niederlage bleibt er im beendeten Spiel sichtbar. Wenn du danach ein neues Spiel startest oder „Neustart“
+        wählst, beginnt er wieder bei 0.</p>
     </section>
 
     <section aria-labelledby="status-heading">
       <h2 id="status-heading">Spielstatus</h2>
       <p>Die Statusmeldung informiert dich über den Beginn, den laufenden Spielstand, einen Sieg oder eine Niederlage.
-        Mit „Neustart“ kannst du jederzeit ein neues Spiel beginnen. Nach einem Sieg startest du mit „Nächste Runde“ die
-        nächste Runde.</p>
+        Mit „Neustart“ kannst du die laufende Serie beenden und von vorn beginnen. Nach einem Sieg startest du mit
+        „Nächste Runde“ ein neues Spielfeld, ohne die Serie zurückzusetzen.</p>
       <p>Geht beim Neustart ein Score verloren oder läuft gerade ein Spiel, fragt das Spiel vorher nach. Ein
-        abgebrochenes Spiel zählt in der Statistik als Niederlage.</p>
+        abgebrochenes Spiel zählt in der Statistik als Niederlage. Ein Neustart setzt Score, Extraleben, Prüfungen und
+        Belohnungsfortschritt nur für die aktuelle Schwierigkeitsstufe zurück.</p>
+    </section>
+
+    <section aria-labelledby="statistics-heading">
+      <h2 id="statistics-heading">Statistik</h2>
+      <p>Die Statistiken sind nach Schwierigkeitsgrad getrennt. Sie zeigen geräumte Minen aus gewonnenen Runden, die
+        Erfolgsquote, deine aktuelle Siegesserie und den höchsten Score einer zusammenhängenden Serie. Der höchste
+        Score wird auch bei einer Niederlage oder einem Neustart berücksichtigt. <a href="statistics.html">Statistiken
+          ansehen</a>.</p>
     </section>
 
     <p><a href="game.html">Zum Spiel</a></p>
