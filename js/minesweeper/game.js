@@ -10,6 +10,7 @@ const newGameLabel = newGameButton.querySelector('.game-header-label');
 const gameChromeToggle = document.querySelector('#game-chrome-toggle');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
+const extraLivesElement = document.querySelector('#extra-lives');
 const seriesRevealedFieldsElement = document.querySelector('#series-revealed-fields');
 const seriesResetDialog = document.querySelector('#series-reset-dialog');
 const modeButtons = document.querySelectorAll('.mode-button');
@@ -36,6 +37,7 @@ const boardRows = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
 const gameStateStorageKey = minesweeperRunState.storageKeys.gameState;
+const maxExtraLives = minesweeperRunState.maxExtraLives;
 const iconPaths = {
   flag: '../../assets/icons/flag.svg',
   mine: '../../assets/icons/mine.svg',
@@ -128,12 +130,23 @@ function updateSeriesDisplay() {
   seriesRevealedFieldsElement.textContent = series.revealedFields.toLocaleString('de-DE');
 }
 
-function isRoundWon() {
+function updateExtraLivesDisplay() {
+  extraLivesElement.querySelector('[aria-hidden="true"]').textContent =
+    `${series.extraLives}/${maxExtraLives}`;
+  extraLivesElement.querySelector('.visually-hidden').textContent =
+    `${series.extraLives} von ${maxExtraLives}`;
+}
+
+function isTriggeredMine(cell) {
+  return cell.isRevealed && cell.isMine;
+}
+
+function checkForWin() {
   return cells.every((row) => row.every((cell) => cell.isMine || cell.isRevealed));
 }
 
 function canStartNextRound() {
-  return gameOver && isRoundWon();
+  return gameOver && checkForWin();
 }
 
 function updateNewGameButton() {
@@ -172,13 +185,23 @@ function restoreCellPresentation(cell) {
   cell.element.classList.toggle('is-flagged', cell.isFlagged);
   cell.element.classList.toggle('is-marked', cell.isMarked);
   cell.element.classList.toggle('is-revealed', cell.isRevealed);
+  cell.element.classList.toggle('is-wrong-flag', cell.isWrongFlag);
 
-  if (cell.isRevealed) {
+  if (isTriggeredMine(cell)) {
+    cell.element.classList.add('is-mine');
+    setCellContent(cell, 'mine', '*');
+    cell.element.setAttribute('aria-label', `Ausgelöste Mine auf Feld ${cell.coordinate}`);
+  } else if (cell.isRevealed) {
     const adjacentMines = countAdjacentMines(cell);
     setAdjacentMineCount(cell, adjacentMines);
   } else if (cell.isFlagged) {
     setCellContent(cell, 'flag', '?');
-    cell.element.setAttribute('aria-label', `Als Flagge markiertes Feld ${cell.coordinate}`);
+    cell.element.setAttribute(
+      'aria-label',
+      cell.isWrongFlag
+        ? `Falsch gesetzte Flagge auf Feld ${cell.coordinate}`
+        : `Als Flagge markiertes Feld ${cell.coordinate}`
+    );
   } else if (cell.isMarked) {
     setCellContent(cell, 'questionmark', '');
     cell.element.setAttribute('aria-label', `Als Fragezeichen markiertes Feld ${cell.coordinate}`);
@@ -272,6 +295,20 @@ function setAdjacentMineCount(cell, adjacentMines) {
   );
 }
 
+function registerHit(message) {
+  if (series.extraLives === 0) {
+    gameOver = true;
+    recordGameResult(false);
+    gameStatus.textContent = `${message} Keine Extraleben mehr. Spiel verloren.`;
+    gameOverRevealMines();
+    return;
+  }
+
+  series.extraLives -= 1;
+  updateExtraLivesDisplay();
+  gameStatus.textContent = `${message} Noch ${series.extraLives} von ${maxExtraLives} Extraleben.`;
+}
+
 function revealCell(cell) {
   if (gameOver || cell.isRevealed || cell.isFlagged || cell.isMarked) {
     return;
@@ -279,13 +316,12 @@ function revealCell(cell) {
 
   if (cell.isMine) {
     cell.isRevealed = true;
-    cell.element.classList.add('is-revealed');
+    cell.element.classList.add('is-revealed', 'is-mine');
     setCellContent(cell, 'mine', '*');
-    cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
-    gameOver = true;
-    recordGameResult(false);
-    gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
-    gameOverRevealMines();
+    cell.element.setAttribute('aria-label', `Ausgelöste Mine auf Feld ${cell.coordinate}`);
+    mineCurrentCount -= 1;
+    mineCount.textContent = mineCurrentCount;
+    registerHit(`Mine auf Feld ${cell.coordinate} ausgelöst.`);
     return;
   }
 
@@ -318,7 +354,7 @@ function revealCell(cell) {
 
   addRevealedSafeFields(revealedCount);
 
-  if (isRoundWon()) {
+  if (checkForWin()) {
     gameOver = true;
     recordGameResult(true);
     gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt. Mit „Nächste Runde“ geht es weiter.';
@@ -334,8 +370,10 @@ function toggleFlag(cell) {
   }
 
   cell.isFlagged = !cell.isFlagged;
+  cell.isWrongFlag = false;
   setCellContent(cell, cell.isFlagged ? 'flag' : null, '?');
   cell.element.classList.toggle('is-flagged', cell.isFlagged);
+  cell.element.classList.remove('is-wrong-flag');
   cell.element.setAttribute(
     'aria-label',
     `${cell.isFlagged ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
@@ -374,39 +412,63 @@ function setMode(mode) {
 }
 
 function activeNumber(cell) {
-  let neighbors = getNeighbors(cell.row, cell.column);
-  let flaggedNeighbors = countFlags(neighbors);
-  let adjacentMines = countMines(neighbors);
-  if (flaggedNeighbors === adjacentMines) {
-    neighbors
-      .filter((neighbor) => !neighbor.isRevealed && !neighbor.isFlagged)
-      .forEach((neighbor) => {
-        revealCell(neighbor);
-      })
-      ;
+  const neighbors = getNeighbors(cell.row, cell.column);
+  const flaggedAndTriggeredMines = countFlags(neighbors)
+    + neighbors.filter(isTriggeredMine).length;
+  const adjacentMines = countMines(neighbors);
+
+  if (flaggedAndTriggeredMines !== adjacentMines) {
+    return;
   }
+
+  const cellsToReveal = neighbors.filter(
+    (neighbor) => !neighbor.isRevealed && !neighbor.isFlagged && !neighbor.isMarked
+  );
+  const mineToReveal = cellsToReveal.find((neighbor) => neighbor.isMine);
+
+  if (mineToReveal) {
+    neighbors
+      .filter((neighbor) => neighbor.isFlagged && !neighbor.isMine)
+      .forEach((neighbor) => {
+        neighbor.isWrongFlag = true;
+        neighbor.element.classList.add('is-wrong-flag');
+        neighbor.element.setAttribute(
+          'aria-label',
+          `Falsch gesetzte Flagge auf Feld ${neighbor.coordinate}`
+        );
+      });
+    registerHit(`Falsche Flaggen um Feld ${cell.coordinate}.`);
+    return;
+  }
+
+  cellsToReveal.forEach(revealCell);
 }
 
 function useActiveMode(cell, mode = activeMode) {
-  if (newGame) {
-    if (mode !== 'reveal') {
-      return;
+  if (isTriggeredMine(cell)) {
+    gameStatus.textContent = `Auf Feld ${cell.coordinate} liegt eine ausgelöste Mine.`;
+  } else {
+    if (newGame) {
+      if (mode !== 'reveal') {
+        return;
+      }
+
+      placeMines(cell);
+      newGame = false;
     }
 
-    placeMines(cell);
-    newGame = false;
+    if (cell.isRevealed) {
+      activeNumber(cell);
+    } else if (mode === 'flag') {
+      toggleFlag(cell);
+    } else if (mode === 'mark') {
+      toggleMark(cell);
+    } else {
+      revealCell(cell);
+    }
   }
 
-  if (cell.isRevealed) {
-    activeNumber(cell);
-  } else if (mode === 'flag') {
-    toggleFlag(cell);
-  } else if (mode === 'mark') {
-    toggleMark(cell);
-  } else {
-    revealCell(cell);
-  }
-
+  updateExtraLivesDisplay();
   updateSeriesDisplay();
   updateNewGameButton();
   saveGameState();
@@ -654,6 +716,7 @@ function createBoard() {
   gameStatus.textContent = 'Neues Spiel gestartet.';
   mineCurrentCount = mineTotal;
   mineCount.textContent = mineCurrentCount;
+  updateExtraLivesDisplay();
   updateSeriesDisplay();
   updateNewGameButton();
 
@@ -692,13 +755,16 @@ function createBoard() {
 }
 
 function gameOverRevealMines() {
-  cells.forEach(row => row.filter((currentCell) => currentCell.isMine && !currentCell.isFlagged).forEach((mine) => {
+  cells.forEach(row => row.filter((currentCell) => (
+    currentCell.isMine && !currentCell.isFlagged && !isTriggeredMine(currentCell)
+  )).forEach((mine) => {
     setCellContent(mine, 'mine', '*');
     mine.element.setAttribute('aria-label', `Mine auf Feld ${mine.coordinate}`);
     mine.element.classList.add('is-mine');
   }));
   cells.forEach(row => row.filter((currentCell) => !currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
-    flag.element.setAttribute('aria-label', `Falsch als Flagge markiertes Feld ${flag.coordinate}`);
+    flag.isWrongFlag = true;
+    flag.element.setAttribute('aria-label', `Falsch gesetzte Flagge auf Feld ${flag.coordinate}`);
     flag.element.classList.add('is-wrong-flag');
   }));
   cells.forEach(row => row.filter((currentCell) => currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
@@ -776,6 +842,7 @@ function loadGameState() {
   cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
 
   series = minesweeperRunState.normalizeSeries(savedGameState.series);
+  updateExtraLivesDisplay();
   updateSeriesDisplay();
   gameOver = Boolean(savedGameState.gameOver);
   newGame = Boolean(savedGameState.newGame);

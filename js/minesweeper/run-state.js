@@ -154,6 +154,7 @@ const minesweeperRunState = (() => {
 
   return Object.freeze({
     storageKeys,
+    maxExtraLives,
     createDefaultSeries,
     normalizeSeries,
     readStatistics,
