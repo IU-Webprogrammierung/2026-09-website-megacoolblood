@@ -85,7 +85,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   out; a win flags every remaining mine automatically, so all flags show as
   correct and the remaining mine count is 0
 - Winning streak and game statistics stored using `localStorage`
-- Statistics are grouped by difficulty and contain games won, success rate,
+- Statistics are grouped by difficulty, including custom sizes and rule
+  combinations; cards list presets by size first, then custom difficulties,
+  and unknown keys are skipped. They contain games won, success rate,
   cleared mines, wrong flags, best, average, and slowest winning time, current
   streak, longest winning streak, and the highest Score achieved within a
   series. A win counts every

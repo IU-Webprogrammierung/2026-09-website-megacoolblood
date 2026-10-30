@@ -1,13 +1,40 @@
 const statisticsList = document.querySelector('#statistics-list');
-const difficultyLabels = {
-  beginner: 'Anfänger',
-  intermediate: 'Fortgeschritten',
-  expert: 'Experte',
-  maximum: 'Maximal (100 × 100)'
-};
+const presetOrder = Object.keys(minesweeperDifficulty.presets);
 
 function getStatistics() {
   return minesweeperRunState.readStatistics() ?? {};
+}
+
+function getRulesRank(config) {
+  const deviations = [!config.extraLives, !config.checks, config.noGuess];
+  const count = deviations.filter(Boolean).length;
+  const pattern = deviations.reduce((sum, isDeviation, index) => sum + (isDeviation ? 2 ** index : 0), 0);
+
+  return count * 8 + pattern;
+}
+
+function compareDifficulties(first, second) {
+  const firstPreset = minesweeperDifficulty.getPresetName(first.config);
+  const secondPreset = minesweeperDifficulty.getPresetName(second.config);
+  const sizeOrder = (entry, preset) => (preset ? [0, presetOrder.indexOf(preset), 0, 0] : [
+    1,
+    entry.config.rows * entry.config.columns,
+    entry.config.mines,
+    entry.config.rows
+  ]);
+  const firstOrder = [...sizeOrder(first, firstPreset), getRulesRank(first.config)];
+  const secondOrder = [...sizeOrder(second, secondPreset), getRulesRank(second.config)];
+  const difference = firstOrder.findIndex((value, index) => value !== secondOrder[index]);
+
+  return difference === -1 ? 0 : firstOrder[difference] - secondOrder[difference];
+}
+
+function getAvailableDifficulties(statistics) {
+  return Object.keys(statistics)
+    .filter((key) => statistics[key] && typeof statistics[key] === 'object')
+    .map((key) => ({ key, config: minesweeperDifficulty.parseDifficultyKey(key) }))
+    .filter((entry) => entry.config)
+    .sort(compareDifficulties);
 }
 
 function createStatistic(label, value) {
@@ -42,7 +69,7 @@ function createDuration(milliseconds, hasValue) {
 function renderStatistics() {
   const statistics = getStatistics();
   statisticsList.replaceChildren();
-  const availableDifficulties = Object.keys(difficultyLabels).filter((difficulty) => statistics[difficulty]);
+  const availableDifficulties = getAvailableDifficulties(statistics);
 
   if (availableDifficulties.length === 0) {
     const emptyState = document.createElement('p');
@@ -51,8 +78,8 @@ function renderStatistics() {
     return;
   }
 
-  availableDifficulties.forEach((difficulty) => {
-    const data = minesweeperRunState.readDifficultyStatistics(statistics, difficulty);
+  availableDifficulties.forEach(({ key, config }) => {
+    const data = minesweeperRunState.readDifficultyStatistics(statistics, key);
     const card = document.createElement('article');
     const heading = document.createElement('h2');
     const values = document.createElement('dl');
@@ -64,7 +91,7 @@ function renderStatistics() {
     const formatCount = (value) => value.toLocaleString('de-DE');
 
     card.className = 'statistics-card';
-    heading.textContent = difficultyLabels[difficulty];
+    heading.textContent = minesweeperDifficulty.getDifficultyLabel(config);
     values.append(
       createStatistic('Gewonnene Spiele', `${formatCount(wins)} von ${formatCount(gamesPlayed)}`),
       createStatistic('Erfolgsquote', `${successRate} %`),
