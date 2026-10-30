@@ -70,6 +70,12 @@
         übernommen. Jede Stufe hat einen eigenen Spielstand. Beim Wechsel bleibt die Runde erhalten und wird
         fortgesetzt, wenn du zu dieser Stufe zurückkehrst. „Neustart“ setzt nur den Spielstand der aktuellen Stufe
         zurück. Ein vorhandener Spielstand aus einer früheren Version wird nicht übernommen.</p>
+      <p>In den <a href="settings.html">Einstellungen</a> wählst du eine der vier festen Stufen oder legst mit
+        „Benutzerdefiniert“ eine eigene fest: 5 bis 100 Zeilen und Spalten und höchstens 33 % Minen, wobei der
+        Startbereich von 3 × 3 Feldern immer frei bleibt. Dort schaltest du außerdem die Spielregeln Extraleben,
+        Prüfen und ratefreie Minenplatzierung ein oder aus. Jede Kombination aus Größe, Minen und Spielregeln ist ein
+        eigener Schwierigkeitsgrad mit eigenem Spielstand und eigener Statistik. Eine eigene Stufe mit denselben Werten
+        wie eine feste Stufe zählt als diese Stufe.</p>
       <h3>Tastaturkürzel</h3>
       <dl>
         <div>
@@ -111,10 +117,12 @@
         Belohnungsfortschritt jeweils um 1. Der Fortschritt wird in der Siegesserie pro Schwierigkeitsgrad gesammelt
         und über die nächste Runde hinweg gespeichert.</p>
       <p>Für jedes erreichte Schwellenziel erhältst du ein Extraleben, höchstens bis zum Stand von 3. Bist du bereits
-        bei 3 von 3, wird daraus stattdessen eine zusätzliche Prüfung. Die Schwelle wird je Stufe mit dieser Formel
-        berechnet; <code>ceil</code> rundet auf die nächste ganze Feldzahl auf:</p>
-      <p><code>ceil(totalFields / (Mines * (Mines / totalFields)^3 * 5 / 4))</code></p>
-      <p><code>totalFields</code> ist die Gesamtzahl der Felder der Stufe, <code>Mines</code> deren Minenzahl.</p>
+        bei 3 von 3, wird daraus stattdessen eine zusätzliche Prüfung. Die Schwelle hängt nur davon ab, wie dicht die
+        Minen liegen: Je mehr Minen pro Feld, desto häufiger gibt es eine Belohnung. Sie wird so berechnet und auf die
+        nächste ganze Feldzahl aufgerundet, höchstens aber 9.999 Felder:</p>
+      <p><code>0,8 · (Felder / Minen)<sup>4</sup></code></p>
+      <p><code>Felder</code> ist die Gesamtzahl der Felder der Stufe, <code>Minen</code> deren Minenzahl. Die
+        Einstellungen zeigen die Schwelle für jeden Schwierigkeitsgrad an.</p>
       <ul>
         <li>Anfänger: 3.444 sichere Felder</li>
         <li>Fortgeschritten: 1.343 sichere Felder</li>

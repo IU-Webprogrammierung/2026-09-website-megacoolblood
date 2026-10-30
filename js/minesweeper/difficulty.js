@@ -18,6 +18,7 @@ const minesweeperDifficulty = (() => {
   });
   // Since the extra lives update, extra lives and checks are part of every standard difficulty.
   const defaultRules = Object.freeze({ extraLives: true, checks: true, noGuess: false });
+  const maxRewardThreshold = 9999;
   const keyPattern = /^(beginner|intermediate|expert|maximum|custom-(\d+)x(\d+)-(\d+))(-lives)?(-checks)?(\+noguess)?$/;
 
   function clamp(value, minimum, maximum) {
@@ -115,6 +116,31 @@ const minesweeperDifficulty = (() => {
     return [base, ...deviations].join(' · ');
   }
 
+  // Equivalent to ceil(fields / (mines * (mines / fields)^3 * 5 / 4)); denser boards reward more often.
+  function getRewardThreshold(raw) {
+    const config = normalizeDifficulty(raw);
+    const fieldsPerMine = (config.rows * config.columns) / config.mines;
+
+    return Math.min(maxRewardThreshold, Math.ceil(0.8 * fieldsPerMine ** 4));
+  }
+
+  // Empty when neither extra lives nor checks are enabled, because there is nothing to reward.
+  function describeReward(raw) {
+    const config = normalizeDifficulty(raw);
+    const every = `Alle ${getRewardThreshold(config).toLocaleString('de-DE')} aufgedeckten sicheren Felder`;
+
+    if (config.extraLives && config.checks) {
+      return `${every}: +1 Extraleben, bei 3 Extraleben stattdessen +1 Prüfung.`;
+    }
+    if (config.extraLives) {
+      return `${every}: +1 Extraleben, höchstens 3.`;
+    }
+    if (config.checks) {
+      return `${every}: +1 Prüfung.`;
+    }
+    return '';
+  }
+
   // Invalid stored values lead to Anfänger; without a stored configuration the former preset choice is used.
   function readStoredDifficulty() {
     try {
@@ -147,6 +173,7 @@ const minesweeperDifficulty = (() => {
     limits,
     presets,
     defaultRules,
+    maxRewardThreshold,
     getMaxMines,
     createPresetDifficulty,
     normalizeDifficulty,
@@ -154,6 +181,8 @@ const minesweeperDifficulty = (() => {
     getDifficultyKey,
     parseDifficultyKey,
     getDifficultyLabel,
+    getRewardThreshold,
+    describeReward,
     readStoredDifficulty,
     writeStoredDifficulty
   });

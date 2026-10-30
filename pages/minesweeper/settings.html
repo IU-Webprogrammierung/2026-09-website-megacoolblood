@@ -16,23 +16,75 @@
   <component path="../../components/header.html"></component>
 
   <main id="main-content" tabindex="-1">
-  <h1>Minesweeper-Einstellungen</h1>
-  <form id="settings-form">
-   <fieldset>
-    <legend>Schwierigkeitsgrad</legend>
-    <label for="difficulty">Auswahl</label>
-    <select id="difficulty" name="difficulty" aria-describedby="difficulty-help">
-     <option value="beginner">Anfänger</option>
-     <option value="intermediate">Fortgeschritten</option>
-     <option value="expert">Experte</option>
-    <option value="maximum">Maximal (100 × 100, 2.000 Minen)</option>
-    </select>
-    <p id="difficulty-help">Jeder Schwierigkeitsgrad hat einen eigenen Spielstand. Beim Wechsel bleibt dein Spiel
-     erhalten und wird fortgesetzt, wenn du zu dieser Stufe zurückwechselst.</p>
-   </fieldset>
-   <button type="submit">Einstellungen speichern</button>
-   <p id="settings-status" role="status" aria-live="polite"></p>
-  </form>
+    <h1>Minesweeper-Einstellungen</h1>
+    <form id="settings-form" class="settings-form" novalidate>
+      <p id="difficulty-help">Jede Kombination aus Größe, Minen und Spielregeln ist ein eigener Schwierigkeitsgrad mit
+        eigenem Spielstand und eigener Statistik. Beim Wechsel bleibt dein Spiel erhalten und wird fortgesetzt, wenn du
+        zu diesem Schwierigkeitsgrad zurückwechselst.</p>
+      <fieldset>
+        <legend>Schwierigkeitsgrad</legend>
+        <div class="settings-field">
+          <label for="difficulty">Stufe</label>
+          <select id="difficulty" name="difficulty" aria-describedby="difficulty-help">
+            <option value="beginner">Anfänger (9 × 9, 10 Minen)</option>
+            <option value="intermediate">Fortgeschritten (16 × 16, 40 Minen)</option>
+            <option value="expert">Experte (16 × 30, 99 Minen)</option>
+            <option value="maximum">Maximal (100 × 100, 2.000 Minen)</option>
+            <option value="custom">Benutzerdefiniert</option>
+          </select>
+        </div>
+        <p id="size-help" class="settings-hint">Bei einer festen Stufe zeigen die Felder deren Werte. Wähle
+          „Benutzerdefiniert“, um sie zu ändern.</p>
+        <div class="settings-size-fields">
+          <div class="settings-field">
+            <label for="rows">Zeilen</label>
+            <input type="number" id="rows" name="rows" min="5" max="100" step="1" inputmode="numeric" required
+              aria-describedby="size-help rows-hint rows-error">
+            <p id="rows-hint" class="settings-hint">5 bis 100</p>
+            <p id="rows-error" class="settings-error" hidden></p>
+          </div>
+          <div class="settings-field">
+            <label for="columns">Spalten</label>
+            <input type="number" id="columns" name="columns" min="5" max="100" step="1" inputmode="numeric" required
+              aria-describedby="size-help columns-hint columns-error">
+            <p id="columns-hint" class="settings-hint">5 bis 100</p>
+            <p id="columns-error" class="settings-error" hidden></p>
+          </div>
+          <div class="settings-field">
+            <label for="mines">Minen</label>
+            <input type="number" id="mines" name="mines" min="1" step="1" inputmode="numeric" required
+              aria-describedby="size-help mines-hint mines-error">
+            <p id="mines-hint" class="settings-hint"></p>
+            <p id="mines-error" class="settings-error" hidden></p>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Spielregeln</legend>
+        <div class="settings-check">
+          <input type="checkbox" id="rule-extra-lives" name="extraLives"
+            aria-describedby="rule-extra-lives-help reward-info">
+          <label for="rule-extra-lives">Extraleben</label>
+          <p id="rule-extra-lives-help" class="settings-hint">Du startest mit 3 Extraleben. Eine Mine kostet ein
+            Extraleben, statt das Spiel zu beenden.</p>
+        </div>
+        <div class="settings-check">
+          <input type="checkbox" id="rule-checks" name="checks" aria-describedby="rule-checks-help reward-info">
+          <label for="rule-checks">Prüfen</label>
+          <p id="rule-checks-help" class="settings-hint">Du startest mit 3 Prüfungen. Eine Prüfung markiert eine Mine
+            mit einer Flagge oder deckt ein sicheres Feld auf.</p>
+        </div>
+        <div class="settings-check">
+          <input type="checkbox" id="rule-no-guess" name="noGuess" aria-describedby="rule-no-guess-help">
+          <label for="rule-no-guess">Ratefreie Minenplatzierung</label>
+          <p id="rule-no-guess-help" class="settings-hint">Die Minen werden möglichst so verteilt, dass du nicht raten
+            musst.</p>
+        </div>
+        <p id="reward-info" class="settings-reward"></p>
+      </fieldset>
+      <button type="submit">Einstellungen speichern</button>
+      <p id="settings-status" role="status" aria-live="polite"></p>
+    </form>
   </main>
   <component path="../../components/footer.html"></component>
   <component path="../../components/footer.html"></component>

@@ -16,11 +16,19 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 ### Minesweeper
 
 - Overview, game, settings, and statistics pages
-- Four difficulty levels:
+- Four preset difficulty levels:
   - Beginner: 9 × 9 cells and 10 mines
   - Intermediate: 16 × 16 cells and 40 mines
   - Expert: 30 × 16 cells and 99 mines
   - Maximum: 100 × 100 cells and 2,000 mines
+- Custom difficulties in the settings: 5 to 100 rows and columns and at most
+  33 % mines, keeping the 3 × 3 start area free. Preset sizes are shown
+  read-only; custom values are validated with a message per field
+- Rule switches in the settings: extra lives, Check, and no-guess placement.
+  Each combination of size, mines, and rules is a separate difficulty with its
+  own saved game and statistics. The gameplay effect of switching extra lives
+  or Check off and of no-guess placement is not implemented yet; the settings
+  already store these choices
 - Random mine placement and display of adjacent mine counts
 - Automatic revealing of connected empty areas
 - Four input modes: Reveal, Flag, Mark with a question mark, and limited Check
@@ -30,8 +38,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Three starting extra lives; revealing a mine consumes one, and another mine
   hit at zero lives ends the game
 - Safe reveals grant a reward for each difficulty-specific threshold:
-  `ceil(totalFields / (mines * (mines / totalFields)^3 * 5 / 4))`
+  `ceil(0.8 * (fields / mines)^4)`, capped at 9,999 fields
   (Beginner: 3,444; Intermediate: 1,343; Expert: 443; Maximum: 500 fields).
+  The settings page shows the threshold for the selected difficulty.
   Rewards restore an extra life up to three; at full lives, a reward adds a
   Check charge instead
 - Check mode starts with three charges and uses one to flag a mine or reveal a

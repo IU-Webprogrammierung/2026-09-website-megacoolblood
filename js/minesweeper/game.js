@@ -24,22 +24,12 @@ const checkChargesElement = document.querySelector('#check-charges');
 const mobileLayout = window.matchMedia('(max-width: 767px)');
 let hasUserSelectedImmersiveMode = false;
 
-function getFieldsUntilNextReward(totalFields, mines) {
-  if (mines === 0) {
-    return Infinity;
-  }
-
-  return Math.ceil(
-    totalFields / (mines * Math.pow(mines / totalFields, 3) * 5 / 4)
-  );
-}
-
 const difficultyConfig = minesweeperDifficulty.readStoredDifficulty();
 const difficulty = minesweeperDifficulty.getDifficultyKey(difficultyConfig);
 const boardRows = difficultyConfig.rows;
 const boardColumns = difficultyConfig.columns;
 const mineTotal = difficultyConfig.mines;
-const rewardThreshold = getFieldsUntilNextReward(boardRows * boardColumns, mineTotal);
+const rewardThreshold = minesweeperDifficulty.getRewardThreshold(difficultyConfig);
 const maxExtraLives = minesweeperRunState.maxExtraLives;
 const iconPaths = {
   fullscreen: '../../assets/icons/fullscreen.svg',
