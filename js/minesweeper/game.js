@@ -35,11 +35,6 @@ const mineTotal = difficultySettings[difficulty].mines;
 const streakStorageKey = 'lycheelab-winning-streak';
 const statisticsStorageKey = 'lycheelab-statistics';
 const gameStateStorageKey = 'lycheelab-minesweeper-game';
-const iconPaths = {
-  flag: '../../assets/icons/flag.svg',
-  mine: '../../assets/icons/mine.svg',
-  questionmark: '../../assets/icons/questionmark.svg'
-};
 
 function setImmersiveMode(isImmersive) {
   document.body.classList.toggle('is-immersive', isImmersive);
@@ -128,21 +123,6 @@ function recordGameResult(won) {
   }
 }
 
-function setCellContent(cell, iconName, fallbackText) {
-  cell.element.replaceChildren();
-
-  if (!iconName) {
-  cell.element.textContent = fallbackText;
-  return;
-  }
-
-  const icon = document.createElement('img');
-  icon.className = 'game-cell-icon';
-  icon.src = iconPaths[iconName];
-  icon.alt = '';
-  cell.element.append(icon);
-}
-
 function saveGameState() {
   const gameState = {
   difficulty,
@@ -172,10 +152,8 @@ function restoreCellPresentation(cell) {
   const adjacentMines = countAdjacentMines(cell);
   setAdjacentMineCount(cell, adjacentMines);
   } else if (cell.isFlagged) {
-  setCellContent(cell, 'flag', '');
   cell.element.setAttribute('aria-label', `Als Flagge markiertes Feld ${cell.coordinate}`);
   } else if (cell.isMarked) {
-  setCellContent(cell, 'questionmark', '');
   cell.element.setAttribute('aria-label', `Als Fragezeichen markiertes Feld ${cell.coordinate}`);
   } else {
   cell.element.textContent = '';
@@ -274,8 +252,7 @@ function revealCell(cell) {
 
   if (cell.isMine) {
   cell.isRevealed = true;
-  cell.element.classList.add('is-revealed');
-  setCellContent(cell, 'mine', '*');
+  cell.element.classList.add('is-revealed', 'is-mine');
   cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
   gameOver = true;
   recordGameResult(false);
@@ -328,7 +305,6 @@ function toggleFlag(cell) {
   }
 
   cell.isFlagged = !cell.isFlagged;
-  setCellContent(cell, cell.isFlagged ? 'flag' : null, '');
   cell.element.classList.toggle('is-flagged', cell.isFlagged);
   cell.element.setAttribute(
   'aria-label',
@@ -347,7 +323,6 @@ function toggleMark(cell) {
   }
 
   cell.isMarked = !cell.isMarked;
-  setCellContent(cell, cell.isMarked ? 'questionmark' : null, '');
   cell.element.classList.toggle('is-marked', cell.isMarked);
   cell.element.setAttribute(
   'aria-label',
@@ -683,7 +658,7 @@ function createBoard() {
 
 function gameOverRevealMines() {
   cells.forEach(row => row.filter((currentCell) => currentCell.isMine && !currentCell.isFlagged).forEach((mine) => {
-  setCellContent(mine, 'mine', '*');
+  mine.element.textContent = '';
   mine.element.setAttribute('aria-label', `Mine auf Feld ${mine.coordinate}`);
   mine.element.classList.add('is-mine');
   }));

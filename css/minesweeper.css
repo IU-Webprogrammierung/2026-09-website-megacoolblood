@@ -264,6 +264,28 @@ main.minesweeper-game-page {
       background: var(--cell-marked-color);
     }
 
+    /* Icons follow the state classes, so a cell cannot show a state without its icon. */
+    &.is-flagged::before,
+    &.is-marked::before,
+    &.is-mine::before {
+      content: '';
+      width: 65%;
+      height: 65%;
+      background: center / contain no-repeat;
+    }
+
+    &.is-flagged::before {
+      background-image: url('../assets/icons/flag.svg');
+    }
+
+    &.is-marked::before {
+      background-image: url('../assets/icons/questionmark.svg');
+    }
+
+    &.is-mine::before {
+      background-image: url('../assets/icons/mine.svg');
+    }
+
     &.is-mine {
       background: var(--cell-mine-color);
       border-color: var(--cell-mine-color);
@@ -288,13 +310,5 @@ main.minesweeper-game-page {
     &.is-wrong-flag {
       background: var(--cell-wrong-flag-color);
     }
-  }
-
-  .game-cell-icon {
-    display: block;
-    width: 65%;
-    height: 65%;
-    margin: auto;
-    object-fit: contain;
   }
 }
