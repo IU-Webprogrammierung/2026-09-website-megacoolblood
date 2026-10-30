@@ -21,29 +21,6 @@ main.minesweeper-game-page {
     gap: var(--space-small);
   }
 
-  .game-chrome-toggle {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: grid;
-    flex: 0 0 48px;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    color: var(--color-accent-dark);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 0.25rem;
-    cursor: pointer;
-  }
-
-  .game-chrome-toggle img {
-    width: 24px;
-    height: 24px;
-    padding: 0;
-  }
-
   .game-board-viewport {
     --board-surface-color: var(--color-background);
     position: relative;
@@ -207,6 +184,22 @@ main.minesweeper-game-page {
   main.minesweeper-game-page .game-header .info-icon {
     width: 24px;
     height: 24px;
+    padding: 0;
+  }
+
+  /* Below 768 px the toggle is an icon button in the corner; its label stays available to screen readers. */
+  main.minesweeper-game-page .game-panel > .game-header {
+    padding-inline-end: calc(48px + var(--space-small));
+  }
+
+  main.minesweeper-game-page .game-panel .game-header-actions > #game-chrome-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
     padding: 0;
   }
 

@@ -52,9 +52,11 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   centering control and loading a saved game move the view to the unrevealed,
   unmarked cell next to a revealed cell that is closest to the last used cell;
   without such a cell, the view is reset
-- The game starts in immersive mode below 768 px; a button toggles the global
-  website header and footer. On wider screens, the site chrome is visible by
-  default and can be hidden with the same control
+- The game starts in immersive mode below 768 px, where the website header and
+  footer are hidden. A labeled "Vollbild" button hides them on wider screens and
+  becomes "Vollbild beenden" while they are hidden; below 768 px it is an icon
+  button named "Menü anzeigen" that shows them again. This is a CSS layout
+  mode, not the browser Fullscreen API
 - Pan/zoom operates on the board viewport; keyboard cell navigation remains
   independent of the visual zoom level
 - A dark frame marks the real board edge on a dotted surface, and inner

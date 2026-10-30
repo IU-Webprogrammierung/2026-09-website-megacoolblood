@@ -80,7 +80,6 @@ main.minesweeper-game-page {
   .game-panel > .game-header {
     position: relative;
     margin-bottom: 0;
-    padding-inline-end: calc(48px + var(--space-small));
   }
 
   .game-header-actions {
@@ -91,7 +90,8 @@ main.minesweeper-game-page {
     gap: var(--space-small);
     min-width: 0;
 
-    > #new-game {
+    > #new-game,
+    > #game-chrome-toggle {
       flex: 0 0 auto;
       width: max-content;
     }
