@@ -172,13 +172,13 @@ function restoreCellPresentation(cell) {
   const adjacentMines = countAdjacentMines(cell);
   setAdjacentMineCount(cell, adjacentMines);
   } else if (cell.isFlagged) {
-  setCellContent(cell, 'flag', '?');
+  setCellContent(cell, 'flag', '');
   cell.element.setAttribute('aria-label', `Als Flagge markiertes Feld ${cell.coordinate}`);
   } else if (cell.isMarked) {
   setCellContent(cell, 'questionmark', '');
   cell.element.setAttribute('aria-label', `Als Fragezeichen markiertes Feld ${cell.coordinate}`);
   } else {
-  cell.element.textContent = '?';
+  cell.element.textContent = '';
   cell.element.setAttribute('aria-label', `Unaufgedecktes Feld ${cell.coordinate}`);
   }
 }
@@ -328,7 +328,7 @@ function toggleFlag(cell) {
   }
 
   cell.isFlagged = !cell.isFlagged;
-  setCellContent(cell, cell.isFlagged ? 'flag' : null, '?');
+  setCellContent(cell, cell.isFlagged ? 'flag' : null, '');
   cell.element.classList.toggle('is-flagged', cell.isFlagged);
   cell.element.setAttribute(
   'aria-label',
@@ -672,7 +672,7 @@ function createBoard() {
    cell.setAttribute('aria-label', `Unaufgedecktes Feld ${coordinate}`);
    cell.setAttribute('row', `${row}`);
    cell.setAttribute('column', `${column}`);
-   cell.textContent = '?';
+   cell.textContent = '';
    cells[row][column] = cellState;
    board.append(cell);
   }
