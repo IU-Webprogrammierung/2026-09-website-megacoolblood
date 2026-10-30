@@ -25,11 +25,6 @@ main.minesweeper-game-page {
     --board-surface-color: var(--color-background);
     position: relative;
     background-color: var(--board-surface-color);
-    /* Safari on iOS ignores Panzoom's unprefixed inline user-select. */
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
 
     /*
      * Gradient strips mark the sides where the board continues beyond the visible area.
