@@ -1,5 +1,6 @@
 const minesweeperRunState = (() => {
   const storageKeys = Object.freeze({
+    activeMode: 'lycheelab-minesweeper-mode',
     gameStatePrefix: 'lycheelab-minesweeper-game',
     statistics: 'lycheelab-statistics'
   });
@@ -123,6 +124,23 @@ const minesweeperRunState = (() => {
     }
   }
 
+  function readActiveMode() {
+    try {
+      return localStorage.getItem(storageKeys.activeMode);
+    } catch {
+      return null;
+    }
+  }
+
+  function writeActiveMode(mode) {
+    try {
+      localStorage.setItem(storageKeys.activeMode, mode);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   function endSeries(difficulty, { countAsLoss = false, revealedFields = 0 } = {}) {
     const statistics = readStatistics();
 
@@ -192,6 +210,8 @@ const minesweeperRunState = (() => {
     readSavedGame,
     writeSavedGame,
     removeSavedGame,
+    readActiveMode,
+    writeActiveMode,
     endSeries,
     getSeriesLossMessage,
     confirmSeriesReset

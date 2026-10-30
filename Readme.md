@@ -24,7 +24,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Random mine placement and display of adjacent mine counts
 - Automatic revealing of connected empty areas
 - Four input modes: Reveal, Flag, Mark with a question mark, and limited Check
-- Mode switching through buttons or the `A`, `F`, `M`, and `P` keyboard shortcuts
+- Mode switching through buttons or the `A`, `F`, `M`, and `P` keyboard shortcuts;
+  the selected mode is stored locally. If no
+  Check charges are left, the game starts in Reveal mode instead
 - Three starting extra lives; revealing a mine consumes one, and another mine
   hit at zero lives ends the game
 - Safe reveals grant a reward for each difficulty-specific threshold:

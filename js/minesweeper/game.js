@@ -450,6 +450,21 @@ function setMode(mode) {
   return true;
 }
 
+// Only explicit choices are stored, so automatic fallbacks keep the preferred mode.
+function selectMode(mode) {
+  if (setMode(mode)) {
+    minesweeperRunState.writeActiveMode(mode);
+  }
+}
+
+function restoreActiveMode() {
+  const storedMode = minesweeperRunState.readActiveMode();
+  const isKnownMode = [...modeButtons].some((button) => button.dataset.mode === storedMode);
+  const isAvailable = storedMode !== 'check' || series.checkCharges > 0;
+
+  setMode(isKnownMode && isAvailable ? storedMode : 'reveal');
+}
+
 function useCheckMode(cell) {
   if (gameOver) {
     return [];
@@ -804,7 +819,7 @@ function handleModeShortcut(event) {
   }
 
   event.preventDefault();
-  setMode(mode);
+  selectMode(mode);
 }
 
 function createBoard() {
@@ -968,7 +983,7 @@ function loadGameState() {
 }
 
 modeButtons.forEach((button) => {
-  button.addEventListener('click', () => setMode(button.dataset.mode));
+  button.addEventListener('click', () => selectMode(button.dataset.mode));
 });
 
 boardViewport.addEventListener('pointerdown', handleBoardPointerDown, true);
@@ -987,6 +1002,7 @@ board.addEventListener('keydown', handleCellKeyDown);
 document.addEventListener('keydown', handleModeShortcut);
 newGameButton.addEventListener('click', startNewGame);
 loadGameState();
+restoreActiveMode();
 
 async function initializeBoardPanzoom() {
   const boardWorld = document.querySelector('.game-board-world');
