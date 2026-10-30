@@ -170,13 +170,13 @@ main.minesweeper-game-page {
 
 .game-board {
   --cell-size: clamp(2rem, 8vw, 3rem);
-  --cell-color: #c0c0c0;
-  --cell-revealed-color: #d3d3d3;
-  --cell-marked-color: #f9edaa;
+  --cell-color: #a5a5a5;
+  --cell-revealed-color: #f2f2f2;
+  --cell-marked-color: #948a5a;
   --cell-text-color: #000;
-  --cell-border-light: #f0f0f0;
+  --cell-bevel-light: #c4c4c4;
+  --cell-bevel-dark: #4d4d4d;
   --cell-border-dark: #808080;
-  --cell-flag-border: #fff;
   --cell-mine-color: #f4cccc;
   --cell-triggered-mine-color: #f00;
   --cell-triggered-mine-border-color: #800000;
@@ -202,7 +202,8 @@ main.minesweeper-game-page {
     padding: 0;
     color: var(--cell-text-color);
     background: var(--cell-color);
-    border: 0.2rem outset var(--cell-border-light);
+    border: 0.2rem solid;
+    border-color: var(--cell-bevel-light) var(--cell-bevel-dark) var(--cell-bevel-dark) var(--cell-bevel-light);
     border-radius: 0.15rem;
     font-weight: 700;
 
@@ -254,13 +255,8 @@ main.minesweeper-game-page {
       color: #595959;
     }
 
-    &.is-flagged {
-      border-color: var(--cell-flag-border);
-    }
-
     &.is-marked {
       background: var(--cell-marked-color);
-      border-color: var(--cell-border-dark);
     }
 
     &.is-mine {
