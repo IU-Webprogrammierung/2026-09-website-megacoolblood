@@ -101,6 +101,17 @@
         </div>
       </form>
     </dialog>
+    <dialog id="win-dialog" class="confirm-dialog win-dialog" aria-labelledby="win-dialog-title"
+      aria-describedby="win-dialog-message">
+      <form method="dialog">
+        <h2 id="win-dialog-title">Gewonnen! Alle Minen entschärft!</h2>
+        <p id="win-dialog-message"></p>
+        <div class="confirm-dialog-actions">
+          <button type="submit" value="view">Spielfeld anschauen</button>
+          <button type="submit" value="next" autofocus>Nächste Runde</button>
+        </div>
+      </form>
+    </dialog>
   </main>
   <component path="../../components/footer.html"></component>
 </body>

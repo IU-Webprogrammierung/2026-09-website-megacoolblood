@@ -16,6 +16,8 @@ const mineCount = document.querySelector('#mine-count');
 const extraLivesElement = document.querySelector('#extra-lives');
 const seriesRevealedFieldsElement = document.querySelector('#series-revealed-fields');
 const seriesResetDialog = document.querySelector('#series-reset-dialog');
+const winDialog = document.querySelector('#win-dialog');
+const winDialogMessage = document.querySelector('#win-dialog-message');
 const modeButtons = document.querySelectorAll('.mode-button');
 const checkModeButton = document.querySelector('[data-mode="check"]');
 const checkChargesElement = document.querySelector('#check-charges');
@@ -614,6 +616,7 @@ function activeNumber(cell) {
 }
 
 function useActiveMode(cell, mode = activeMode) {
+  const wasGameOver = gameOver;
   let rewardAnnouncements = [];
 
   if (isTriggeredMine(cell)) {
@@ -649,6 +652,30 @@ function useActiveMode(cell, mode = activeMode) {
   updateSeriesDisplay();
   updateNewGameButton();
   saveGameState();
+
+  // Only a win in this move opens the dialog, so reloading a won game stays quiet.
+  if (!wasGameOver && canStartNextRound()) {
+    showWinDialog();
+  }
+}
+
+function showWinDialog() {
+  if (typeof winDialog?.showModal !== 'function' || winDialog.open) {
+    return;
+  }
+
+  winDialogMessage.textContent = `Großartig gespielt! Du hast alle sicheren Felder in ${minesweeperRunState.describeDuration(elapsedMs)} aufgedeckt. Dein Score steht jetzt bei ${series.revealedFields.toLocaleString('de-DE')}.`;
+  winDialog.returnValue = '';
+  winDialog.showModal();
+}
+
+// Escape closes the dialog without a value and behaves like "Spielfeld anschauen".
+function handleWinDialogClose() {
+  newGameButton.focus();
+
+  if (winDialog.returnValue === 'next') {
+    startNewGame();
+  }
 }
 
 function handleCellClick(event) {
@@ -1198,6 +1225,7 @@ board.addEventListener('contextmenu', handleCellContextMenu);
 board.addEventListener('keydown', handleCellKeyDown);
 document.addEventListener('keydown', handleModeShortcut);
 newGameButton.addEventListener('click', startNewGame);
+winDialog?.addEventListener('close', handleWinDialogClose);
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'hidden') {
     handlePageHidden();

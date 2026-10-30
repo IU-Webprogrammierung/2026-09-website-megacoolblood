@@ -65,6 +65,11 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Visible focus state for board cells
 - Status messages for starting a game, revealing cells, winning, and losing;
   the win message includes the playing time
+- A win opens a modal `<dialog>` with the playing time, the Score, and the
+  options "Nächste Runde" and "Spielfeld anschauen" (also Escape); focus then
+  returns to the header button. A short pop-in animation only plays without
+  `prefers-reduced-motion: reduce`, and reloading a won game does not reopen
+  the dialog
 - Playing time runs from the first move until the round ends, pauses while
   the page is hidden, and is saved with the game so a reload continues it
 - After a game ends, correct flags are highlighted and wrong flags are crossed

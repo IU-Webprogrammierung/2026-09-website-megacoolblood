@@ -439,3 +439,43 @@ main.minesweeper-game-page {
     cursor: pointer;
   }
 }
+
+.win-dialog {
+  border-top: 0.375rem solid var(--color-accent);
+  text-align: center;
+
+  h2 {
+    color: var(--color-accent-dark);
+    font-size: 1.5rem;
+  }
+
+  .confirm-dialog-actions {
+    justify-content: center;
+  }
+
+  button[value='next'] {
+    color: var(--color-surface);
+    background: var(--color-accent-dark);
+    border: 1px solid var(--color-accent-dark);
+    border-radius: 0.25rem;
+    font-weight: 700;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .win-dialog[open] {
+    animation: win-dialog-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+@keyframes win-dialog-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
