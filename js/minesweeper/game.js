@@ -34,32 +34,12 @@ function getFieldsUntilNextReward(totalFields, mines) {
   );
 }
 
-const difficultySettings = {
-  beginner: { columns: 9, mines: 10, rows: 9 },
-  intermediate: { columns: 16, mines: 40, rows: 16 },
-  expert: { columns: 30, mines: 99, rows: 16 },
-  maximum: { columns: 100, mines: 2000, rows: 100 }
-};
-const rewardFieldsByDifficulty = Object.freeze(Object.fromEntries(
-  Object.entries(difficultySettings).map(([level, settings]) => [
-    level,
-    getFieldsUntilNextReward(settings.columns * settings.rows, settings.mines)
-  ])
-));
-
-function getStoredDifficulty() {
-  try {
-    return localStorage.getItem('lycheelab-difficulty');
-  } catch {
-    return null;
-  }
-}
-
-const storedDifficulty = getStoredDifficulty();
-const difficulty = difficultySettings[storedDifficulty] ? storedDifficulty : 'beginner';
-const boardRows = difficultySettings[difficulty].rows;
-const boardColumns = difficultySettings[difficulty].columns;
-const mineTotal = difficultySettings[difficulty].mines;
+const difficultyConfig = minesweeperDifficulty.readStoredDifficulty();
+const difficulty = minesweeperDifficulty.getDifficultyKey(difficultyConfig);
+const boardRows = difficultyConfig.rows;
+const boardColumns = difficultyConfig.columns;
+const mineTotal = difficultyConfig.mines;
+const rewardThreshold = getFieldsUntilNextReward(boardRows * boardColumns, mineTotal);
 const maxExtraLives = minesweeperRunState.maxExtraLives;
 const iconPaths = {
   fullscreen: '../../assets/icons/fullscreen.svg',
@@ -108,7 +88,7 @@ gameChromeToggle.addEventListener('click', () => {
     menuToggle?.click();
   }
 });
-let mineCurrentCount = difficultySettings[difficulty].mines;
+let mineCurrentCount = mineTotal;
 let series = minesweeperRunState.createDefaultSeries();
 let cells = [];
 let gameOver = false;
@@ -195,7 +175,6 @@ function addRevealedSafeFields(count) {
 
   let extraLivesAwarded = 0;
   let checkChargesAwarded = 0;
-  const rewardThreshold = rewardFieldsByDifficulty[difficulty];
 
   while (series.revealProgress >= rewardThreshold) {
     series.revealProgress -= rewardThreshold;

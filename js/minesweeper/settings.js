@@ -1,39 +1,40 @@
 const settingsForm = document.querySelector('#settings-form');
 const difficultySelect = document.querySelector('#difficulty');
 const settingsStatus = document.querySelector('#settings-status');
-const storageKey = 'lycheelab-difficulty';
+
+function isStorageReadable() {
+  try {
+    return typeof localStorage.getItem === 'function';
+  } catch {
+    return false;
+  }
+}
 
 function readDifficulty() {
-  try {
-    const storedDifficulty = localStorage.getItem(storageKey);
-    return minesweeperRunState.difficulties.includes(storedDifficulty)
-      ? storedDifficulty
-      : 'beginner';
-  } catch {
+  if (!isStorageReadable()) {
     settingsStatus.textContent = 'Einstellungen konnten nicht gelesen werden; Anfänger wird angezeigt.';
-    return 'beginner';
   }
+
+  return minesweeperDifficulty.getPresetName(minesweeperDifficulty.readStoredDifficulty()) ?? 'beginner';
 }
 
 function saveDifficulty(event) {
   event.preventDefault();
 
-  if (!minesweeperRunState.difficulties.includes(difficultySelect.value)) {
+  const preset = minesweeperDifficulty.createPresetDifficulty(difficultySelect.value);
+
+  if (!preset) {
     settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
     return;
   }
 
-  try {
-    localStorage.setItem(storageKey, difficultySelect.value);
-    if (localStorage.getItem(storageKey) !== difficultySelect.value) {
-      settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
-      return;
-    }
+  // Rule switches have no controls yet, so a preset change keeps the stored rules.
+  const { extraLives, checks, noGuess } = minesweeperDifficulty.readStoredDifficulty();
+  const saved = minesweeperDifficulty.writeStoredDifficulty({ ...preset, extraLives, checks, noGuess });
 
-    settingsStatus.textContent = 'Einstellungen gespeichert.';
-  } catch {
-    settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
-  }
+  settingsStatus.textContent = saved
+    ? 'Einstellungen gespeichert.'
+    : 'Einstellungen konnten nicht gespeichert werden.';
 }
 
 difficultySelect.value = readDifficulty();

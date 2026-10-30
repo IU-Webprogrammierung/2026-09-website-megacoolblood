@@ -4,12 +4,12 @@ const minesweeperRunState = (() => {
     gameStatePrefix: 'lycheelab-minesweeper-game',
     statistics: 'lycheelab-statistics'
   });
-  const difficulties = Object.freeze(['beginner', 'intermediate', 'expert', 'maximum']);
   const maxExtraLives = 3;
   const initialCheckCharges = 3;
 
+  // Every canonical difficulty key has its own save, including custom sizes and rule combinations.
   function getGameStateStorageKey(difficulty) {
-    if (!difficulties.includes(difficulty)) {
+    if (!minesweeperDifficulty.parseDifficultyKey(difficulty)) {
       throw new RangeError(`Unbekannter Schwierigkeitsgrad: ${difficulty}`);
     }
 
@@ -248,7 +248,6 @@ const minesweeperRunState = (() => {
 
   return Object.freeze({
     storageKeys,
-    difficulties,
     maxExtraLives,
     getGameStateStorageKey,
     createDefaultSeries,
