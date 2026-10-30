@@ -176,6 +176,7 @@ function recordGameResult(won) {
     difficultyStatistics.wins += 1;
     difficultyStatistics.minesCleared += mineTotal;
     difficultyStatistics.currentStreak += 1;
+    difficultyStatistics.bestStreak = Math.max(difficultyStatistics.bestStreak, difficultyStatistics.currentStreak);
     minesweeperRunState.addWinTime(difficultyStatistics, Math.round(getElapsedMs()));
   } else {
     difficultyStatistics.currentStreak = 0;

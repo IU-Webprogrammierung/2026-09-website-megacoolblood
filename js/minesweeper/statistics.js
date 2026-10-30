@@ -74,6 +74,7 @@ function renderStatistics() {
       createStatistic('Durchschnittszeit', createDuration(averageTimeMs, hasTimes)),
       createStatistic('Langsamste Zeit', createDuration(data.slowestTimeMs, hasTimes)),
       createStatistic('Aktuelle Serie', formatCount(data.currentStreak)),
+      createStatistic('Größte Siegesserie', formatCount(data.bestStreak)),
       createStatistic('Höchster Score', formatCount(data.bestSeriesRevealedFields))
     );
     card.append(heading, values);

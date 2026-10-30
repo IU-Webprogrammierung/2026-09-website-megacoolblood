@@ -73,7 +73,8 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Winning streak and game statistics stored using `localStorage`
 - Statistics are grouped by difficulty and contain games won, success rate,
   cleared mines, wrong flags, best, average, and slowest winning time, current
-  streak, and the highest Score achieved within a series. A win counts every
+  streak, longest winning streak, and the highest Score achieved within a
+  series. A win counts every
   mine as cleared; a lost or aborted round counts its correct flags as cleared
   mines and its wrong flags separately, both only when the round ends. Times
   only cover wins recorded after time tracking was added

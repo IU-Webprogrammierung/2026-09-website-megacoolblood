@@ -70,12 +70,14 @@ const minesweeperRunState = (() => {
   function readDifficultyStatistics(statistics, difficulty) {
     const storedStatistics = statistics?.[difficulty];
     const source = storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
+    const currentStreak = toCount(source.currentStreak);
 
     return {
-      bestStreak: toCount(source.bestStreak),
+      // Versions without best-streak tracking kept counting the current streak, so it can exceed the stored best.
+      bestStreak: Math.max(toCount(source.bestStreak), currentStreak),
       bestSeriesRevealedFields: toCount(source.bestSeriesRevealedFields),
       bestTimeMs: toCount(source.bestTimeMs),
-      currentStreak: toCount(source.currentStreak),
+      currentStreak,
       gamesPlayed: toCount(source.gamesPlayed),
       minesCleared: toCount(source.minesCleared),
       slowestTimeMs: toCount(source.slowestTimeMs),
