@@ -64,6 +64,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   visible area
 - Visible focus state for board cells
 - Status messages for starting a game, revealing cells, winning, and losing
+- After a game ends, correct flags are highlighted and wrong flags are crossed
+  out; a win flags every remaining mine automatically, so all flags show as
+  correct and the remaining mine count is 0
 - Winning streak and game statistics stored using `localStorage`
 - Statistics are grouped by difficulty and contain cleared mines, success rate,
   current streak, and the highest Score achieved within a series

@@ -420,6 +420,8 @@ function revealCell(cell) {
   if (checkForWin()) {
     gameOver = true;
     recordGameResult(true);
+    flagRemainingMines();
+    gameOverRevealMines();
     gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt. Mit „Nächste Runde“ geht es weiter.';
     return rewardAnnouncements;
   }
@@ -995,6 +997,20 @@ function createBoard() {
   setActiveCell(cells[0][0]);
 }
 
+// After a win every remaining mine gets a flag, as in classic Minesweeper, so all flags show as correct.
+function flagRemainingMines() {
+  cells.forEach((row) => row.forEach((cell) => {
+    if (cell.isMine && !cell.isFlagged && !isTriggeredMine(cell)) {
+      cell.isFlagged = true;
+      cell.isMarked = false;
+      cell.element.classList.remove('is-marked');
+      cell.element.classList.add('is-flagged');
+    }
+  }));
+  mineCurrentCount = 0;
+  mineCount.textContent = mineCurrentCount;
+}
+
 function gameOverRevealMines() {
   cells.forEach(row => row.filter((currentCell) => (
     currentCell.isMine && !currentCell.isFlagged && !isTriggeredMine(currentCell)
@@ -1107,6 +1123,9 @@ function loadGameState() {
       : 'Gespeichertes Spiel fortgesetzt.';
   }
   updateNewGameButton();
+  if (canStartNextRound()) {
+    flagRemainingMines();
+  }
   if (gameOver) {
     gameOverRevealMines();
   }
