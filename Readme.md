@@ -63,7 +63,10 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   shadows on the viewport edges show where the board continues beyond the
   visible area
 - Visible focus state for board cells
-- Status messages for starting a game, revealing cells, winning, and losing
+- Status messages for starting a game, revealing cells, winning, and losing;
+  the win message includes the playing time
+- Playing time runs from the first move until the round ends, pauses while
+  the page is hidden, and is saved with the game so a reload continues it
 - After a game ends, correct flags are highlighted and wrong flags are crossed
   out; a win flags every remaining mine automatically, so all flags show as
   correct and the remaining mine count is 0

@@ -177,6 +177,20 @@ const minesweeperRunState = (() => {
     return parts.join(' ');
   }
 
+  function describeDuration(milliseconds) {
+    const totalSeconds = Math.floor(toCount(milliseconds) / 1000);
+    const units = [
+      [Math.floor(totalSeconds / 3600), 'Stunde', 'Stunden'],
+      [Math.floor(totalSeconds / 60) % 60, 'Minute', 'Minuten'],
+      [totalSeconds % 60, 'Sekunde', 'Sekunden']
+    ];
+    const parts = units
+      .filter(([value]) => value > 0)
+      .map(([value, singular, plural]) => `${value} ${value === 1 ? singular : plural}`);
+
+    return parts.length > 0 ? parts.join(' ') : '0 Sekunden';
+  }
+
   function confirmSeriesReset(dialog, message) {
     const title = document.getElementById(dialog?.getAttribute('aria-labelledby'))?.textContent ?? '';
 
@@ -214,6 +228,7 @@ const minesweeperRunState = (() => {
     writeActiveMode,
     endSeries,
     getSeriesLossMessage,
+    describeDuration,
     confirmSeriesReset
   });
 })();

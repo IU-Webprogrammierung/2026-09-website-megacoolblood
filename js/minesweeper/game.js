@@ -111,6 +111,8 @@ let series = minesweeperRunState.createDefaultSeries();
 let cells = [];
 let gameOver = false;
 let newGame = true;
+let elapsedMs = 0;
+let timerStartedAt = null;
 let activeMode = 'reveal';
 let activeCell = null;
 let boardPanzoom = null;
@@ -126,6 +128,31 @@ const activeBoardPointers = new Set();
 const boardPanThreshold = 5;
 const panClickSuppressionMs = 500;
 const panClickSuppressionRadius = 16;
+
+function getElapsedMs() {
+  return timerStartedAt === null ? elapsedMs : elapsedMs + performance.now() - timerStartedAt;
+}
+
+// The timer runs only while a started, unfinished round is visible.
+function resumeGameTimer() {
+  if (timerStartedAt === null && !newGame && !gameOver && document.visibilityState === 'visible') {
+    timerStartedAt = performance.now();
+  }
+}
+
+function pauseGameTimer() {
+  if (timerStartedAt !== null) {
+    elapsedMs = getElapsedMs();
+    timerStartedAt = null;
+  }
+}
+
+function handlePageHidden() {
+  if (timerStartedAt !== null) {
+    pauseGameTimer();
+    saveGameState();
+  }
+}
 
 function recordGameResult(won) {
   const statistics = minesweeperRunState.readStatistics();
@@ -232,6 +259,7 @@ function saveGameState() {
     gameOver,
     newGame,
     mineCurrentCount,
+    elapsedMs: Math.round(getElapsedMs()),
     series,
     activeCell: activeCell ? { row: activeCell.row, column: activeCell.column } : null,
     cells: cells.map((row) => row.map((cell) => ({
@@ -362,6 +390,7 @@ function setAdjacentMineCount(cell, adjacentMines) {
 function registerHit(message) {
   if (series.extraLives === 0) {
     gameOver = true;
+    pauseGameTimer();
     recordGameResult(false);
     gameStatus.textContent = `${message} Keine Extraleben mehr. Spiel verloren.`;
     gameOverRevealMines();
@@ -419,10 +448,11 @@ function revealCell(cell) {
 
   if (checkForWin()) {
     gameOver = true;
+    pauseGameTimer();
     recordGameResult(true);
     flagRemainingMines();
     gameOverRevealMines();
-    gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt. Mit „Nächste Runde“ geht es weiter.';
+    gameStatus.textContent = `Gewonnen in ${minesweeperRunState.describeDuration(elapsedMs)}. Alle sicheren Felder sind aufgedeckt. Mit „Nächste Runde“ geht es weiter.`;
     return rewardAnnouncements;
   }
 
@@ -584,6 +614,7 @@ function useActiveMode(cell, mode = activeMode) {
       mode = 'reveal';
       placeMines(cell);
       newGame = false;
+      resumeGameTimer();
     }
 
     if (cell.isRevealed) {
@@ -955,6 +986,8 @@ function createBoard() {
   activeCell = null;
   gameOver = false;
   newGame = true;
+  elapsedMs = 0;
+  timerStartedAt = null;
   gameStatus.textContent = 'Neues Spiel gestartet.';
   mineCurrentCount = mineTotal;
   mineCount.textContent = mineCurrentCount;
@@ -1111,6 +1144,10 @@ function loadGameState() {
   updateSeriesDisplay();
   gameOver = Boolean(savedGameState.gameOver);
   newGame = Boolean(savedGameState.newGame);
+  elapsedMs = Number.isFinite(savedGameState.elapsedMs) && savedGameState.elapsedMs > 0
+    ? savedGameState.elapsedMs
+    : 0;
+  resumeGameTimer();
   mineCurrentCount = Number.isFinite(savedGameState.mineCurrentCount)
     ? savedGameState.mineCurrentCount
     : mineTotal;
@@ -1150,6 +1187,15 @@ board.addEventListener('contextmenu', handleCellContextMenu);
 board.addEventListener('keydown', handleCellKeyDown);
 document.addEventListener('keydown', handleModeShortcut);
 newGameButton.addEventListener('click', startNewGame);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    handlePageHidden();
+  } else {
+    resumeGameTimer();
+  }
+});
+window.addEventListener('pagehide', handlePageHidden);
+window.addEventListener('pageshow', resumeGameTimer);
 loadGameState();
 restoreActiveMode();
 
