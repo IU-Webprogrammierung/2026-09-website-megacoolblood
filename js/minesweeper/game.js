@@ -154,6 +154,13 @@ function handlePageHidden() {
   }
 }
 
+function countFlagResults() {
+  const flaggedCells = cells.flat().filter((cell) => cell.isFlagged);
+  const correctFlags = flaggedCells.filter((cell) => cell.isMine).length;
+
+  return { correctFlags, wrongFlags: flaggedCells.length - correctFlags };
+}
+
 function recordGameResult(won) {
   const statistics = minesweeperRunState.readStatistics();
 
@@ -169,8 +176,10 @@ function recordGameResult(won) {
     difficultyStatistics.wins += 1;
     difficultyStatistics.minesCleared += mineTotal;
     difficultyStatistics.currentStreak += 1;
+    minesweeperRunState.addWinTime(difficultyStatistics, Math.round(getElapsedMs()));
   } else {
     difficultyStatistics.currentStreak = 0;
+    minesweeperRunState.addLossFlags(difficultyStatistics, countFlagResults());
   }
 
   statistics[difficulty] = difficultyStatistics;
@@ -1079,7 +1088,8 @@ async function startNewGame() {
 
       minesweeperRunState.endSeries(difficulty, {
         countAsLoss: roundInProgress,
-        revealedFields: series.revealedFields
+        revealedFields: series.revealedFields,
+        flags: countFlagResults()
       });
     }
   }

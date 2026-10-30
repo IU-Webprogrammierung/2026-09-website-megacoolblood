@@ -74,11 +74,34 @@ const minesweeperRunState = (() => {
     return {
       bestStreak: toCount(source.bestStreak),
       bestSeriesRevealedFields: toCount(source.bestSeriesRevealedFields),
+      bestTimeMs: toCount(source.bestTimeMs),
       currentStreak: toCount(source.currentStreak),
       gamesPlayed: toCount(source.gamesPlayed),
       minesCleared: toCount(source.minesCleared),
-      wins: toCount(source.wins)
+      slowestTimeMs: toCount(source.slowestTimeMs),
+      timedWins: toCount(source.timedWins),
+      totalWinTimeMs: toCount(source.totalWinTimeMs),
+      wins: toCount(source.wins),
+      wrongFlags: toCount(source.wrongFlags)
     };
+  }
+
+  // A lost or aborted round counts its correct flags as cleared mines and keeps its wrong flags.
+  function addLossFlags(difficultyStatistics, { correctFlags = 0, wrongFlags = 0 } = {}) {
+    difficultyStatistics.minesCleared += toCount(correctFlags);
+    difficultyStatistics.wrongFlags += toCount(wrongFlags);
+  }
+
+  // Wins saved before time tracking have no time, so the average uses timedWins instead of wins.
+  function addWinTime(difficultyStatistics, elapsedMs) {
+    const time = toCount(elapsedMs);
+
+    difficultyStatistics.bestTimeMs = difficultyStatistics.timedWins > 0
+      ? Math.min(difficultyStatistics.bestTimeMs, time)
+      : time;
+    difficultyStatistics.slowestTimeMs = Math.max(difficultyStatistics.slowestTimeMs, time);
+    difficultyStatistics.totalWinTimeMs += time;
+    difficultyStatistics.timedWins += 1;
   }
 
   function updateBestSeriesRevealedFields(difficultyStatistics, revealedFields) {
@@ -141,7 +164,7 @@ const minesweeperRunState = (() => {
     }
   }
 
-  function endSeries(difficulty, { countAsLoss = false, revealedFields = 0 } = {}) {
+  function endSeries(difficulty, { countAsLoss = false, revealedFields = 0, flags } = {}) {
     const statistics = readStatistics();
 
     if (statistics) {
@@ -152,6 +175,7 @@ const minesweeperRunState = (() => {
         difficultyStatistics.currentStreak = 0;
         if (countAsLoss) {
           difficultyStatistics.gamesPlayed += 1;
+          addLossFlags(difficultyStatistics, flags);
         }
         statistics[difficulty] = difficultyStatistics;
         writeStatistics(statistics);
@@ -191,6 +215,16 @@ const minesweeperRunState = (() => {
     return parts.length > 0 ? parts.join(' ') : '0 Sekunden';
   }
 
+  // Compact clock format such as "01:23" or "1:02:03" for statistics.
+  function formatClockDuration(milliseconds) {
+    const totalSeconds = Math.floor(toCount(milliseconds) / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = String(Math.floor(totalSeconds / 60) % 60).padStart(2, '0');
+    const seconds = String(totalSeconds % 60).padStart(2, '0');
+
+    return hours > 0 ? `${hours}:${minutes}:${seconds}` : `${minutes}:${seconds}`;
+  }
+
   function confirmSeriesReset(dialog, message) {
     const title = document.getElementById(dialog?.getAttribute('aria-labelledby'))?.textContent ?? '';
 
@@ -220,6 +254,8 @@ const minesweeperRunState = (() => {
     readStatistics,
     writeStatistics,
     readDifficultyStatistics,
+    addLossFlags,
+    addWinTime,
     updateBestSeriesRevealedFields,
     readSavedGame,
     writeSavedGame,
@@ -229,6 +265,7 @@ const minesweeperRunState = (() => {
     endSeries,
     getSeriesLossMessage,
     describeDuration,
+    formatClockDuration,
     confirmSeriesReset
   });
 })();
