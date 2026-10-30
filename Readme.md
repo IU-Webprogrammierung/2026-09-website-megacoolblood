@@ -26,6 +26,8 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Three input modes: Reveal, Flag, and Mark with a question mark
 - Mode switching through buttons or the `A`, `F`, and `M` keyboard shortcuts
 - Mouse Left and Right clicks, Space key, and arrow key controls
+- The first move of a game always reveals a cell, regardless of the selected
+  mode or mouse button
 - The board supports mouse-wheel zoom, mouse dragging, touch dragging, and
   pinch zoom; separate controls provide zoom in, zoom out, and reset
 - The game starts in immersive mode below 768 px; a button toggles the global

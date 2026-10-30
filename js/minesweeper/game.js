@@ -21,9 +21,9 @@ const difficultySettings = {
 
 function getStoredDifficulty() {
   try {
-  return localStorage.getItem('lycheelab-difficulty');
+    return localStorage.getItem('lycheelab-difficulty');
   } catch {
-  return null;
+    return null;
   }
 }
 
@@ -75,10 +75,10 @@ const panClickSuppressionRadius = 16;
 
 function getWinningStreak() {
   try {
-  const storedStreak = Number.parseInt(localStorage.getItem(streakStorageKey), 10);
-  return Number.isNaN(storedStreak) || storedStreak < 0 ? 0 : storedStreak;
+    const storedStreak = Number.parseInt(localStorage.getItem(streakStorageKey), 10);
+    return Number.isNaN(storedStreak) || storedStreak < 0 ? 0 : storedStreak;
   } catch {
-  return 0;
+    return 0;
   }
 }
 
@@ -86,59 +86,59 @@ function setWinningStreak(streak) {
   winningStreakElement.textContent = streak;
 
   try {
-  localStorage.setItem(streakStorageKey, String(streak));
+    localStorage.setItem(streakStorageKey, String(streak));
   } catch {
   }
 }
 
 function recordGameResult(won) {
   try {
-  const storedStatistics = JSON.parse(localStorage.getItem(statisticsStorageKey) || '{}');
-  const statistics = storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
-  const storedDifficultyStatistics = statistics[difficulty] || {};
-  const difficultyStatistics = {
-   bestStreak: Number(storedDifficultyStatistics.bestStreak) || 0,
-   currentStreak: Number(storedDifficultyStatistics.currentStreak) || 0,
-   gamesPlayed: Number(storedDifficultyStatistics.gamesPlayed) || 0,
-   minesCleared: Number(storedDifficultyStatistics.minesCleared) || 0,
-   wins: Number(storedDifficultyStatistics.wins) || 0
-  };
+    const storedStatistics = JSON.parse(localStorage.getItem(statisticsStorageKey) || '{}');
+    const statistics = storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
+    const storedDifficultyStatistics = statistics[difficulty] || {};
+    const difficultyStatistics = {
+      bestStreak: Number(storedDifficultyStatistics.bestStreak) || 0,
+      currentStreak: Number(storedDifficultyStatistics.currentStreak) || 0,
+      gamesPlayed: Number(storedDifficultyStatistics.gamesPlayed) || 0,
+      minesCleared: Number(storedDifficultyStatistics.minesCleared) || 0,
+      wins: Number(storedDifficultyStatistics.wins) || 0
+    };
 
-  difficultyStatistics.gamesPlayed += 1;
-  if (won) {
-   difficultyStatistics.wins += 1;
-   difficultyStatistics.minesCleared += mineTotal;
-   difficultyStatistics.currentStreak += 1;
-   difficultyStatistics.bestStreak = Math.max(
-    difficultyStatistics.bestStreak,
-    difficultyStatistics.currentStreak
-   );
-  } else {
-   difficultyStatistics.currentStreak = 0;
-  }
+    difficultyStatistics.gamesPlayed += 1;
+    if (won) {
+      difficultyStatistics.wins += 1;
+      difficultyStatistics.minesCleared += mineTotal;
+      difficultyStatistics.currentStreak += 1;
+      difficultyStatistics.bestStreak = Math.max(
+        difficultyStatistics.bestStreak,
+        difficultyStatistics.currentStreak
+      );
+    } else {
+      difficultyStatistics.currentStreak = 0;
+    }
 
-  statistics[difficulty] = difficultyStatistics;
-  localStorage.setItem(statisticsStorageKey, JSON.stringify(statistics));
+    statistics[difficulty] = difficultyStatistics;
+    localStorage.setItem(statisticsStorageKey, JSON.stringify(statistics));
   } catch {
   }
 }
 
 function saveGameState() {
   const gameState = {
-  difficulty,
-  gameOver,
-  newGame,
-  mineCurrentCount,
-  cells: cells.map((row) => row.map((cell) => ({
-   isFlagged: cell.isFlagged,
-   isMarked: cell.isMarked,
-   isMine: cell.isMine,
-   isRevealed: cell.isRevealed
-  })))
+    difficulty,
+    gameOver,
+    newGame,
+    mineCurrentCount,
+    cells: cells.map((row) => row.map((cell) => ({
+      isFlagged: cell.isFlagged,
+      isMarked: cell.isMarked,
+      isMine: cell.isMine,
+      isRevealed: cell.isRevealed
+    })))
   };
 
   try {
-  localStorage.setItem(gameStateStorageKey, JSON.stringify(gameState));
+    localStorage.setItem(gameStateStorageKey, JSON.stringify(gameState));
   } catch {
   }
 }
@@ -149,15 +149,15 @@ function restoreCellPresentation(cell) {
   cell.element.classList.toggle('is-revealed', cell.isRevealed);
 
   if (cell.isRevealed) {
-  const adjacentMines = countAdjacentMines(cell);
-  setAdjacentMineCount(cell, adjacentMines);
+    const adjacentMines = countAdjacentMines(cell);
+    setAdjacentMineCount(cell, adjacentMines);
   } else if (cell.isFlagged) {
-  cell.element.setAttribute('aria-label', `Als Flagge markiertes Feld ${cell.coordinate}`);
+    cell.element.setAttribute('aria-label', `Als Flagge markiertes Feld ${cell.coordinate}`);
   } else if (cell.isMarked) {
-  cell.element.setAttribute('aria-label', `Als Fragezeichen markiertes Feld ${cell.coordinate}`);
+    cell.element.setAttribute('aria-label', `Als Fragezeichen markiertes Feld ${cell.coordinate}`);
   } else {
-  cell.element.textContent = '';
-  cell.element.setAttribute('aria-label', `Unaufgedecktes Feld ${cell.coordinate}`);
+    cell.element.textContent = '';
+    cell.element.setAttribute('aria-label', `Unaufgedecktes Feld ${cell.coordinate}`);
   }
 }
 
@@ -166,8 +166,8 @@ function getColumnLabel(columnIndex) {
   let remainingIndex = columnIndex;
 
   while (remainingIndex >= 0) {
-  label = String.fromCharCode((remainingIndex % 26) + 65) + label;
-  remainingIndex = Math.floor(remainingIndex / 26) - 1;
+    label = String.fromCharCode((remainingIndex % 26) + 65) + label;
+    remainingIndex = Math.floor(remainingIndex / 26) - 1;
   }
 
   return label;
@@ -177,20 +177,20 @@ function getNeighbors(row, column) {
   const neighbors = [];
 
   for (let rowOffset = -1; rowOffset <= 1; rowOffset += 1) {
-  for (let columnOffset = -1; columnOffset <= 1; columnOffset += 1) {
-   const neighborRow = row + rowOffset;
-   const neighborColumn = column + columnOffset;
+    for (let columnOffset = -1; columnOffset <= 1; columnOffset += 1) {
+      const neighborRow = row + rowOffset;
+      const neighborColumn = column + columnOffset;
 
-   if (
-    (rowOffset !== 0 || columnOffset !== 0) &&
-    neighborRow >= 0 &&
-    neighborRow < boardRows &&
-    neighborColumn >= 0 &&
-    neighborColumn < boardColumns
-   ) {
-    neighbors.push(cells[neighborRow][neighborColumn]);
-   }
-  }
+      if (
+        (rowOffset !== 0 || columnOffset !== 0) &&
+        neighborRow >= 0 &&
+        neighborRow < boardRows &&
+        neighborColumn >= 0 &&
+        neighborColumn < boardColumns
+      ) {
+        neighbors.push(cells[neighborRow][neighborColumn]);
+      }
+    }
   }
 
   return neighbors;
@@ -201,22 +201,22 @@ function placeMines(firstCell) {
   const noMineIndexes = new Set([firstCell.row * boardColumns + firstCell.column]);
 
   getNeighbors(firstCell.row, firstCell.column).forEach((neighbor) => {
-  noMineIndexes.add(neighbor.row * boardColumns + neighbor.column);
+    noMineIndexes.add(neighbor.row * boardColumns + neighbor.column);
   });
 
   while (mineIndexes.size < mineTotal) {
-  let index = Math.floor(Math.random() * boardRows * boardColumns);
-  if (!noMineIndexes.has(index)) {
-   mineIndexes.add(index);
-  }
+    let index = Math.floor(Math.random() * boardRows * boardColumns);
+    if (!noMineIndexes.has(index)) {
+      mineIndexes.add(index);
+    }
   }
   let row;
   let column;
 
   mineIndexes.forEach((index) => {
-  column = index % boardColumns;
-  row = (index - column) / boardColumns;
-  cells[row][column].isMine = true;
+    column = index % boardColumns;
+    row = (index - column) / boardColumns;
+    cells[row][column].isMine = true;
   });
 }
 
@@ -235,65 +235,65 @@ function countAdjacentMines(cell) {
 function setAdjacentMineCount(cell, adjacentMines) {
   cell.element.textContent = adjacentMines > 0 ? adjacentMines : '';
   if (adjacentMines > 0) {
-  cell.element.dataset.adjacentMines = adjacentMines;
+    cell.element.dataset.adjacentMines = adjacentMines;
   } else {
-  delete cell.element.dataset.adjacentMines;
+    delete cell.element.dataset.adjacentMines;
   }
   cell.element.setAttribute(
-  'aria-label',
-  `${cell.coordinate}, ${adjacentMines} angrenzende Minen`
+    'aria-label',
+    `${cell.coordinate}, ${adjacentMines} angrenzende Minen`
   );
 }
 
 function revealCell(cell) {
   if (gameOver || cell.isRevealed || cell.isFlagged || cell.isMarked) {
-  return;
+    return;
   }
 
   if (cell.isMine) {
-  cell.isRevealed = true;
-  cell.element.classList.add('is-revealed', 'is-mine');
-  cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
-  gameOver = true;
-  recordGameResult(false);
-  setWinningStreak(0);
-  gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
-  gameOverRevealMines();
-  return;
+    cell.isRevealed = true;
+    cell.element.classList.add('is-revealed', 'is-mine');
+    cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
+    gameOver = true;
+    recordGameResult(false);
+    setWinningStreak(0);
+    gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
+    gameOverRevealMines();
+    return;
   }
 
   const cellsToReveal = [cell];
   let currentIndex = 0;
 
   while (currentIndex < cellsToReveal.length) {
-  const currentCell = cellsToReveal[currentIndex];
-  currentIndex += 1;
+    const currentCell = cellsToReveal[currentIndex];
+    currentIndex += 1;
 
-  if (currentCell.isRevealed || currentCell.isFlagged || currentCell.isMarked) {
-   continue;
-  }
-
-  currentCell.isRevealed = true;
-  currentCell.element.classList.add('is-revealed');
-  const adjacentMines = countAdjacentMines(currentCell);
-  setAdjacentMineCount(currentCell, adjacentMines);
-
-  if (adjacentMines === 0) {
-   getNeighbors(currentCell.row, currentCell.column).forEach((neighbor) => {
-    if (!neighbor.isMine && !neighbor.isRevealed && !neighbor.isFlagged && !neighbor.isMarked) {
-     cellsToReveal.push(neighbor);
+    if (currentCell.isRevealed || currentCell.isFlagged || currentCell.isMarked) {
+      continue;
     }
-   });
-  }
+
+    currentCell.isRevealed = true;
+    currentCell.element.classList.add('is-revealed');
+    const adjacentMines = countAdjacentMines(currentCell);
+    setAdjacentMineCount(currentCell, adjacentMines);
+
+    if (adjacentMines === 0) {
+      getNeighbors(currentCell.row, currentCell.column).forEach((neighbor) => {
+        if (!neighbor.isMine && !neighbor.isRevealed && !neighbor.isFlagged && !neighbor.isMarked) {
+          cellsToReveal.push(neighbor);
+        }
+      });
+    }
   }
 
   if (cells.every((row) => row.every((currentCell) => currentCell.isMine || currentCell.isRevealed))) {
-  gameOver = true;
-  recordGameResult(true);
-  const streak = getWinningStreak() + 1;
-  setWinningStreak(streak);
-  gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt.';
-  return;
+    gameOver = true;
+    recordGameResult(true);
+    const streak = getWinningStreak() + 1;
+    setWinningStreak(streak);
+    gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt.';
+    return;
   }
 
   gameStatus.textContent = `Feld ${cell.coordinate} aufgedeckt.`;
@@ -301,44 +301,44 @@ function revealCell(cell) {
 
 function toggleFlag(cell) {
   if (gameOver || cell.isRevealed || cell.isMarked) {
-  return;
+    return;
   }
 
   cell.isFlagged = !cell.isFlagged;
   cell.element.classList.toggle('is-flagged', cell.isFlagged);
   cell.element.setAttribute(
-  'aria-label',
-  `${cell.isFlagged ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
+    'aria-label',
+    `${cell.isFlagged ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
   );
   mineCurrentCount = mineCurrentCount + (cell.isFlagged ? -1 : 1);
   mineCount.textContent = mineCurrentCount;
   gameStatus.textContent = cell.isFlagged
-  ? `Feld ${cell.coordinate} als vermutete Mine markiert.`
-  : `Markierung von Feld ${cell.coordinate} entfernt.`;
+    ? `Feld ${cell.coordinate} als vermutete Mine markiert.`
+    : `Markierung von Feld ${cell.coordinate} entfernt.`;
 }
 
 function toggleMark(cell) {
   if (gameOver || cell.isRevealed || cell.isFlagged) {
-  return;
+    return;
   }
 
   cell.isMarked = !cell.isMarked;
   cell.element.classList.toggle('is-marked', cell.isMarked);
   cell.element.setAttribute(
-  'aria-label',
-  `${cell.isMarked ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
+    'aria-label',
+    `${cell.isMarked ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
   );
   gameStatus.textContent = cell.isMarked
-  ? `Feld ${cell.coordinate} mit einem Fragezeichen markiert.`
-  : `Markierung von Feld ${cell.coordinate} entfernt.`;
+    ? `Feld ${cell.coordinate} mit einem Fragezeichen markiert.`
+    : `Markierung von Feld ${cell.coordinate} entfernt.`;
 }
 
 function setMode(mode) {
   activeMode = mode;
   modeButtons.forEach((button) => {
-  const isActive = button.dataset.mode === activeMode;
-  button.classList.toggle('is-active', isActive);
-  button.setAttribute('aria-pressed', String(isActive));
+    const isActive = button.dataset.mode === activeMode;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
   });
 }
 
@@ -347,33 +347,31 @@ function activeNumber(cell) {
   let flaggedNeighbors = countFlags(neighbors);
   let adjacentMines = countMines(neighbors);
   if (flaggedNeighbors === adjacentMines) {
-  neighbors
-   .filter((neighbor) => !neighbor.isRevealed && !neighbor.isFlagged)
-   .forEach((neighbor) => {
-    revealCell(neighbor);
-   })
-   ;
+    neighbors
+      .filter((neighbor) => !neighbor.isRevealed && !neighbor.isFlagged)
+      .forEach((neighbor) => {
+        revealCell(neighbor);
+      })
+      ;
   }
 }
 
 function useActiveMode(cell, mode = activeMode) {
   if (newGame) {
-  if (mode !== 'reveal') {
-   return;
-  }
-
-  placeMines(cell);
-  newGame = false;
+    // The first move always reveals because mines are placed around the starting cell.
+    mode = 'reveal';
+    placeMines(cell);
+    newGame = false;
   }
 
   if (cell.isRevealed) {
-  activeNumber(cell);
+    activeNumber(cell);
   } else if (mode === 'flag') {
-  toggleFlag(cell);
+    toggleFlag(cell);
   } else if (mode === 'mark') {
-  toggleMark(cell);
+    toggleMark(cell);
   } else {
-  revealCell(cell);
+    revealCell(cell);
   }
 
   saveGameState();
@@ -382,13 +380,13 @@ function useActiveMode(cell, mode = activeMode) {
 function handleCellClick(event) {
   const cellElement = event.target.closest('.game-cell');
   if (!cellElement) {
-  return;
+    return;
   }
   const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
   if (cell) {
-  setActiveCell(cell);
-  useActiveMode(cell);
+    setActiveCell(cell);
+    useActiveMode(cell);
   }
 }
 
@@ -397,54 +395,54 @@ function handleCellContextMenu(event) {
 
   const cellElement = event.target.closest('.game-cell');
   if (!cellElement) {
-  return;
+    return;
   }
   const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
   if (!cell) {
-  return;
+    return;
   }
 
   setActiveCell(cell);
 
   const contextMode = activeMode === 'reveal' ? 'flag' : 'reveal';
 
-  if (activeMode !== 'mark') {
-  useActiveMode(cell, contextMode);
+  if (newGame || activeMode !== 'mark') {
+    useActiveMode(cell, contextMode);
   }
 }
 
 function handleBoardPointerDown(event) {
   if (event.pointerType === 'mouse' && event.button !== 0) {
-  return;
+    return;
   }
 
   activeBoardPointers.add(event.pointerId);
 
   if (!boardPointerGesture) {
-  boardPointerGesture = {
-   startX: event.clientX,
-   startY: event.clientY,
-   moved: false
-  };
+    boardPointerGesture = {
+      startX: event.clientX,
+      startY: event.clientY,
+      moved: false
+    };
   } else {
-  boardPointerGesture.moved = true;
+    boardPointerGesture.moved = true;
   }
 }
 
 function handleBoardPointerMove(event) {
   if (!boardPointerGesture || !activeBoardPointers.has(event.pointerId)) {
-  return;
+    return;
   }
 
   const distance = Math.hypot(
-  event.clientX - boardPointerGesture.startX,
-  event.clientY - boardPointerGesture.startY
+    event.clientX - boardPointerGesture.startX,
+    event.clientY - boardPointerGesture.startY
   );
 
   if (!boardPointerGesture.moved && distance <= boardPanThreshold) {
-  event.stopImmediatePropagation();
-  return;
+    event.stopImmediatePropagation();
+    return;
   }
 
   boardPointerGesture.moved = true;
@@ -452,27 +450,27 @@ function handleBoardPointerMove(event) {
 
 function handleBoardPointerEnd(event) {
   if (!boardPointerGesture || !activeBoardPointers.has(event.pointerId)) {
-  return;
+    return;
   }
 
   activeBoardPointers.delete(event.pointerId);
 
   if (event.type === 'pointercancel') {
-  activeBoardPointers.clear();
-  boardPointerGesture = null;
-  return;
+    activeBoardPointers.clear();
+    boardPointerGesture = null;
+    return;
   }
 
   if (activeBoardPointers.size > 0) {
-  return;
+    return;
   }
 
   if (boardPointerGesture.moved) {
-  suppressedPanClick = {
-   expiresAt: performance.now() + panClickSuppressionMs,
-   x: event.clientX,
-   y: event.clientY
-  };
+    suppressedPanClick = {
+      expiresAt: performance.now() + panClickSuppressionMs,
+      x: event.clientX,
+      y: event.clientY
+    };
   }
 
   boardPointerGesture = null;
@@ -480,24 +478,24 @@ function handleBoardPointerEnd(event) {
 
 function preventClickAfterPan(event) {
   if (!event.detail || !suppressedPanClick) {
-  return;
+    return;
   }
 
   if (performance.now() > suppressedPanClick.expiresAt) {
-  suppressedPanClick = null;
-  return;
+    suppressedPanClick = null;
+    return;
   }
 
   const cellElement = event.target.closest('.game-cell');
   const releaseDistance = Math.hypot(
-  event.clientX - suppressedPanClick.x,
-  event.clientY - suppressedPanClick.y
+    event.clientX - suppressedPanClick.x,
+    event.clientY - suppressedPanClick.y
   );
 
   if (cellElement && releaseDistance <= panClickSuppressionRadius) {
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  suppressedPanClick = null;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    suppressedPanClick = null;
   }
 }
 
@@ -539,17 +537,17 @@ function finishZoomLevelAnnouncement() {
 
 function setActiveCell(nextCell, shouldFocus = false) {
   if (activeCell !== nextCell) {
-  if (activeCell) {
-   activeCell.element.tabIndex = -1;
-  }
+    if (activeCell) {
+      activeCell.element.tabIndex = -1;
+    }
 
-  activeCell = nextCell;
-  activeCell.element.tabIndex = 0;
+    activeCell = nextCell;
+    activeCell.element.tabIndex = 0;
   }
 
   if (shouldFocus) {
-  activeCell.element.focus();
-  activeCell.element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    activeCell.element.focus();
+    activeCell.element.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 }
 
@@ -558,12 +556,12 @@ function moveFocus(currentCell, rowOffset, columnOffset) {
   const targetColumn = currentCell.column + columnOffset;
 
   if (
-  targetRow < 0 ||
-  targetRow >= boardRows ||
-  targetColumn < 0 ||
-  targetColumn >= boardColumns
+    targetRow < 0 ||
+    targetRow >= boardRows ||
+    targetColumn < 0 ||
+    targetColumn >= boardColumns
   ) {
-  return;
+    return;
   }
 
   const targetCell = cells[targetRow][targetColumn];
@@ -575,27 +573,27 @@ function handleCellKeyDown(event) {
   const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
 
   if (cell && event.key.startsWith('Arrow')) {
-  const movement = {
-   ArrowDown: [1, 0],
-   ArrowLeft: [0, -1],
-   ArrowRight: [0, 1],
-   ArrowUp: [-1, 0]
-  }[event.key];
+    const movement = {
+      ArrowDown: [1, 0],
+      ArrowLeft: [0, -1],
+      ArrowRight: [0, 1],
+      ArrowUp: [-1, 0]
+    }[event.key];
 
-  if (movement) {
-   event.preventDefault();
-   moveFocus(cell, movement[0], movement[1]);
-  }
-  return;
+    if (movement) {
+      event.preventDefault();
+      moveFocus(cell, movement[0], movement[1]);
+    }
+    return;
   }
 
   if (event.key === ' ') {
-  event.preventDefault();
+    event.preventDefault();
 
-  if (cell) {
-   useActiveMode(cell);
-  }
-  return;
+    if (cell) {
+      useActiveMode(cell);
+    }
+    return;
   }
 }
 
@@ -605,7 +603,7 @@ function handleModeShortcut(event) {
   const mode = modeShortcuts[event.key.toLowerCase()];
 
   if (!mode || event.target.matches('input, select, textarea')) {
-  return;
+    return;
   }
 
   event.preventDefault();
@@ -626,31 +624,31 @@ function createBoard() {
   board.style.gridTemplateColumns = `repeat(${boardColumns}, var(--cell-size))`;
 
   for (let row = 0; row < boardRows; row += 1) {
-  cells[row] = [];
-  for (let column = 0; column < boardColumns; column += 1) {
-   const cell = document.createElement('button');
-   const coordinate = `${getColumnLabel(column)}${row + 1}`;
-   const cellState = {
-    row,
-    column,
-    coordinate,
-    element: cell,
-    isMine: false,
-    isFlagged: false,
-    isMarked: false,
-    isRevealed: false
-   };
+    cells[row] = [];
+    for (let column = 0; column < boardColumns; column += 1) {
+      const cell = document.createElement('button');
+      const coordinate = `${getColumnLabel(column)}${row + 1}`;
+      const cellState = {
+        row,
+        column,
+        coordinate,
+        element: cell,
+        isMine: false,
+        isFlagged: false,
+        isMarked: false,
+        isRevealed: false
+      };
 
-   cell.type = 'button';
-   cell.className = 'game-cell';
-   cell.tabIndex = -1;
-   cell.setAttribute('aria-label', `Unaufgedecktes Feld ${coordinate}`);
-   cell.setAttribute('row', `${row}`);
-   cell.setAttribute('column', `${column}`);
-   cell.textContent = '';
-   cells[row][column] = cellState;
-   board.append(cell);
-  }
+      cell.type = 'button';
+      cell.className = 'game-cell';
+      cell.tabIndex = -1;
+      cell.setAttribute('aria-label', `Unaufgedecktes Feld ${coordinate}`);
+      cell.setAttribute('row', `${row}`);
+      cell.setAttribute('column', `${column}`);
+      cell.textContent = '';
+      cells[row][column] = cellState;
+      board.append(cell);
+    }
   }
 
   setActiveCell(cells[0][0]);
@@ -658,23 +656,23 @@ function createBoard() {
 
 function gameOverRevealMines() {
   cells.forEach(row => row.filter((currentCell) => currentCell.isMine && !currentCell.isFlagged).forEach((mine) => {
-  mine.element.textContent = '';
-  mine.element.setAttribute('aria-label', `Mine auf Feld ${mine.coordinate}`);
-  mine.element.classList.add('is-mine');
+    mine.element.textContent = '';
+    mine.element.setAttribute('aria-label', `Mine auf Feld ${mine.coordinate}`);
+    mine.element.classList.add('is-mine');
   }));
   cells.forEach(row => row.filter((currentCell) => !currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
-  flag.element.setAttribute('aria-label', `Falsch als Flagge markiertes Feld ${flag.coordinate}`);
-  flag.element.classList.add('is-wrong-flag');
+    flag.element.setAttribute('aria-label', `Falsch als Flagge markiertes Feld ${flag.coordinate}`);
+    flag.element.classList.add('is-wrong-flag');
   }));
   cells.forEach(row => row.filter((currentCell) => currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
-  flag.element.setAttribute('aria-label', `Richtig als Flagge markiertes Feld ${flag.coordinate}`);
-  flag.element.classList.add('is-correct-flag');
+    flag.element.setAttribute('aria-label', `Richtig als Flagge markiertes Feld ${flag.coordinate}`);
+    flag.element.classList.add('is-correct-flag');
   }));
 }
 
 function startNewGame() {
   try {
-  localStorage.removeItem(gameStateStorageKey);
+    localStorage.removeItem(gameStateStorageKey);
   } catch {
   }
 
@@ -686,34 +684,34 @@ function loadGameState() {
   let savedGameState;
 
   try {
-  savedGameState = JSON.parse(localStorage.getItem(gameStateStorageKey) || 'null');
+    savedGameState = JSON.parse(localStorage.getItem(gameStateStorageKey) || 'null');
   } catch {
-  savedGameState = null;
+    savedGameState = null;
   }
 
   if (
-  !savedGameState ||
-  savedGameState.difficulty !== difficulty ||
-  !Array.isArray(savedGameState.cells) ||
-  savedGameState.cells.length !== boardRows
+    !savedGameState ||
+    savedGameState.difficulty !== difficulty ||
+    !Array.isArray(savedGameState.cells) ||
+    savedGameState.cells.length !== boardRows
   ) {
-  createBoard();
-  return;
+    createBoard();
+    return;
   }
 
   createBoard();
 
   savedGameState.cells.forEach((savedRow, row) => {
-  if (!Array.isArray(savedRow) || savedRow.length !== boardColumns) {
-   return;
-  }
+    if (!Array.isArray(savedRow) || savedRow.length !== boardColumns) {
+      return;
+    }
 
-  savedRow.forEach((savedCell, column) => {
-   cells[row][column].isMine = Boolean(savedCell.isMine);
-   cells[row][column].isFlagged = Boolean(savedCell.isFlagged);
-   cells[row][column].isMarked = Boolean(savedCell.isMarked);
-   cells[row][column].isRevealed = Boolean(savedCell.isRevealed);
-  });
+    savedRow.forEach((savedCell, column) => {
+      cells[row][column].isMine = Boolean(savedCell.isMine);
+      cells[row][column].isFlagged = Boolean(savedCell.isFlagged);
+      cells[row][column].isMarked = Boolean(savedCell.isMarked);
+      cells[row][column].isRevealed = Boolean(savedCell.isRevealed);
+    });
   });
 
   cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
@@ -721,14 +719,14 @@ function loadGameState() {
   gameOver = Boolean(savedGameState.gameOver);
   newGame = Boolean(savedGameState.newGame);
   mineCurrentCount = Number.isFinite(savedGameState.mineCurrentCount)
-  ? savedGameState.mineCurrentCount
-  : mineTotal;
+    ? savedGameState.mineCurrentCount
+    : mineTotal;
   mineCount.textContent = mineCurrentCount;
   gameStatus.textContent = gameOver
-  ? 'Gespeichertes Spiel beendet.'
-  : 'Gespeichertes Spiel fortgesetzt.';
+    ? 'Gespeichertes Spiel beendet.'
+    : 'Gespeichertes Spiel fortgesetzt.';
   if (gameOver) {
-  gameOverRevealMines();
+    gameOverRevealMines();
   }
 }
 
@@ -757,43 +755,43 @@ async function initializeBoardPanzoom() {
   const boardWorld = document.querySelector('.game-board-world');
 
   if (!boardViewport || !boardWorld) {
-  return;
+    return;
   }
 
   try {
-  const { default: Panzoom } = await import(
-    '../../assets/vendor/panzoom.es.js'
-  );
+    const { default: Panzoom } = await import(
+      '../../assets/vendor/panzoom.es.js'
+    );
 
-  boardPanzoom = Panzoom(boardWorld, {
-   startX: 0,
-   startY: 0,
-   startScale: 1,
-   minScale: 0.125,
-   maxScale: 4,
-   contain: 'outside',
-   panOnlyWhenZoomed: false,
-  touchAction: 'none',
-    overflow: 'hidden'
-  });
-  boardWorld.addEventListener('panzoomzoom', scheduleZoomLevelAnnouncement);
-  boardWorld.addEventListener('panzoomreset', scheduleZoomLevelAnnouncement);
-  boardWorld.addEventListener('panzoomend', finishZoomLevelAnnouncement);
-  updateZoomLevelText();
+    boardPanzoom = Panzoom(boardWorld, {
+      startX: 0,
+      startY: 0,
+      startScale: 1,
+      minScale: 0.125,
+      maxScale: 4,
+      contain: 'outside',
+      panOnlyWhenZoomed: false,
+      touchAction: 'none',
+      overflow: 'hidden'
+    });
+    boardWorld.addEventListener('panzoomzoom', scheduleZoomLevelAnnouncement);
+    boardWorld.addEventListener('panzoomreset', scheduleZoomLevelAnnouncement);
+    boardWorld.addEventListener('panzoomend', finishZoomLevelAnnouncement);
+    updateZoomLevelText();
 
-  [zoomInButton, zoomOutButton, resetViewButton].forEach((button) => {
-   button.disabled = false;
-  });
+    [zoomInButton, zoomOutButton, resetViewButton].forEach((button) => {
+      button.disabled = false;
+    });
 
-  boardViewport.addEventListener(
-  'wheel',
-  boardPanzoom.zoomWithWheel,
-  { passive: false }
-  );
+    boardViewport.addEventListener(
+      'wheel',
+      boardPanzoom.zoomWithWheel,
+      { passive: false }
+    );
   } catch (error) {
-  boardViewport.style.overflow = 'auto';
-  console.error('Panzoom konnte nicht geladen werden.', error);
-  gameStatus.textContent = 'Pan-/Zoom-Ansicht nicht verfügbar; das Spielfeld bleibt scrollbar.';
+    boardViewport.style.overflow = 'auto';
+    console.error('Panzoom konnte nicht geladen werden.', error);
+    gameStatus.textContent = 'Pan-/Zoom-Ansicht nicht verfügbar; das Spielfeld bleibt scrollbar.';
   }
 }
 
