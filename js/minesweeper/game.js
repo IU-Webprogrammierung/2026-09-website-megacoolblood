@@ -1,5 +1,6 @@
 const board = document.querySelector('#game-board');
 const boardViewport = document.querySelector('.game-board-viewport');
+const boardWorld = document.querySelector('.game-board-world');
 const zoomLevelOutput = document.querySelector('#zoom-level');
 const zoomInButton = document.querySelector('#zoom-in');
 const zoomOutButton = document.querySelector('#zoom-out');
@@ -96,6 +97,7 @@ let zoomAnnouncementPending = false;
 let lastAnnouncedZoomLevel = null;
 let boardEdgeHintFrame = null;
 const boardEdgeTolerance = 1;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const activeBoardPointers = new Set();
 const boardPanThreshold = 5;
 const panClickSuppressionMs = 500;
@@ -207,6 +209,7 @@ function saveGameState() {
     newGame,
     mineCurrentCount,
     series,
+    activeCell: activeCell ? { row: activeCell.row, column: activeCell.column } : null,
     cells: cells.map((row) => row.map((cell) => ({
       isFlagged: cell.isFlagged,
       isMarked: cell.isMarked,
@@ -766,6 +769,85 @@ function scheduleBoardEdgeHints() {
   }
 }
 
+function isFrontierCell(cell) {
+  return !cell.isRevealed && !cell.isFlagged && !cell.isMarked
+    && getNeighbors(cell.row, cell.column).some((neighbor) => neighbor.isRevealed && !neighbor.isMine);
+}
+
+function findFrontierCell(reference) {
+  let closestCell = null;
+  let closestDistance = Infinity;
+
+  cells.forEach((row) => row.forEach((cell) => {
+    const distance = (cell.row - reference.row) ** 2 + (cell.column - reference.column) ** 2;
+
+    if (distance < closestDistance && isFrontierCell(cell)) {
+      closestCell = cell;
+      closestDistance = distance;
+    }
+  }));
+
+  return closestCell;
+}
+
+// Layout offsets ignore the Panzoom transform, so the target position is independent of the current view.
+function getLayoutOffset(element) {
+  let left = 0;
+  let top = 0;
+
+  for (let current = element; current; current = current.offsetParent) {
+    left += current.offsetLeft;
+    top += current.offsetTop;
+  }
+
+  return { left, top };
+}
+
+function getWorkAreaTarget() {
+  return gameOver || newGame ? null : findFrontierCell(activeCell ?? cells[0][0]);
+}
+
+// Pan values at 100 % that center the cell, limited like Panzoom's "outside" containment.
+function getCenteringPan(cell) {
+  const viewportOffset = getLayoutOffset(boardViewport);
+  const cellOffset = getLayoutOffset(cell.element);
+  const worldOffset = getLayoutOffset(boardWorld);
+  const worldLeft = worldOffset.left - viewportOffset.left;
+  const worldTop = worldOffset.top - viewportOffset.top;
+  const scrollLeft = cellOffset.left - viewportOffset.left + cell.element.offsetWidth / 2 - boardViewport.clientWidth / 2;
+  const scrollTop = cellOffset.top - viewportOffset.top + cell.element.offsetHeight / 2 - boardViewport.clientHeight / 2;
+  const minX = boardViewport.clientWidth - worldLeft - boardWorld.offsetWidth;
+  const minY = boardViewport.clientHeight - worldTop - boardWorld.offsetHeight;
+
+  return {
+    scrollLeft,
+    scrollTop,
+    x: Math.min(Math.max(-scrollLeft, minX), -worldLeft),
+    y: Math.min(Math.max(-scrollTop, minY), -worldTop)
+  };
+}
+
+function centerViewOnWorkArea() {
+  if (!boardPanzoom) {
+    return;
+  }
+
+  const animate = !reducedMotion.matches;
+  const target = getWorkAreaTarget();
+
+  if (!target) {
+    boardPanzoom.reset({ animate, startX: 0, startY: 0 });
+    return;
+  }
+
+  setActiveCell(target);
+  const pan = getCenteringPan(target);
+  boardPanzoom.zoom(1, { animate });
+  // Panzoom would limit the pan with the old, not yet rendered scale; the values are already limited.
+  boardPanzoom.pan(pan.x, pan.y, { animate, contain: false });
+  gameStatus.textContent = `Ansicht auf Feld ${target.coordinate} zentriert.`;
+}
+
 function setActiveCell(nextCell, shouldFocus = false) {
   if (activeCell !== nextCell) {
     if (activeCell) {
@@ -978,6 +1060,11 @@ function loadGameState() {
 
   cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
 
+  const savedActiveCell = cells[savedGameState.activeCell?.row]?.[savedGameState.activeCell?.column];
+  if (savedActiveCell) {
+    setActiveCell(savedActiveCell);
+  }
+
   series = minesweeperRunState.normalizeSeries(savedGameState.series);
   updateCheckChargesDisplay();
   updateExtraLivesDisplay();
@@ -1013,7 +1100,7 @@ board.addEventListener('click', preventClickAfterPan, true);
 
 zoomInButton.addEventListener('click', () => boardPanzoom?.zoomIn());
 zoomOutButton.addEventListener('click', () => boardPanzoom?.zoomOut());
-resetViewButton.addEventListener('click', () => boardPanzoom?.reset());
+resetViewButton.addEventListener('click', centerViewOnWorkArea);
 
 board.addEventListener('click', handleCellClick);
 board.addEventListener('contextmenu', handleCellContextMenu);
@@ -1029,10 +1116,16 @@ new ResizeObserver(scheduleBoardEdgeHints).observe(boardViewport);
 scheduleBoardEdgeHints();
 
 async function initializeBoardPanzoom() {
-  const boardWorld = document.querySelector('.game-board-world');
-
   if (!boardViewport || !boardWorld) {
     return;
+  }
+
+  // The site header and footer change the viewport size, so the start position waits for them.
+  await window.lycheelabComponentsLoaded;
+  const loadTarget = getWorkAreaTarget();
+
+  if (loadTarget) {
+    setActiveCell(loadTarget);
   }
 
   try {
@@ -1040,9 +1133,13 @@ async function initializeBoardPanzoom() {
       '../../assets/vendor/panzoom.es.js'
     );
 
+    // Panzoom hides the overflow itself; doing it first keeps the measured start position exact.
+    boardViewport.style.overflow = 'hidden';
+    const startPan = loadTarget ? getCenteringPan(loadTarget) : { x: 0, y: 0 };
+
     boardPanzoom = Panzoom(boardWorld, {
-      startX: 0,
-      startY: 0,
+      startX: startPan.x,
+      startY: startPan.y,
       startScale: 1,
       minScale: 0.125,
       maxScale: 4,
@@ -1073,6 +1170,11 @@ async function initializeBoardPanzoom() {
     boardViewport.style.overflow = 'auto';
     console.error('Panzoom konnte nicht geladen werden.', error);
     gameStatus.textContent = 'Pan-/Zoom-Ansicht nicht verfügbar; das Spielfeld bleibt scrollbar.';
+
+    if (loadTarget) {
+      const { scrollLeft, scrollTop } = getCenteringPan(loadTarget);
+      boardViewport.scrollTo({ left: scrollLeft, top: scrollTop });
+    }
   }
 }
 

@@ -137,4 +137,5 @@ async function loadComponents() {
   );
 }
 
-loadComponents().catch(console.error);
+// Pages can wait for the header and footer, for example before measuring layout.
+window.lycheelabComponentsLoaded = loadComponents().catch(console.error);

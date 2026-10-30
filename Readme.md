@@ -48,7 +48,10 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - The game header shows remaining mines, series Score, and extra lives; the
   mode controls show remaining Check charges
 - The board supports mouse-wheel zoom, mouse dragging, touch dragging, and
-  pinch zoom; separate controls provide zoom in, zoom out, and reset
+  pinch zoom; separate controls provide zoom in, zoom out, and centering. The
+  centering control and loading a saved game move the view to the unrevealed,
+  unmarked cell next to a revealed cell that is closest to the last used cell;
+  without such a cell, the view is reset
 - The game starts in immersive mode below 768 px; a button toggles the global
   website header and footer. On wider screens, the site chrome is visible by
   default and can be hidden with the same control
