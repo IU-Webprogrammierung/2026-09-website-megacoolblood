@@ -50,6 +50,10 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   the next round. Restarting resets the active difficulty's series; a loss ends
   it. Each difficulty has its own saved board and series, so changing difficulty
   preserves the previous save and resumes it when selected again
+- Saved boards store one character per cell, so a 100 × 100 save takes about
+  10,000 characters instead of about 900,000; invalid saved cells start a new
+  game. If `localStorage` is full, the game keeps running and reports that it
+  could not be saved
 - Right-click in Check mode toggles a question mark
 - Mouse Left and Right clicks, Space key, and arrow key controls
 - The first move of a game always reveals a cell, regardless of the selected

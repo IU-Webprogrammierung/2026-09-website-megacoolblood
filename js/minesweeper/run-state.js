@@ -117,6 +117,28 @@ const minesweeperRunState = (() => {
     return hasChanged;
   }
 
+  // One character per cell keeps a 100 x 100 save small; the bits stand for the cell properties below.
+  const cellAlphabet = '0123456789abcdefghijklmnopqrstuv';
+  const cellProperties = Object.freeze(['isMine', 'isRevealed', 'isFlagged', 'isMarked', 'isWrongFlag']);
+
+  function encodeCells(cells) {
+    return cells.flat().map((cell) => cellAlphabet[
+      cellProperties.reduce((bits, property, index) => (cell[property] ? bits | (1 << index) : bits), 0)
+    ]).join('');
+  }
+
+  // Returns the cell states as rows, or null when the saved text does not match the board.
+  function decodeCells(encodedCells, rows, columns) {
+    if (typeof encodedCells !== 'string' || encodedCells.length !== rows * columns || !/^[0-9a-v]*$/.test(encodedCells)) {
+      return null;
+    }
+
+    return Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => {
+      const bits = cellAlphabet.indexOf(encodedCells[row * columns + column]);
+      return Object.fromEntries(cellProperties.map((property, index) => [property, (bits & (1 << index)) !== 0]));
+    }));
+  }
+
   function readSavedGame(difficulty) {
     const gameStateStorageKey = getGameStateStorageKey(difficulty);
 
@@ -261,6 +283,8 @@ const minesweeperRunState = (() => {
     readSavedGame,
     writeSavedGame,
     removeSavedGame,
+    encodeCells,
+    decodeCells,
     readActiveMode,
     writeActiveMode,
     endSeries,

@@ -243,13 +243,7 @@ function saveGameState() {
     elapsedMs: Math.round(getElapsedMs()),
     series,
     activeCell: activeCell ? { row: activeCell.row, column: activeCell.column } : null,
-    cells: cells.map((row) => row.map((cell) => ({
-      isFlagged: cell.isFlagged,
-      isMarked: cell.isMarked,
-      isMine: cell.isMine,
-      isRevealed: cell.isRevealed,
-      isWrongFlag: cell.isWrongFlag
-    })))
+    cells: minesweeperRunState.encodeCells(cells)
   };
 
   if (!minesweeperRunState.writeSavedGame(difficulty, gameState)) {
@@ -1109,30 +1103,22 @@ async function startNewGame() {
 
 function loadGameState() {
   const savedGameState = minesweeperRunState.readSavedGame(difficulty);
+  const savedCells = minesweeperRunState.decodeCells(savedGameState?.cells, boardRows, boardColumns);
 
-  if (
-    !savedGameState ||
-    savedGameState.difficulty !== difficulty ||
-    !Array.isArray(savedGameState.cells) ||
-    savedGameState.cells.length !== boardRows
-  ) {
+  if (!savedCells || savedGameState.difficulty !== difficulty) {
     createBoard();
     return;
   }
 
   createBoard();
 
-  savedGameState.cells.forEach((savedRow, row) => {
-    if (!Array.isArray(savedRow) || savedRow.length !== boardColumns) {
-      return;
-    }
-
+  savedCells.forEach((savedRow, row) => {
     savedRow.forEach((savedCell, column) => {
-      cells[row][column].isMine = Boolean(savedCell.isMine);
-      cells[row][column].isFlagged = Boolean(savedCell.isFlagged);
-      cells[row][column].isMarked = Boolean(savedCell.isMarked);
-      cells[row][column].isRevealed = Boolean(savedCell.isRevealed);
-      cells[row][column].isWrongFlag = Boolean(savedCell.isWrongFlag)
+      cells[row][column].isMine = savedCell.isMine;
+      cells[row][column].isFlagged = savedCell.isFlagged;
+      cells[row][column].isMarked = savedCell.isMarked;
+      cells[row][column].isRevealed = savedCell.isRevealed;
+      cells[row][column].isWrongFlag = savedCell.isWrongFlag
         && cells[row][column].isFlagged
         && !cells[row][column].isMine;
     });
