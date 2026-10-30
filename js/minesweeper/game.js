@@ -94,6 +94,8 @@ let suppressedPanClick = null;
 let zoomAnnouncementTimeout = null;
 let zoomAnnouncementPending = false;
 let lastAnnouncedZoomLevel = null;
+let boardEdgeHintFrame = null;
+const boardEdgeTolerance = 1;
 const activeBoardPointers = new Set();
 const boardPanThreshold = 5;
 const panClickSuppressionMs = 500;
@@ -747,6 +749,23 @@ function finishZoomLevelAnnouncement() {
   }
 }
 
+function updateBoardEdgeHints() {
+  boardEdgeHintFrame = null;
+  const viewportRect = boardViewport.getBoundingClientRect();
+  const boardRect = board.getBoundingClientRect();
+
+  boardViewport.classList.toggle('has-more-left', boardRect.left < viewportRect.left - boardEdgeTolerance);
+  boardViewport.classList.toggle('has-more-right', boardRect.right > viewportRect.right + boardEdgeTolerance);
+  boardViewport.classList.toggle('has-more-top', boardRect.top < viewportRect.top - boardEdgeTolerance);
+  boardViewport.classList.toggle('has-more-bottom', boardRect.bottom > viewportRect.bottom + boardEdgeTolerance);
+}
+
+function scheduleBoardEdgeHints() {
+  if (boardEdgeHintFrame === null) {
+    boardEdgeHintFrame = window.requestAnimationFrame(updateBoardEdgeHints);
+  }
+}
+
 function setActiveCell(nextCell, shouldFocus = false) {
   if (activeCell !== nextCell) {
     if (activeCell) {
@@ -1004,6 +1023,11 @@ newGameButton.addEventListener('click', startNewGame);
 loadGameState();
 restoreActiveMode();
 
+// Edge hints follow the visible board area, also when Panzoom is unavailable and the viewport scrolls.
+boardViewport.addEventListener('scroll', scheduleBoardEdgeHints, { passive: true });
+new ResizeObserver(scheduleBoardEdgeHints).observe(boardViewport);
+scheduleBoardEdgeHints();
+
 async function initializeBoardPanzoom() {
   const boardWorld = document.querySelector('.game-board-world');
 
@@ -1030,7 +1054,11 @@ async function initializeBoardPanzoom() {
     boardWorld.addEventListener('panzoomzoom', scheduleZoomLevelAnnouncement);
     boardWorld.addEventListener('panzoomreset', scheduleZoomLevelAnnouncement);
     boardWorld.addEventListener('panzoomend', finishZoomLevelAnnouncement);
+    boardWorld.addEventListener('panzoomchange', scheduleBoardEdgeHints);
+    // Animated zoom and reset report their target first; recheck once the transition ends.
+    boardWorld.addEventListener('transitionend', scheduleBoardEdgeHints);
     updateZoomLevelText();
+    scheduleBoardEdgeHints();
 
     [zoomInButton, zoomOutButton, resetViewButton].forEach((button) => {
       button.disabled = false;

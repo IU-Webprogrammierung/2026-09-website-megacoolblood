@@ -10,7 +10,9 @@
 main.minesweeper-game-page {
   .game-board-world {
     --board-color: #c0c0c0;
-    background: var(--board-color);
+    background-color: var(--board-surface-color);
+    background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1.5px);
+    background-size: 1rem 1rem;
   }
 
   .game-header-title-row {
@@ -43,12 +45,56 @@ main.minesweeper-game-page {
   }
 
   .game-board-viewport {
+    --board-surface-color: var(--color-background);
     position: relative;
+    background-color: var(--board-surface-color);
     /* Safari on iOS ignores Panzoom's unprefixed inline user-select. */
     -webkit-user-select: none;
     user-select: none;
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
+
+    /*
+     * Gradient strips mark the sides where the board continues beyond the visible area.
+     * The custom properties live on the pseudo-element, so toggling a side does not
+     * restyle the 10,000 inherited cells of a 100x100 board. Its own compositor layer
+     * keeps the overlay from slowing down re-rasterizing the zoomed board.
+     */
+    &::after {
+      --edge-shadow-color: rgb(32 35 31 / 0.5);
+      --edge-size: 1.5rem;
+      --edge-left: transparent;
+      --edge-right: transparent;
+      --edge-top: transparent;
+      --edge-bottom: transparent;
+      content: '';
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      pointer-events: none;
+      will-change: transform;
+      background:
+        linear-gradient(to right, var(--edge-left), transparent) left / var(--edge-size) 100% no-repeat,
+        linear-gradient(to left, var(--edge-right), transparent) right / var(--edge-size) 100% no-repeat,
+        linear-gradient(to bottom, var(--edge-top), transparent) top / 100% var(--edge-size) no-repeat,
+        linear-gradient(to top, var(--edge-bottom), transparent) bottom / 100% var(--edge-size) no-repeat;
+    }
+
+    &.has-more-left::after {
+      --edge-left: var(--edge-shadow-color);
+    }
+
+    &.has-more-right::after {
+      --edge-right: var(--edge-shadow-color);
+    }
+
+    &.has-more-top::after {
+      --edge-top: var(--edge-shadow-color);
+    }
+
+    &.has-more-bottom::after {
+      --edge-bottom: var(--edge-shadow-color);
+    }
   }
 
   .zoom-level {
@@ -243,6 +289,7 @@ main.minesweeper-game-page {
   margin: 4rem;
   padding: 0.25rem;
   overflow: visible;
+  border: 0.25rem solid var(--cell-bevel-dark);
   border-radius: 0.5rem;
   background: var(--board-color);
 

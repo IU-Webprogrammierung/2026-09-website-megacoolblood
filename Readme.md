@@ -54,6 +54,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   default and can be hidden with the same control
 - Pan/zoom operates on the board viewport; keyboard cell navigation remains
   independent of the visual zoom level
+- A dark frame marks the real board edge on a dotted surface, and inner
+  shadows on the viewport edges show where the board continues beyond the
+  visible area
 - Visible focus state for board cells
 - Status messages for starting a game, revealing cells, winning, and losing
 - Winning streak and game statistics stored using `localStorage`
