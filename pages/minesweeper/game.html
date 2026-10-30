@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="../../css/minesweeper.css">
   <link rel="icon" type="image/png" href="../../assets/images/LycheeLab.png">
   <script src="../../js/components.js" defer></script>
+  <script src="../../js/minesweeper/run-state.js" defer></script>
   <script src="../../js/minesweeper/game.js" defer></script>
 </head>
 
@@ -40,8 +41,13 @@
             </div>
             <div>
               <dt><img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true"><span
-                  class="game-header-label">Aktuelle Siegesserie</span></dt>
-              <dd id="winning-streak">0</dd>
+                  class="game-header-label">Score</span></dt>
+              <dd id="series-revealed-fields">0</dd>
+            </div>
+            <div>
+              <dt><img class="info-icon" src="../../assets/icons/heart.svg" alt="" aria-hidden="true"><span
+                  class="game-header-label">Extraleben</span></dt>
+              <dd id="extra-lives"><span aria-hidden="true">3/3</span><span class="visually-hidden">3 von 3</span></dd>
             </div>
           </dl>
         </div>
@@ -77,9 +83,25 @@
           <button type="button" class="mode-button" data-mode="mark" aria-pressed="false"><img class="mode-icon"
               src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true"><span
               class="mode-button-label">Markieren (M)</span></button>
+          <button type="button" class="mode-button" data-mode="check" aria-pressed="false" aria-disabled="false"
+            aria-label="Prüfen (P), 3 verbleibend"><span class="check-mode-icon"><img class="mode-icon"
+                src="../../assets/icons/check.svg" alt="" aria-hidden="true"><span id="check-charges"
+                class="check-charge-count" aria-hidden="true">3</span></span><span class="mode-button-label">Prüfen
+              (P)</span></button>
         </div>
       </footer>
     </section>
+    <dialog id="series-reset-dialog" class="confirm-dialog" aria-labelledby="series-reset-title"
+      aria-describedby="series-reset-message">
+      <form method="dialog">
+        <h2 id="series-reset-title">Neues Spiel starten?</h2>
+        <p id="series-reset-message"></p>
+        <div class="confirm-dialog-actions">
+          <button type="submit" value="cancel" autofocus>Abbrechen</button>
+          <button type="submit" value="confirm">Neu starten</button>
+        </div>
+      </form>
+    </dialog>
   </main>
   <component path="../../components/footer.html"></component>
 </body>

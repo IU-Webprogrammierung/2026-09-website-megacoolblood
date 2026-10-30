@@ -5,20 +5,34 @@ const storageKey = 'lycheelab-difficulty';
 
 function readDifficulty() {
   try {
-  return localStorage.getItem(storageKey) || 'beginner';
+    const storedDifficulty = localStorage.getItem(storageKey);
+    return minesweeperRunState.difficulties.includes(storedDifficulty)
+      ? storedDifficulty
+      : 'beginner';
   } catch {
-  return 'beginner';
+    settingsStatus.textContent = 'Einstellungen konnten nicht gelesen werden; Anfänger wird angezeigt.';
+    return 'beginner';
   }
 }
 
 function saveDifficulty(event) {
   event.preventDefault();
 
+  if (!minesweeperRunState.difficulties.includes(difficultySelect.value)) {
+    settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
+    return;
+  }
+
   try {
-  localStorage.setItem(storageKey, difficultySelect.value);
-  settingsStatus.textContent = 'Einstellungen gespeichert.';
+    localStorage.setItem(storageKey, difficultySelect.value);
+    if (localStorage.getItem(storageKey) !== difficultySelect.value) {
+      settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
+      return;
+    }
+
+    settingsStatus.textContent = 'Einstellungen gespeichert.';
   } catch {
-  settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
+    settingsStatus.textContent = 'Einstellungen konnten nicht gespeichert werden.';
   }
 }
 

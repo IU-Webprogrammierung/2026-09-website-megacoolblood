@@ -23,11 +23,28 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   - Maximum: 100 × 100 cells and 2,000 mines
 - Random mine placement and display of adjacent mine counts
 - Automatic revealing of connected empty areas
-- Three input modes: Reveal, Flag, and Mark with a question mark
-- Mode switching through buttons or the `A`, `F`, and `M` keyboard shortcuts
+- Four input modes: Reveal, Flag, Mark with a question mark, and limited Check
+- Mode switching through buttons or the `A`, `F`, `M`, and `P` keyboard shortcuts
+- Three starting extra lives; revealing a mine consumes one, and another mine
+  hit at zero lives ends the game
+- Safe reveals grant a reward for each difficulty-specific threshold:
+  `ceil(totalFields / (mines * (mines / totalFields)^3 * 5 / 4))`
+  (Beginner: 3,444; Intermediate: 1,343; Expert: 443; Maximum: 500 fields).
+  Rewards restore an extra life up to three; at full lives, a reward adds a
+  Check charge instead
+- Check mode starts with three charges and uses one to flag a mine or reveal a
+  safe cell; on the first move it reveals without using a charge. Marked
+  question cells can be checked, while flags must be removed first
+- After a win, Score, extra lives, Check charges, and reward progress carry into
+  the next round. Restarting resets the active difficulty's series; a loss ends
+  it. Each difficulty has its own saved board and series, so changing difficulty
+  preserves the previous save and resumes it when selected again
+- Right-click in Check mode toggles a question mark
 - Mouse Left and Right clicks, Space key, and arrow key controls
 - The first move of a game always reveals a cell, regardless of the selected
   mode or mouse button
+- The game header shows remaining mines, series Score, and extra lives; the
+  mode controls show remaining Check charges
 - The board supports mouse-wheel zoom, mouse dragging, touch dragging, and
   pinch zoom; separate controls provide zoom in, zoom out, and reset
 - The game starts in immersive mode below 768 px; a button toggles the global
@@ -39,7 +56,7 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Status messages for starting a game, revealing cells, winning, and losing
 - Winning streak and game statistics stored using `localStorage`
 - Statistics are grouped by difficulty and contain cleared mines, success rate,
-  current streak, and best streak
+  current streak, and the highest Score achieved within a series
 - No account, application backend, or tracking required
 - Serve the static files over HTTP; component loading and the local Panzoom ESM
   import are not supported by a plain `file://` launch

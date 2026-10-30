@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="../../css/minesweeper.css">
   <link rel="icon" type="image/png" href="../../assets/images/LycheeLab.png">
   <script src="../../js/components.js" defer></script>
+  <script src="../../js/minesweeper/run-state.js" defer></script>
   <script src="../../js/minesweeper/statistics.js" defer></script>
 </head>
 <body>
@@ -16,6 +17,7 @@
   <main id="main-content" tabindex="-1">
   <h1>Minesweeper-Statistiken</h1>
   <p id="statistics-status" role="status">Lokal gespeicherte Spielstatistiken.</p>
+  <p>Der höchste Score zeigt die meisten sicheren Felder, die du in einer zusammenhängenden Siegesserie aufgedeckt hast. Die letzte Runde zählt auch bei einer Niederlage oder einem Neustart mit.</p>
   <section id="statistics-list" class="statistics-grid" aria-label="Statistiken nach Schwierigkeitsgrad"></section>
   </main>
   <component path="../../components/footer.html"></component>

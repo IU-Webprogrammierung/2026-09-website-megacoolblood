@@ -5,19 +5,42 @@ const zoomInButton = document.querySelector('#zoom-in');
 const zoomOutButton = document.querySelector('#zoom-out');
 const resetViewButton = document.querySelector('#reset-view');
 const newGameButton = document.querySelector('#new-game');
+const newGameIcon = newGameButton.querySelector('.control-icon');
+const newGameLabel = newGameButton.querySelector('.game-header-label');
 const gameChromeToggle = document.querySelector('#game-chrome-toggle');
 const gameStatus = document.querySelector('#game-status');
 const mineCount = document.querySelector('#mine-count');
-const winningStreakElement = document.querySelector('#winning-streak');
+const extraLivesElement = document.querySelector('#extra-lives');
+const seriesRevealedFieldsElement = document.querySelector('#series-revealed-fields');
+const seriesResetDialog = document.querySelector('#series-reset-dialog');
 const modeButtons = document.querySelectorAll('.mode-button');
+const checkModeButton = document.querySelector('[data-mode="check"]');
+const checkChargesElement = document.querySelector('#check-charges');
 const mobileLayout = window.matchMedia('(max-width: 767px)');
 let hasUserSelectedImmersiveMode = false;
+
+function getFieldsUntilNextReward(totalFields, mines) {
+  if (mines === 0) {
+    return Infinity;
+  }
+
+  return Math.ceil(
+    totalFields / (mines * Math.pow(mines / totalFields, 3) * 5 / 4)
+  );
+}
+
 const difficultySettings = {
   beginner: { columns: 9, mines: 10, rows: 9 },
   intermediate: { columns: 16, mines: 40, rows: 16 },
   expert: { columns: 30, mines: 99, rows: 16 },
   maximum: { columns: 100, mines: 2000, rows: 100 }
 };
+const rewardFieldsByDifficulty = Object.freeze(Object.fromEntries(
+  Object.entries(difficultySettings).map(([level, settings]) => [
+    level,
+    getFieldsUntilNextReward(settings.columns * settings.rows, settings.mines)
+  ])
+));
 
 function getStoredDifficulty() {
   try {
@@ -32,9 +55,11 @@ const difficulty = difficultySettings[storedDifficulty] ? storedDifficulty : 'be
 const boardRows = difficultySettings[difficulty].rows;
 const boardColumns = difficultySettings[difficulty].columns;
 const mineTotal = difficultySettings[difficulty].mines;
-const streakStorageKey = 'lycheelab-winning-streak';
-const statisticsStorageKey = 'lycheelab-statistics';
-const gameStateStorageKey = 'lycheelab-minesweeper-game';
+const maxExtraLives = minesweeperRunState.maxExtraLives;
+const iconPaths = {
+  nextRound: '../../assets/icons/next-round.svg',
+  reload: '../../assets/icons/reload.svg'
+};
 
 function setImmersiveMode(isImmersive) {
   document.body.classList.toggle('is-immersive', isImmersive);
@@ -57,6 +82,7 @@ gameChromeToggle.addEventListener('click', () => {
   setImmersiveMode(!document.body.classList.contains('is-immersive'));
 });
 let mineCurrentCount = difficultySettings[difficulty].mines;
+let series = minesweeperRunState.createDefaultSeries();
 let cells = [];
 let gameOver = false;
 let newGame = true;
@@ -73,54 +99,103 @@ const boardPanThreshold = 5;
 const panClickSuppressionMs = 500;
 const panClickSuppressionRadius = 16;
 
-function getWinningStreak() {
-  try {
-    const storedStreak = Number.parseInt(localStorage.getItem(streakStorageKey), 10);
-    return Number.isNaN(storedStreak) || storedStreak < 0 ? 0 : storedStreak;
-  } catch {
-    return 0;
-  }
-}
-
-function setWinningStreak(streak) {
-  winningStreakElement.textContent = streak;
-
-  try {
-    localStorage.setItem(streakStorageKey, String(streak));
-  } catch {
-  }
-}
-
 function recordGameResult(won) {
-  try {
-    const storedStatistics = JSON.parse(localStorage.getItem(statisticsStorageKey) || '{}');
-    const statistics = storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
-    const storedDifficultyStatistics = statistics[difficulty] || {};
-    const difficultyStatistics = {
-      bestStreak: Number(storedDifficultyStatistics.bestStreak) || 0,
-      currentStreak: Number(storedDifficultyStatistics.currentStreak) || 0,
-      gamesPlayed: Number(storedDifficultyStatistics.gamesPlayed) || 0,
-      minesCleared: Number(storedDifficultyStatistics.minesCleared) || 0,
-      wins: Number(storedDifficultyStatistics.wins) || 0
-    };
+  const statistics = minesweeperRunState.readStatistics();
 
-    difficultyStatistics.gamesPlayed += 1;
-    if (won) {
-      difficultyStatistics.wins += 1;
-      difficultyStatistics.minesCleared += mineTotal;
-      difficultyStatistics.currentStreak += 1;
-      difficultyStatistics.bestStreak = Math.max(
-        difficultyStatistics.bestStreak,
-        difficultyStatistics.currentStreak
-      );
-    } else {
-      difficultyStatistics.currentStreak = 0;
-    }
-
-    statistics[difficulty] = difficultyStatistics;
-    localStorage.setItem(statisticsStorageKey, JSON.stringify(statistics));
-  } catch {
+  if (!statistics) {
+    return;
   }
+
+  const difficultyStatistics = minesweeperRunState.readDifficultyStatistics(statistics, difficulty);
+
+  minesweeperRunState.updateBestSeriesRevealedFields(difficultyStatistics, series.revealedFields);
+  difficultyStatistics.gamesPlayed += 1;
+  if (won) {
+    difficultyStatistics.wins += 1;
+    difficultyStatistics.minesCleared += mineTotal;
+    difficultyStatistics.currentStreak += 1;
+  } else {
+    difficultyStatistics.currentStreak = 0;
+  }
+
+  statistics[difficulty] = difficultyStatistics;
+  minesweeperRunState.writeStatistics(statistics);
+}
+
+function addRevealedSafeFields(count) {
+  series.revealedFields += count;
+  series.revealProgress += count;
+
+  let extraLivesAwarded = 0;
+  let checkChargesAwarded = 0;
+  const rewardThreshold = rewardFieldsByDifficulty[difficulty];
+
+  while (series.revealProgress >= rewardThreshold) {
+    series.revealProgress -= rewardThreshold;
+    if (series.extraLives < maxExtraLives) {
+      series.extraLives += 1;
+      extraLivesAwarded += 1;
+    } else {
+      series.checkCharges += 1;
+      checkChargesAwarded += 1;
+    }
+  }
+
+  const announcements = [];
+  if (extraLivesAwarded > 0) {
+    announcements.push(
+      `Belohnung: ${extraLivesAwarded} Extraleben (${series.extraLives}/${maxExtraLives}).`
+    );
+  }
+  if (checkChargesAwarded > 0) {
+    const checkLabel = checkChargesAwarded === 1 ? 'Prüfung' : 'Prüfungen';
+    announcements.push(
+      `Belohnung: ${checkChargesAwarded} ${checkLabel} (${series.checkCharges.toLocaleString('de-DE')} verbleibend).`
+    );
+  }
+
+  return announcements;
+}
+
+function updateSeriesDisplay() {
+  seriesRevealedFieldsElement.textContent = series.revealedFields.toLocaleString('de-DE');
+}
+
+function updateExtraLivesDisplay() {
+  extraLivesElement.querySelector('[aria-hidden="true"]').textContent =
+    `${series.extraLives}/${maxExtraLives}`;
+  extraLivesElement.querySelector('.visually-hidden').textContent =
+    `${series.extraLives} von ${maxExtraLives}`;
+}
+
+function updateCheckChargesDisplay() {
+  const checkCharges = series.checkCharges;
+
+  checkChargesElement.textContent = checkCharges.toLocaleString('de-DE');
+  checkModeButton.setAttribute('aria-label', `Prüfen (P), ${checkCharges} verbleibend`);
+  checkModeButton.setAttribute('aria-disabled', String(checkCharges === 0));
+}
+
+function isTriggeredMine(cell) {
+  return cell.isRevealed && cell.isMine;
+}
+
+function checkForWin() {
+  return cells.every((row) => row.every((cell) => cell.isMine || cell.isRevealed));
+}
+
+function canStartNextRound() {
+  return gameOver && checkForWin();
+}
+
+function updateNewGameButton() {
+  const isNextRound = canStartNextRound();
+  const iconPath = isNextRound ? iconPaths.nextRound : iconPaths.reload;
+
+  if (newGameIcon.getAttribute('src') !== iconPath) {
+    newGameIcon.setAttribute('src', iconPath);
+  }
+  newGameLabel.textContent = isNextRound ? 'Nächste Runde' : 'Neustart';
 }
 
 function saveGameState() {
@@ -129,17 +204,18 @@ function saveGameState() {
     gameOver,
     newGame,
     mineCurrentCount,
+    series,
     cells: cells.map((row) => row.map((cell) => ({
       isFlagged: cell.isFlagged,
       isMarked: cell.isMarked,
       isMine: cell.isMine,
-      isRevealed: cell.isRevealed
+      isRevealed: cell.isRevealed,
+      isWrongFlag: cell.isWrongFlag
     })))
   };
 
-  try {
-    localStorage.setItem(gameStateStorageKey, JSON.stringify(gameState));
-  } catch {
+  if (!minesweeperRunState.writeSavedGame(difficulty, gameState)) {
+    gameStatus.textContent = 'Spielstand konnte nicht gespeichert werden.';
   }
 }
 
@@ -147,12 +223,21 @@ function restoreCellPresentation(cell) {
   cell.element.classList.toggle('is-flagged', cell.isFlagged);
   cell.element.classList.toggle('is-marked', cell.isMarked);
   cell.element.classList.toggle('is-revealed', cell.isRevealed);
+  cell.element.classList.toggle('is-wrong-flag', cell.isWrongFlag);
 
-  if (cell.isRevealed) {
+  if (isTriggeredMine(cell)) {
+    cell.element.classList.add('is-mine');
+    cell.element.setAttribute('aria-label', `Ausgelöste Mine auf Feld ${cell.coordinate}`);
+  } else if (cell.isRevealed) {
     const adjacentMines = countAdjacentMines(cell);
     setAdjacentMineCount(cell, adjacentMines);
   } else if (cell.isFlagged) {
-    cell.element.setAttribute('aria-label', `Als Flagge markiertes Feld ${cell.coordinate}`);
+    cell.element.setAttribute(
+      'aria-label',
+      cell.isWrongFlag
+        ? `Falsch gesetzte Flagge auf Feld ${cell.coordinate}`
+        : `Als Flagge markiertes Feld ${cell.coordinate}`
+    );
   } else if (cell.isMarked) {
     cell.element.setAttribute('aria-label', `Als Fragezeichen markiertes Feld ${cell.coordinate}`);
   } else {
@@ -245,25 +330,38 @@ function setAdjacentMineCount(cell, adjacentMines) {
   );
 }
 
+function registerHit(message) {
+  if (series.extraLives === 0) {
+    gameOver = true;
+    recordGameResult(false);
+    gameStatus.textContent = `${message} Keine Extraleben mehr. Spiel verloren.`;
+    gameOverRevealMines();
+    return;
+  }
+
+  series.extraLives -= 1;
+  updateExtraLivesDisplay();
+  gameStatus.textContent = `${message} Noch ${series.extraLives} von ${maxExtraLives} Extraleben.`;
+}
+
 function revealCell(cell) {
   if (gameOver || cell.isRevealed || cell.isFlagged || cell.isMarked) {
-    return;
+    return [];
   }
 
   if (cell.isMine) {
     cell.isRevealed = true;
     cell.element.classList.add('is-revealed', 'is-mine');
-    cell.element.setAttribute('aria-label', `Mine auf Feld ${cell.coordinate}`);
-    gameOver = true;
-    recordGameResult(false);
-    setWinningStreak(0);
-    gameStatus.textContent = `Spiel verloren. Auf Feld ${cell.coordinate} lag eine Mine.`;
-    gameOverRevealMines();
-    return;
+    cell.element.setAttribute('aria-label', `Ausgelöste Mine auf Feld ${cell.coordinate}`);
+    mineCurrentCount -= 1;
+    mineCount.textContent = mineCurrentCount;
+    registerHit(`Mine auf Feld ${cell.coordinate} ausgelöst.`);
+    return [];
   }
 
   const cellsToReveal = [cell];
   let currentIndex = 0;
+  let revealedCount = 0;
 
   while (currentIndex < cellsToReveal.length) {
     const currentCell = cellsToReveal[currentIndex];
@@ -274,6 +372,7 @@ function revealCell(cell) {
     }
 
     currentCell.isRevealed = true;
+    revealedCount += 1;
     currentCell.element.classList.add('is-revealed');
     const adjacentMines = countAdjacentMines(currentCell);
     setAdjacentMineCount(currentCell, adjacentMines);
@@ -287,16 +386,17 @@ function revealCell(cell) {
     }
   }
 
-  if (cells.every((row) => row.every((currentCell) => currentCell.isMine || currentCell.isRevealed))) {
+  const rewardAnnouncements = addRevealedSafeFields(revealedCount);
+
+  if (checkForWin()) {
     gameOver = true;
     recordGameResult(true);
-    const streak = getWinningStreak() + 1;
-    setWinningStreak(streak);
-    gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt.';
-    return;
+    gameStatus.textContent = 'Gewonnen. Alle sicheren Felder sind aufgedeckt. Mit „Nächste Runde“ geht es weiter.';
+    return rewardAnnouncements;
   }
 
   gameStatus.textContent = `Feld ${cell.coordinate} aufgedeckt.`;
+  return rewardAnnouncements;
 }
 
 function toggleFlag(cell) {
@@ -305,7 +405,9 @@ function toggleFlag(cell) {
   }
 
   cell.isFlagged = !cell.isFlagged;
+  cell.isWrongFlag = false;
   cell.element.classList.toggle('is-flagged', cell.isFlagged);
+  cell.element.classList.remove('is-wrong-flag');
   cell.element.setAttribute(
     'aria-label',
     `${cell.isFlagged ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
@@ -334,46 +436,131 @@ function toggleMark(cell) {
 }
 
 function setMode(mode) {
+  if (mode === 'check' && series.checkCharges === 0) {
+    gameStatus.textContent = 'Keine Prüfungen übrig.';
+    return false;
+  }
+
   activeMode = mode;
   modeButtons.forEach((button) => {
     const isActive = button.dataset.mode === activeMode;
     button.classList.toggle('is-active', isActive);
     button.setAttribute('aria-pressed', String(isActive));
   });
+  return true;
+}
+
+function useCheckMode(cell) {
+  if (gameOver) {
+    return [];
+  }
+
+  if (cell.isFlagged) {
+    gameStatus.textContent = `Entferne zuerst die Flagge auf Feld ${cell.coordinate}.`;
+    return [];
+  }
+
+  if (series.checkCharges === 0) {
+    gameStatus.textContent = 'Keine Prüfungen übrig.';
+    setMode('reveal');
+    return [];
+  }
+
+  series.checkCharges -= 1;
+  updateCheckChargesDisplay();
+
+  if (cell.isMarked) {
+    cell.isMarked = false;
+    cell.element.classList.remove('is-marked');
+    cell.element.setAttribute('aria-label', `Unaufgedecktes Feld ${cell.coordinate}`);
+  }
+
+  if (cell.isMine) {
+    toggleFlag(cell);
+    gameStatus.textContent = `Prüfung: Auf Feld ${cell.coordinate} liegt eine Mine. Flagge gesetzt.`;
+    if (series.checkCharges === 0) {
+      setMode('reveal');
+    }
+    return [];
+  }
+
+  const rewardAnnouncements = revealCell(cell);
+  if (!gameOver) {
+    gameStatus.textContent = `Prüfung: Feld ${cell.coordinate} ist sicher und wurde aufgedeckt.`;
+  }
+  if (series.checkCharges === 0) {
+    setMode('reveal');
+  }
+  return rewardAnnouncements;
 }
 
 function activeNumber(cell) {
-  let neighbors = getNeighbors(cell.row, cell.column);
-  let flaggedNeighbors = countFlags(neighbors);
-  let adjacentMines = countMines(neighbors);
-  if (flaggedNeighbors === adjacentMines) {
-    neighbors
-      .filter((neighbor) => !neighbor.isRevealed && !neighbor.isFlagged)
-      .forEach((neighbor) => {
-        revealCell(neighbor);
-      })
-      ;
+  const neighbors = getNeighbors(cell.row, cell.column);
+  const flaggedAndTriggeredMines = countFlags(neighbors)
+    + neighbors.filter(isTriggeredMine).length;
+  const adjacentMines = countMines(neighbors);
+
+  if (flaggedAndTriggeredMines !== adjacentMines) {
+    return [];
   }
+
+  const cellsToReveal = neighbors.filter(
+    (neighbor) => !neighbor.isRevealed && !neighbor.isFlagged && !neighbor.isMarked
+  );
+  const mineToReveal = cellsToReveal.find((neighbor) => neighbor.isMine);
+
+  if (mineToReveal) {
+    neighbors
+      .filter((neighbor) => neighbor.isFlagged && !neighbor.isMine)
+      .forEach((neighbor) => {
+        neighbor.isWrongFlag = true;
+        neighbor.element.classList.add('is-wrong-flag');
+        neighbor.element.setAttribute(
+          'aria-label',
+          `Falsch gesetzte Flagge auf Feld ${neighbor.coordinate}`
+        );
+      });
+    registerHit(`Falsche Flaggen um Feld ${cell.coordinate}.`);
+    return [];
+  }
+
+  return cellsToReveal.flatMap(revealCell);
 }
 
 function useActiveMode(cell, mode = activeMode) {
-  if (newGame) {
-    // The first move always reveals because mines are placed around the starting cell.
-    mode = 'reveal';
-    placeMines(cell);
-    newGame = false;
-  }
+  let rewardAnnouncements = [];
 
-  if (cell.isRevealed) {
-    activeNumber(cell);
-  } else if (mode === 'flag') {
-    toggleFlag(cell);
-  } else if (mode === 'mark') {
-    toggleMark(cell);
+  if (isTriggeredMine(cell)) {
+    gameStatus.textContent = `Auf Feld ${cell.coordinate} liegt eine ausgelöste Mine.`;
   } else {
-    revealCell(cell);
+    if (newGame) {
+      // The first move always reveals because mines are placed around the starting cell.
+      mode = 'reveal';
+      placeMines(cell);
+      newGame = false;
+    }
+
+    if (cell.isRevealed) {
+      rewardAnnouncements = activeNumber(cell);
+    } else if (mode === 'flag') {
+      toggleFlag(cell);
+    } else if (mode === 'mark') {
+      toggleMark(cell);
+    } else if (mode === 'check') {
+      rewardAnnouncements = useCheckMode(cell);
+    } else {
+      rewardAnnouncements = revealCell(cell);
+    }
   }
 
+  if (rewardAnnouncements.length > 0) {
+    gameStatus.textContent = `${gameStatus.textContent} ${rewardAnnouncements.join(' ')}`;
+  }
+
+  updateCheckChargesDisplay();
+  updateExtraLivesDisplay();
+  updateSeriesDisplay();
+  updateNewGameButton();
   saveGameState();
 }
 
@@ -404,6 +591,16 @@ function handleCellContextMenu(event) {
   }
 
   setActiveCell(cell);
+
+  if (activeMode === 'check' && !newGame) {
+    toggleMark(cell);
+    updateCheckChargesDisplay();
+    updateExtraLivesDisplay();
+    updateSeriesDisplay();
+    updateNewGameButton();
+    saveGameState();
+    return;
+  }
 
   const contextMode = activeMode === 'reveal' ? 'flag' : 'reveal';
 
@@ -599,10 +796,10 @@ function handleCellKeyDown(event) {
 
 
 function handleModeShortcut(event) {
-  const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark' };
+  const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark', p: 'check' };
   const mode = modeShortcuts[event.key.toLowerCase()];
 
-  if (!mode || event.target.matches('input, select, textarea')) {
+  if (!mode || event.target.matches('input, select, textarea') || event.target.closest('dialog[open]')) {
     return;
   }
 
@@ -619,7 +816,10 @@ function createBoard() {
   gameStatus.textContent = 'Neues Spiel gestartet.';
   mineCurrentCount = mineTotal;
   mineCount.textContent = mineCurrentCount;
-  winningStreakElement.textContent = getWinningStreak();
+  updateCheckChargesDisplay();
+  updateExtraLivesDisplay();
+  updateSeriesDisplay();
+  updateNewGameButton();
 
   board.style.gridTemplateColumns = `repeat(${boardColumns}, var(--cell-size))`;
 
@@ -636,7 +836,8 @@ function createBoard() {
         isMine: false,
         isFlagged: false,
         isMarked: false,
-        isRevealed: false
+        isRevealed: false,
+        isWrongFlag: false
       };
 
       cell.type = 'button';
@@ -655,13 +856,15 @@ function createBoard() {
 }
 
 function gameOverRevealMines() {
-  cells.forEach(row => row.filter((currentCell) => currentCell.isMine && !currentCell.isFlagged).forEach((mine) => {
-    mine.element.textContent = '';
+  cells.forEach(row => row.filter((currentCell) => (
+    currentCell.isMine && !currentCell.isFlagged && !isTriggeredMine(currentCell)
+  )).forEach((mine) => {
     mine.element.setAttribute('aria-label', `Mine auf Feld ${mine.coordinate}`);
     mine.element.classList.add('is-mine');
   }));
   cells.forEach(row => row.filter((currentCell) => !currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
-    flag.element.setAttribute('aria-label', `Falsch als Flagge markiertes Feld ${flag.coordinate}`);
+    flag.isWrongFlag = true;
+    flag.element.setAttribute('aria-label', `Falsch gesetzte Flagge auf Feld ${flag.coordinate}`);
     flag.element.classList.add('is-wrong-flag');
   }));
   cells.forEach(row => row.filter((currentCell) => currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
@@ -670,24 +873,46 @@ function gameOverRevealMines() {
   }));
 }
 
-function startNewGame() {
-  try {
-    localStorage.removeItem(gameStateStorageKey);
-  } catch {
+async function startNewGame() {
+  const isNextRound = canStartNextRound();
+
+  if (!isNextRound && !gameOver) {
+    const roundInProgress = !newGame;
+    const message = minesweeperRunState.getSeriesLossMessage({ series, roundInProgress });
+
+    if (message) {
+      const confirmed = await minesweeperRunState.confirmSeriesReset(seriesResetDialog, message);
+
+      if (!confirmed) {
+        gameStatus.textContent = 'Neustart abgebrochen.';
+        return;
+      }
+
+      minesweeperRunState.endSeries(difficulty, {
+        countAsLoss: roundInProgress,
+        revealedFields: series.revealedFields
+      });
+    }
   }
 
+  minesweeperRunState.removeSavedGame(difficulty);
+
+  if (!isNextRound) {
+    series = minesweeperRunState.createDefaultSeries();
+  }
   createBoard();
+
+  if (isNextRound) {
+    const checkChargeLabel = series.checkCharges === 1 ? 'Prüfung' : 'Prüfungen';
+    const carriedLives = `${series.extraLives} von ${maxExtraLives} Extraleben`;
+    const carriedChecks = `${series.checkCharges} ${checkChargeLabel}`;
+    gameStatus.textContent = `Nächste Runde gestartet. Score von ${series.revealedFields.toLocaleString('de-DE')} übernommen. ${carriedLives} und ${carriedChecks} übernommen.`;
+  }
   saveGameState();
 }
 
 function loadGameState() {
-  let savedGameState;
-
-  try {
-    savedGameState = JSON.parse(localStorage.getItem(gameStateStorageKey) || 'null');
-  } catch {
-    savedGameState = null;
-  }
+  const savedGameState = minesweeperRunState.readSavedGame(difficulty);
 
   if (
     !savedGameState ||
@@ -711,20 +936,32 @@ function loadGameState() {
       cells[row][column].isFlagged = Boolean(savedCell.isFlagged);
       cells[row][column].isMarked = Boolean(savedCell.isMarked);
       cells[row][column].isRevealed = Boolean(savedCell.isRevealed);
+      cells[row][column].isWrongFlag = Boolean(savedCell.isWrongFlag)
+        && cells[row][column].isFlagged
+        && !cells[row][column].isMine;
     });
   });
 
   cells.forEach((row) => row.forEach((cell) => restoreCellPresentation(cell)));
 
+  series = minesweeperRunState.normalizeSeries(savedGameState.series);
+  updateCheckChargesDisplay();
+  updateExtraLivesDisplay();
+  updateSeriesDisplay();
   gameOver = Boolean(savedGameState.gameOver);
   newGame = Boolean(savedGameState.newGame);
   mineCurrentCount = Number.isFinite(savedGameState.mineCurrentCount)
     ? savedGameState.mineCurrentCount
     : mineTotal;
   mineCount.textContent = mineCurrentCount;
-  gameStatus.textContent = gameOver
-    ? 'Gespeichertes Spiel beendet.'
-    : 'Gespeichertes Spiel fortgesetzt.';
+  if (canStartNextRound()) {
+    gameStatus.textContent = 'Gespeichertes Spiel gewonnen. Mit „Nächste Runde“ geht es weiter.';
+  } else {
+    gameStatus.textContent = gameOver
+      ? 'Gespeichertes Spiel beendet.'
+      : 'Gespeichertes Spiel fortgesetzt.';
+  }
+  updateNewGameButton();
   if (gameOver) {
     gameOverRevealMines();
   }
