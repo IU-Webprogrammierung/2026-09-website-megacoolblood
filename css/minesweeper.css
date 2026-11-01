@@ -75,6 +75,11 @@ main.minesweeper-game-page {
     }
   }
 
+  .game-header-actions > dl > div[hidden],
+  .game-modes .mode-button[hidden] {
+    display: none !important;
+  }
+
   .game-board-viewport {
     width: 100%;
     min-width: 0;

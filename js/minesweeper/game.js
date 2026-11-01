@@ -201,7 +201,7 @@ function updateSeriesDisplay() {
 }
 
 function updateExtraLivesDisplay() {
-  extraLivesElement.hidden = !hasExtraLives;
+  extraLivesElement.parentElement.hidden = !hasExtraLives;
   if (!hasExtraLives) {
     return;
   }
