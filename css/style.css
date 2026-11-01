@@ -98,6 +98,10 @@ p {
   padding: var(--space-medium);
 
   .site-logo {
+    :hover {
+      opacity: 0.8;
+    }
+
     img {
       display: block;
       width: 3rem;
