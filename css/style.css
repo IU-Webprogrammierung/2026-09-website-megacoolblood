@@ -57,7 +57,7 @@ main {
   }
 
   .app-preview {
-    display: block;
+    display: grid;
     margin-block: 0 var(--space-medium);
     place-items: center;
 
@@ -87,6 +87,47 @@ p {
 #site-header {
   border-bottom: 1px solid var(--color-border);
   background: var(--color-background);
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--space-medium);
+  width: 100%;
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: var(--space-medium);
+
+  .site-logo {
+    img {
+      display: block;
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  .menu-toggle {
+    .menu-icon {
+      position: relative;
+      width: 1.5rem;
+      height: 1.25rem;
+
+      &,
+      span {
+        display: block;
+      }
+
+      span {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 0.15rem;
+        background: currentColor;
+        border-radius: 0.1rem;
+        transition: transform 160ms ease, opacity 160ms ease;
+      }
+    }
+  }
 }
 
 #site-footer {
@@ -220,50 +261,6 @@ p {
   }
 }
 
-body>header {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: var(--space-medium);
-  width: 100%;
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: var(--space-medium);
-
-  .site-logo {
-    img {
-      display: block;
-      width: 3rem;
-      height: 3rem;
-    }
-  }
-
-  .menu-toggle {
-    .menu-icon {
-      position: relative;
-      width: 1.5rem;
-      height: 1.25rem;
-
-      &,
-      span {
-        display: block;
-      }
-
-      span {
-        position: absolute;
-        left: 0;
-        top: 50%;
-        width: 100%;
-        height: 0.15rem;
-        background: currentColor;
-        border-radius: 0.1rem;
-        transition: transform 160ms ease, opacity 160ms ease;
-      }
-    }
-  }
-}
-
 .menu-toggle {
   display: grid;
   place-items: center;
@@ -392,7 +389,7 @@ a:focus-visible {
 }
 
 @media (min-width: 768px) {
-  body>header {
+  #site-header {
     flex-wrap: wrap;
   }
 
