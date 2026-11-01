@@ -72,6 +72,10 @@ main {
   p {
     margin-block: 0 var(--space-small);
   }
+
+  nav {
+    margin-top: auto;
+  }
 }
 
 h1,
