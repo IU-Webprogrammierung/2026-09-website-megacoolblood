@@ -339,17 +339,27 @@ function handleKeyDown(event) {
 }
 
 function handlePointerDown(event) {
-  pointerStart = { x: event.clientX, y: event.clientY };
+  if (!event.isPrimary) {
+  return;
+  }
+
+  pointerStart = {
+  id: event.pointerId,
+  x: event.clientX,
+  y: event.clientY
+  };
+  boardElement.setPointerCapture(event.pointerId);
 }
 
 function handlePointerUp(event) {
-  if (!pointerStart) {
+  if (!pointerStart || event.pointerId !== pointerStart.id) {
   return;
   }
 
   const deltaX = event.clientX - pointerStart.x;
   const deltaY = event.clientY - pointerStart.y;
   pointerStart = null;
+  boardElement.releasePointerCapture(event.pointerId);
 
   if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) < 24) {
   return;
@@ -367,6 +377,9 @@ boardElement.addEventListener('keydown', handleKeyDown);
 boardElement.addEventListener('pointerdown', handlePointerDown);
 boardElement.addEventListener('pointerup', handlePointerUp);
 boardElement.addEventListener('pointercancel', () => {
+  pointerStart = null;
+});
+boardElement.addEventListener('lostpointercapture', () => {
   pointerStart = null;
 });
 bestScoreElement.textContent = bestScore;
