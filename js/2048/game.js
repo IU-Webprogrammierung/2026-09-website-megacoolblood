@@ -339,7 +339,7 @@ function handleKeyDown(event) {
 }
 
 function handleGlobalKeyDown(event) {
-  if (event.target.matches('input, textarea, select')) {
+  if (isGlobalShortcutBlocked(event)) {
     return;
   }
 

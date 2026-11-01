@@ -969,10 +969,7 @@ function handleCellKeyDown(event) {
 
 
 function handleGlobalShortcut(event) {
-  if (
-    event.target.matches('input, select, textarea')
-    || event.target.closest('dialog[open]')
-  ) {
+  if (isGlobalShortcutBlocked(event)) {
     return;
   }
 

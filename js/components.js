@@ -1,3 +1,14 @@
+function isGlobalShortcutBlocked(event) {
+  const target = event.target;
+
+  return target instanceof Element
+    && (
+      target.matches('input, select, textarea')
+      || target.closest('[contenteditable]:not([contenteditable="false"])')
+      || target.closest('dialog[open]')
+    );
+}
+
 function markCurrentPage(link) {
   const linkUrl = new URL(link.href, window.location.href);
   const currentUrl = new URL(window.location.href);
