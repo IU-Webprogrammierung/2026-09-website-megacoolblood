@@ -109,6 +109,12 @@ p {
     }
   }
 
+  nav[data-main-navigation] a[aria-current="page"] {
+    color: var(--color-text);
+    background: var(--color-background);
+    font-weight: 700;
+  }
+  
   .menu-toggle {
     .menu-icon {
       position: relative;
