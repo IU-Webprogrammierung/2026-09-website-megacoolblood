@@ -989,6 +989,28 @@ function handleGlobalShortcut(event) {
   if (mode) {
     event.preventDefault();
     selectMode(mode);
+    return;
+  }
+
+  const viewActions = {
+    '+': () => zoomInButton.click(),
+    '=': () => zoomInButton.click(),
+    '-': () => zoomOutButton.click(),
+    '0': () => resetViewButton.click()
+  };
+  const viewAction = viewActions[key];
+
+  if (viewAction && !event.ctrlKey && !event.altKey && !event.metaKey && !event.repeat) {
+    const button = key === '+' || key === '='
+      ? zoomInButton
+      : key === '-'
+        ? zoomOutButton
+        : resetViewButton;
+
+    if (!button.disabled) {
+      event.preventDefault();
+      viewAction();
+    }
   }
 }
 
