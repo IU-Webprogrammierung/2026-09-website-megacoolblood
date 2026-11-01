@@ -231,7 +231,7 @@ function updateNewGameButton() {
   if (newGameIcon.getAttribute('src') !== iconPath) {
     newGameIcon.setAttribute('src', iconPath);
   }
-  newGameLabel.textContent = isNextRound ? 'Nächste Runde' : 'Neustart';
+  newGameLabel.textContent = isNextRound ? 'Nächste Runde (R)' : 'Neustart (R)';
 }
 
 function saveGameState() {
@@ -968,16 +968,28 @@ function handleCellKeyDown(event) {
 }
 
 
-function handleModeShortcut(event) {
-  const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark', p: 'check' };
-  const mode = modeShortcuts[event.key.toLowerCase()];
-
-  if (!mode || event.target.matches('input, select, textarea') || event.target.closest('dialog[open]')) {
+function handleGlobalShortcut(event) {
+  if (
+    event.target.matches('input, select, textarea')
+    || event.target.closest('dialog[open]')
+  ) {
     return;
   }
 
-  event.preventDefault();
-  selectMode(mode);
+  const key = event.key.toLowerCase();
+  const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark', p: 'check' };
+  const mode = modeShortcuts[key];
+
+  if (key === 'r' && !event.ctrlKey && !event.altKey && !event.metaKey && !event.repeat) {
+    event.preventDefault();
+    startNewGame();
+    return;
+  }
+
+  if (mode) {
+    event.preventDefault();
+    selectMode(mode);
+  }
 }
 
 function createBoard() {
@@ -1178,7 +1190,7 @@ resetViewButton.addEventListener('click', centerViewOnWorkArea);
 board.addEventListener('click', handleCellClick);
 board.addEventListener('contextmenu', handleCellContextMenu);
 board.addEventListener('keydown', handleCellKeyDown);
-document.addEventListener('keydown', handleModeShortcut);
+document.addEventListener('keydown', handleGlobalShortcut);
 newGameButton.addEventListener('click', startNewGame);
 winDialog?.addEventListener('close', handleWinDialogClose);
 document.addEventListener('visibilitychange', () => {
