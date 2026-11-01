@@ -51,9 +51,9 @@ p {
   border: 1px solid var(--color-border);
   border-radius: 0.5rem;
 
-  > .game-header {
+  >.game-header {
     display: flex;
-    flex-wrap: wrap;    
+    flex-wrap: wrap;
     gap: var(--space-small);
     justify-content: space-between;
     align-items: flex-start;
@@ -79,7 +79,7 @@ p {
       margin: 0;
     }
 
-    dl > div {
+    dl>div {
       display: flex;
       align-items: center;
       gap: var(--space-small);
@@ -98,7 +98,7 @@ p {
     gap: var(--space-small);
   }
 
-  > .game-footer {
+  >.game-footer {
     width: auto;
     margin: var(--space-large) 0 0;
     padding: 0;
@@ -122,7 +122,7 @@ p {
       margin: 0;
     }
 
-    dl > div {
+    dl>div {
       display: flex;
       justify-content: space-between;
       gap: var(--space-medium);
@@ -138,7 +138,7 @@ p {
     }
   }
 
-  > p {
+  >p {
     grid-column: 1 / -1;
     margin: 0;
     padding: var(--space-medium);
@@ -147,51 +147,6 @@ p {
     border: 1px solid var(--color-border);
     border-radius: 0.5rem;
   }
-}
-
-.skip-link {
-  position: absolute;
-  transform: translateY(-200%);
-}
-
-.skip-link:focus {
-  transform: translateY(0);
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-
-button,
-a {
-  outline-offset: 0.2rem;
-}
-
-a {
-  color: var(--color-accent-dark);
-}
-
-button,
-select {
-  font: inherit;
-}
-
-button:disabled {
-  cursor: not-allowed;
-}
-
-button:focus-visible,
-a:focus-visible {
-  outline: 0.2rem solid var(--color-accent-dark);
-  outline-offset: 0.2rem;
 }
 
 body>header {
@@ -314,6 +269,57 @@ nav[data-subnavigation] ul {
   gap: var(--space-small);
 }
 
+.skip-link {
+  position: absolute;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+button,
+a {
+  outline-offset: 0.2rem;
+}
+
+a {
+  color: var(--color-accent-dark);
+}
+
+button,
+select {
+  font: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 0.2rem solid var(--color-accent-dark);
+  outline-offset: 0.2rem;
+}
+
+.brand-image {
+  display: block;
+  width: min(100%, 16rem);
+  height: auto;
+}
+
 @media (min-width: 768px) {
   body>header {
     flex-wrap: wrap;
@@ -348,10 +354,4 @@ nav[data-subnavigation] ul {
   nav[data-subnavigation] ul {
     flex-direction: row;
   }
-}
-
-.brand-image {
-  display: block;
-  width: min(100%, 16rem);
-  height: auto;
 }

@@ -128,34 +128,7 @@ main.minesweeper-game-page {
     margin: 0;
     padding: 0;
   }
-}
 
-@media (max-height: 40rem) {
-  body.minesweeper-game-shell main.minesweeper-game-page {
-    padding-block: var(--space-small);
-  }
-
-  main.minesweeper-game-page .game-panel {
-    gap: var(--space-small);
-  }
-}
-
-@media (max-width: 480px) {
-  main.minesweeper-game-page .game-panel > .game-footer {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 0.25rem;
-  }
-
-  main.minesweeper-game-page .game-modes {
-    flex: 1 1 0;
-    flex-wrap: nowrap;
-    min-width: 0;
-    gap: 0.25rem;
-  }
-}
-
-main.minesweeper-game-page {
   .game-board-world {
     --board-color: #c0c0c0;
     background-color: var(--board-surface-color);
@@ -286,6 +259,30 @@ main.minesweeper-game-page {
   }
 }
 
+@media (max-height: 40rem) {
+  body.minesweeper-game-shell main.minesweeper-game-page {
+    padding-block: var(--space-small);
+  }
+
+  main.minesweeper-game-page .game-panel {
+    gap: var(--space-small);
+  }
+}
+
+@media (max-width: 480px) {
+  main.minesweeper-game-page .game-panel > .game-footer {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0.25rem;
+  }
+
+  main.minesweeper-game-page .game-modes {
+    flex: 1 1 0;
+    flex-wrap: nowrap;
+    min-width: 0;
+    gap: 0.25rem;
+  }
+}
 
 @media (max-width: 767px) {
   main.minesweeper-game-page .game-modes > span {
