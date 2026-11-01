@@ -343,14 +343,21 @@ function handleGlobalKeyDown(event) {
     return;
   }
 
+  const key = event.key.toLowerCase();
   const isUndoShortcut = event.key === 'Backspace'
-    || (event.ctrlKey && event.key.toLowerCase() === 'z');
+    || (event.ctrlKey && key === 'z');
+  const isRestartShortcut = !event.ctrlKey && !event.altKey && key === 'r';
 
-  if (!isUndoShortcut) {
+  if (!isUndoShortcut && !isRestartShortcut) {
     return;
   }
 
   event.preventDefault();
+  if (isRestartShortcut) {
+    startGame();
+    return;
+  }
+
   undoMove();
 }
 
