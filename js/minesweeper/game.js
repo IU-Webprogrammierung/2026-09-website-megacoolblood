@@ -31,6 +31,9 @@ const boardColumns = difficultyConfig.columns;
 const mineTotal = difficultyConfig.mines;
 const rewardThreshold = minesweeperDifficulty.getRewardThreshold(difficultyConfig);
 const maxExtraLives = minesweeperRunState.maxExtraLives;
+const hasExtraLives = difficultyConfig.extraLives !== false;
+const hasChecks = difficultyConfig.checks !== false;
+const usesNoGuessPlacement = difficultyConfig.noGuess !== false;
 const iconPaths = {
   fullscreen: '../../assets/icons/fullscreen.svg',
   fullscreenExit: '../../assets/icons/fullscreen-exit.svg',
@@ -79,7 +82,7 @@ gameChromeToggle.addEventListener('click', () => {
   }
 });
 let mineCurrentCount = mineTotal;
-let series = minesweeperRunState.createDefaultSeries();
+let series = minesweeperRunState.createDefaultSeries(difficultyConfig);
 let cells = [];
 let gameOver = false;
 let newGame = true;
@@ -168,10 +171,10 @@ function addRevealedSafeFields(count) {
 
   while (series.revealProgress >= rewardThreshold) {
     series.revealProgress -= rewardThreshold;
-    if (series.extraLives < maxExtraLives) {
+    if (hasExtraLives && series.extraLives < maxExtraLives) {
       series.extraLives += 1;
       extraLivesAwarded += 1;
-    } else {
+    } else if (hasChecks) {
       series.checkCharges += 1;
       checkChargesAwarded += 1;
     }
@@ -198,6 +201,11 @@ function updateSeriesDisplay() {
 }
 
 function updateExtraLivesDisplay() {
+  extraLivesElement.hidden = !hasExtraLives;
+  if (!hasExtraLives) {
+    return;
+  }
+
   extraLivesElement.querySelector('[aria-hidden="true"]').textContent =
     `${series.extraLives}/${maxExtraLives}`;
   extraLivesElement.querySelector('.visually-hidden').textContent =
@@ -206,6 +214,11 @@ function updateExtraLivesDisplay() {
 
 function updateCheckChargesDisplay() {
   const checkCharges = series.checkCharges;
+
+  checkModeButton.hidden = !hasChecks;
+  if (!hasChecks) {
+    return;
+  }
 
   checkChargesElement.textContent = checkCharges.toLocaleString('de-DE');
   checkModeButton.setAttribute('aria-label', `Prüfen (P), ${checkCharges} verbleibend`);
@@ -363,7 +376,7 @@ function setAdjacentMineCount(cell, adjacentMines) {
 }
 
 function registerHit(message) {
-  if (series.extraLives === 0) {
+  if (!hasExtraLives || series.extraLives === 0) {
     gameOver = true;
     pauseGameTimer();
     recordGameResult(false);
@@ -472,7 +485,7 @@ function toggleMark(cell) {
 }
 
 function setMode(mode) {
-  if (mode === 'check' && series.checkCharges === 0) {
+  if (mode === 'check' && (!hasChecks || series.checkCharges === 0)) {
     gameStatus.textContent = 'Keine Prüfungen übrig.';
     return false;
   }
@@ -511,7 +524,7 @@ function useCheckMode(cell) {
     return [];
   }
 
-  if (series.checkCharges === 0) {
+  if (!hasChecks || series.checkCharges === 0) {
     gameStatus.textContent = 'Keine Prüfungen übrig.';
     setMode('reveal');
     return [];
@@ -529,7 +542,7 @@ function useCheckMode(cell) {
   if (cell.isMine) {
     toggleFlag(cell);
     gameStatus.textContent = `Prüfung: Auf Feld ${cell.coordinate} liegt eine Mine. Flagge gesetzt.`;
-    if (series.checkCharges === 0) {
+    if (!hasChecks || series.checkCharges === 0) {
       setMode('reveal');
     }
     return [];
@@ -539,7 +552,7 @@ function useCheckMode(cell) {
   if (!gameOver) {
     gameStatus.textContent = `Prüfung: Feld ${cell.coordinate} ist sicher und wurde aufgedeckt.`;
   }
-  if (series.checkCharges === 0) {
+  if (!hasChecks || series.checkCharges === 0) {
     setMode('reveal');
   }
   return rewardAnnouncements;
@@ -1098,7 +1111,11 @@ async function startNewGame() {
 
   if (!isNextRound && !gameOver) {
     const roundInProgress = !newGame;
-    const message = minesweeperRunState.getSeriesLossMessage({ series, roundInProgress });
+    const message = minesweeperRunState.getSeriesLossMessage({
+      series,
+      roundInProgress,
+      rules: difficultyConfig
+    });
 
     if (message) {
       const confirmed = await minesweeperRunState.confirmSeriesReset(seriesResetDialog, message);
@@ -1119,7 +1136,7 @@ async function startNewGame() {
   minesweeperRunState.removeSavedGame(difficulty);
 
   if (!isNextRound) {
-    series = minesweeperRunState.createDefaultSeries();
+    series = minesweeperRunState.createDefaultSeries(difficultyConfig);
   }
   createBoard();
 
@@ -1162,7 +1179,7 @@ function loadGameState() {
     setActiveCell(savedActiveCell);
   }
 
-  series = minesweeperRunState.normalizeSeries(savedGameState.series);
+  series = minesweeperRunState.normalizeSeries(savedGameState.series, difficultyConfig);
   updateCheckChargesDisplay();
   updateExtraLivesDisplay();
   updateSeriesDisplay();

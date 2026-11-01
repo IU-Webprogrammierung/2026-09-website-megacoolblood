@@ -26,9 +26,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   read-only; custom values are validated with a message per field
 - Rule switches in the settings: extra lives, Check, and no-guess placement.
   Each combination of size, mines, and rules is a separate difficulty with its
-  own saved game and statistics. The gameplay effect of switching extra lives
-  or Check off and of no-guess placement is not implemented yet; the settings
-  already store these choices
+  own saved game and statistics. Disabled extra lives end the game on the next
+  mine, disabled Check removes the Check mode and charges, and no-guess
+  placement selects the best of several random layouts for a safer opening.
 - Random mine placement and display of adjacent mine counts
 - Automatic revealing of connected empty areas
 - Four input modes: Reveal, Flag, Mark with a question mark, and limited Check

@@ -21,10 +21,10 @@ const minesweeperRunState = (() => {
     return Number.isFinite(number) && number > 0 ? Math.floor(number) : 0;
   }
 
-  function createDefaultSeries() {
+  function createDefaultSeries(rules = {}) {
     return {
-      extraLives: maxExtraLives,
-      checkCharges: initialCheckCharges,
+      extraLives: rules.extraLives === false ? 0 : maxExtraLives,
+      checkCharges: rules.checks === false ? 0 : initialCheckCharges,
       revealProgress: 0,
       revealedFields: 0
     };
@@ -34,13 +34,13 @@ const minesweeperRunState = (() => {
     return Number.isInteger(value) && value >= 0 && value <= maximum ? value : fallback;
   }
 
-  function normalizeSeries(savedSeries) {
-    const defaults = createDefaultSeries();
+  function normalizeSeries(savedSeries, rules = {}) {
+    const defaults = createDefaultSeries(rules);
     const source = savedSeries && typeof savedSeries === 'object' ? savedSeries : {};
 
     return {
-      extraLives: normalizeCount(source.extraLives, defaults.extraLives, maxExtraLives),
-      checkCharges: normalizeCount(source.checkCharges, defaults.checkCharges),
+      extraLives: rules.extraLives === false ? 0 : normalizeCount(source.extraLives, defaults.extraLives, maxExtraLives),
+      checkCharges: rules.checks === false ? 0 : normalizeCount(source.checkCharges, defaults.checkCharges),
       revealProgress: normalizeCount(source.revealProgress, defaults.revealProgress),
       revealedFields: normalizeCount(source.revealedFields, defaults.revealedFields)
     };
@@ -209,14 +209,23 @@ const minesweeperRunState = (() => {
     removeSavedGame(difficulty);
   }
 
-  function getSeriesLossMessage({ series, roundInProgress }) {
+  function getSeriesLossMessage({ series, roundInProgress, rules = {} }) {
     const parts = [];
 
     if (series.revealedFields > 0) {
       parts.push(`Dein Score von ${series.revealedFields.toLocaleString('de-DE')} geht verloren.`);
     }
-    if (series.extraLives !== maxExtraLives || series.checkCharges !== initialCheckCharges) {
-      parts.push(`Extraleben werden auf ${maxExtraLives} und Prüfungen auf ${initialCheckCharges} zurückgesetzt.`);
+    const livesNeedReset = rules.extraLives !== false && series.extraLives !== maxExtraLives;
+    const checksNeedReset = rules.checks !== false && series.checkCharges !== initialCheckCharges;
+    if (livesNeedReset || checksNeedReset) {
+      const resetParts = [];
+      if (livesNeedReset) {
+        resetParts.push(`Extraleben werden auf ${maxExtraLives} zurückgesetzt`);
+      }
+      if (checksNeedReset) {
+        resetParts.push(`Prüfungen werden auf ${initialCheckCharges} zurückgesetzt`);
+      }
+      parts.push(`${resetParts.join(' und ')}.`);
     }
     if (roundInProgress) {
       parts.push('Das laufende Spiel zählt in der Statistik als Niederlage.');

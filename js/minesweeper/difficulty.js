@@ -16,7 +16,6 @@ const minesweeperDifficulty = (() => {
     expert: Object.freeze({ label: 'Experte', rows: 16, columns: 30, mines: 99 }),
     maximum: Object.freeze({ label: 'Maximal (100 × 100)', rows: 100, columns: 100, mines: 2000 })
   });
-  // Since the extra lives update, extra lives and checks are part of every standard difficulty.
   const defaultRules = Object.freeze({ extraLives: true, checks: true, noGuess: false });
   const maxRewardThreshold = 9999;
   const keyPattern = /^(beginner|intermediate|expert|maximum|custom-(\d+)x(\d+)-(\d+))(-lives)?(-checks)?(\+noguess)?$/;
