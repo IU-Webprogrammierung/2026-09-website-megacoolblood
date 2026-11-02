@@ -15,9 +15,9 @@ const minesweeperDifficulty = (() => {
     expert: Object.freeze({ label: 'Experte', rows: 16, columns: 30, mines: 99 }),
     maximum: Object.freeze({ label: 'Maximal (100 × 100)', rows: 100, columns: 100, mines: 2000 })
   });
-  const defaultRules = Object.freeze({ extraLives: true, checks: true, noGuess: false });
+  const defaultRules = Object.freeze({ extraLives: true, checks: true, lessGuess: true });
   const maxRewardThreshold = 9999;
-  const keyPattern = /^(beginner|intermediate|expert|maximum|custom-(\d+)x(\d+)-(\d+))(-lives)?(-checks)?(\+noguess)?$/;
+  const keyPattern = /^(beginner|intermediate|expert|maximum|custom-(\d+)x(\d+)-(\d+))(-lives)?(-checks)?(-lessguess)?$/;
 
   function clamp(value, minimum, maximum) {
     return Math.min(Math.max(value, minimum), maximum);
@@ -54,7 +54,7 @@ const minesweeperDifficulty = (() => {
       mines: clamp(Math.round(mines), limits.minMines, getMaxMines(normalizedRows, normalizedColumns)),
       extraLives: typeof source.extraLives === 'boolean' ? source.extraLives : defaultRules.extraLives,
       checks: typeof source.checks === 'boolean' ? source.checks : defaultRules.checks,
-      noGuess: typeof source.noGuess === 'boolean' ? source.noGuess : defaultRules.noGuess
+      lessGuess: typeof source.lessGuess === 'boolean' ? source.lessGuess : defaultRules.lessGuess
     };
   }
 
@@ -74,7 +74,7 @@ const minesweeperDifficulty = (() => {
     return base
       + (config.extraLives ? '' : '-lives')
       + (config.checks ? '' : '-checks')
-      + (config.noGuess ? '+noguess' : '');
+      + (config.lessGuess ? '' : '-lessguess');
   }
 
   // Returns the configuration for a canonical key, or null for unknown or out-of-range keys.
@@ -85,7 +85,7 @@ const minesweeperDifficulty = (() => {
       return null;
     }
 
-    const [, base, rows, columns, mines, livesOff, checksOff, noGuessOn] = match;
+    const [, base, rows, columns, mines, livesOff, checksOff, lessGuessOff] = match;
     const dimensions = presets[base] ?? { rows: Number(rows), columns: Number(columns), mines: Number(mines) };
     const config = normalizeDifficulty({
       rows: dimensions.rows,
@@ -93,7 +93,7 @@ const minesweeperDifficulty = (() => {
       mines: dimensions.mines,
       extraLives: !livesOff,
       checks: !checksOff,
-      noGuess: Boolean(noGuessOn)
+      lessGuess: !lessGuessOff
     });
 
     return getDifficultyKey(config) === key ? config : null;
@@ -108,7 +108,7 @@ const minesweeperDifficulty = (() => {
     const deviations = [
       config.extraLives ? null : 'ohne Extraleben',
       config.checks ? null : 'ohne Prüfen',
-      config.noGuess ? 'ratefrei' : null
+      config.lessGuess ? null : 'ratearm'
     ].filter(Boolean);
 
     return [base, ...deviations].join(' · ');

@@ -24,11 +24,18 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Custom difficulties in the settings: 5 to 100 rows and columns and at most
   33 % mines, keeping the 3 × 3 start area free. Preset sizes are shown
   read-only; custom values are validated with a message per field
-- Rule switches in the settings: extra lives, Check, and no-guess placement.
+- Rule switches in the settings: extra lives, Check, and less-guess placement.
   Each combination of size, mines, and rules is a separate difficulty with its
   own saved game and statistics. Disabled extra lives end the game on the next
-  mine, disabled Check removes the Check mode and charges, and no-guess
-  placement selects the best of several random layouts for a safer opening.
+  mine, and disabled Check removes the Check mode and charges.
+- Less-guess placement avoids two small guess situations: two adjacent cells
+  sharing one mine, and a 2 × 2 block with two mines, where the surrounding
+  numbers cannot tell the possible layouts apart. A cell that would complete
+  such a situation is skipped and only receives a mine when no other free cell
+  is left. Larger guess situations are intentionally not handled, so the
+  placement does not guarantee a game without guessing. The placement logic in
+  `js/minesweeper/mine-placement.js` has no DOM access and was checked with
+  Node scripts
 - Random mine placement and display of adjacent mine counts
 - Automatic revealing of connected empty areas
 - Four input modes: Reveal, Flag, Mark with a question mark, and limited Check

@@ -33,7 +33,7 @@ const rewardThreshold = minesweeperDifficulty.getRewardThreshold(difficultyConfi
 const maxExtraLives = minesweeperRunState.maxExtraLives;
 const hasExtraLives = difficultyConfig.extraLives !== false;
 const hasChecks = difficultyConfig.checks !== false;
-const usesNoGuessPlacement = difficultyConfig.noGuess !== false;
+const usesLessGuessPlacement = difficultyConfig.lessGuess !== false;
 const iconPaths = {
   fullscreen: '../../assets/icons/fullscreen.svg',
   fullscreenExit: '../../assets/icons/fullscreen-exit.svg',
@@ -327,25 +327,17 @@ function getNeighbors(row, column) {
 }
 
 function placeMines(firstCell) {
-  const mineIndexes = new Set();
-  const noMineIndexes = new Set([firstCell.row * boardColumns + firstCell.column]);
-
-  getNeighbors(firstCell.row, firstCell.column).forEach((neighbor) => {
-    noMineIndexes.add(neighbor.row * boardColumns + neighbor.column);
+  const { mineIndexes } = minesweeperMinePlacement.placeMines({
+    rows: boardRows,
+    columns: boardColumns,
+    mines: mineTotal,
+    startIndex: firstCell.row * boardColumns + firstCell.column,
+    lessGuess: usesLessGuessPlacement
   });
 
-  while (mineIndexes.size < mineTotal) {
-    let index = Math.floor(Math.random() * boardRows * boardColumns);
-    if (!noMineIndexes.has(index)) {
-      mineIndexes.add(index);
-    }
-  }
-  let row;
-  let column;
-
   mineIndexes.forEach((index) => {
-    column = index % boardColumns;
-    row = (index - column) / boardColumns;
+    const column = index % boardColumns;
+    const row = (index - column) / boardColumns;
     cells[row][column].isMine = true;
   });
 }

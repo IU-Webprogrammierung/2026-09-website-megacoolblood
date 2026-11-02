@@ -6,7 +6,7 @@ function getStatistics() {
 }
 
 function getRulesRank(config) {
-  const deviations = [!config.extraLives, !config.checks, config.noGuess];
+  const deviations = [!config.extraLives, !config.checks, !config.lessGuess];
   const count = deviations.filter(Boolean).length;
   const pattern = deviations.reduce((sum, isDeviation, index) => sum + (isDeviation ? 2 ** index : 0), 0);
 

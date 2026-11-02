@@ -10,7 +10,7 @@ const minesHint = document.querySelector('#mines-hint');
 const ruleInputs = {
   extraLives: document.querySelector('#rule-extra-lives'),
   checks: document.querySelector('#rule-checks'),
-  noGuess: document.querySelector('#rule-no-guess')
+  lessGuess: document.querySelector('#rule-less-guess')
 };
 const rewardInfo = document.querySelector('#reward-info');
 const { limits } = minesweeperDifficulty;
@@ -66,7 +66,7 @@ function readFormConfig() {
     mines: size.mines,
     extraLives: ruleInputs.extraLives.checked,
     checks: ruleInputs.checks.checked,
-    noGuess: ruleInputs.noGuess.checked
+    lessGuess: ruleInputs.lessGuess.checked
   };
 }
 
