@@ -20,8 +20,9 @@
 
     <section aria-labelledby="goal-heading">
       <h2 id="goal-heading">Spielziel</h2>
-      <p>Du gewinnst, wenn alle Felder ohne Mine aufgedeckt wurden. Du startest mit 3 Extraleben. Ein Minentreffer
-        verbraucht ein Extraleben; erst ein weiterer Treffer bei 0 Extraleben beendet das Spiel.</p>
+      <p>Du gewinnst, wenn alle Felder ohne Mine aufgedeckt wurden. Mit der Spielregel „Extraleben“ startest du mit 3
+        Extraleben. Ein Minentreffer verbraucht ein Extraleben; erst ein weiterer Treffer bei 0 Extraleben beendet das
+        Spiel. Ohne diese Spielregel beendet bereits die erste Mine das Spiel.</p>
       <p>Nach Spielende zeigt das Spielfeld alle Minen. Richtig gesetzte Flaggen werden grün hinterlegt, falsch gesetzte
         Flaggen rot mit einem Kreuz. Bei einem Sieg erhalten alle noch nicht markierten Minen automatisch eine Flagge,
         sodass alle Flaggen als richtig angezeigt werden.</p>
@@ -44,8 +45,9 @@
         </div>
         <div>
           <dt>Prüfen</dt>
-          <dd>Verbraucht eine der anfangs 3 Prüfungen: Eine Mine wird mit einer Flagge markiert, ein sicheres Feld
-            wird aufgedeckt. Ein mit „?“ markiertes Feld kann geprüft werden; eine Flagge muss vorher entfernt werden.
+          <dd>Nur mit der Spielregel „Prüfen“: Verbraucht eine der anfangs 3 Prüfungen. Eine Mine wird mit einer
+            Flagge markiert, ein sicheres Feld wird aufgedeckt. Ein mit „?“ markiertes Feld kann geprüft werden; eine
+            Flagge muss vorher entfernt werden.
           </dd>
         </div>
       </dl>
@@ -75,9 +77,9 @@
       <p>In den <a href="settings.html">Einstellungen</a> wählst du eine der vier festen Stufen oder legst mit
         „Benutzerdefiniert“ eine eigene fest: 5 bis 100 Zeilen und Spalten und höchstens 33 % Minen, wobei der
         Startbereich von 3 × 3 Feldern immer frei bleibt. Dort schaltest du außerdem die Spielregeln Extraleben,
-        Prüfen und ratearme Minenplatzierung ein oder aus. Jede Kombination aus Größe, Minen und Spielregeln ist ein
-        eigener Schwierigkeitsgrad mit eigenem Spielstand und eigener Statistik. Eine eigene Stufe mit denselben Werten
-        wie eine feste Stufe zählt als diese Stufe.</p>
+        Prüfen und ratearme Minenplatzierung ein oder aus; zu Beginn sind alle drei eingeschaltet. Jede Kombination
+        aus Größe, Minen und Spielregeln ist ein eigener Schwierigkeitsgrad mit eigenem Spielstand und eigener
+        Statistik. Eine eigene Stufe mit denselben Werten wie eine feste Stufe zählt als diese Stufe.</p>
       <p>Die ratearme Minenplatzierung vermeidet zwei kleine Ratesituationen: zwei benachbarte Felder mit einer Mine
         und einen Block aus 2 × 2 Feldern mit zwei Minen, bei denen die Zahlen ringsum keine Entscheidung zulassen.
         Größere Bereiche, in denen du raten musst, können weiterhin vorkommen. Bei sehr vielen Minen kann es
@@ -98,7 +100,7 @@
         </div>
         <div>
           <dt><kbd>P</kbd></dt>
-          <dd>Prüfen auswählen</dd>
+          <dd>Prüfen auswählen (nur mit der Spielregel „Prüfen“)</dd>
         </div>
         <div>
           <dt><kbd>Pfeiltasten</kbd></dt>
@@ -134,17 +136,26 @@
 
     <section aria-labelledby="lives-heading">
       <h2 id="lives-heading">Extraleben und Belohnungen</h2>
-      <p>Du startest mit 3 Extraleben. Eine aufgedeckte Mine kostet ein Extraleben. Erst wenn du bei 0 Extraleben eine
-        weitere Mine auslöst, ist das Spiel verloren. Beim Aufdecken eines sicheren Feldes steigt dein Score und dein
-        Belohnungsfortschritt jeweils um 1. Der Fortschritt wird in der Siegesserie pro Schwierigkeitsgrad gesammelt
-        und über die nächste Runde hinweg gespeichert.</p>
-      <p>Für jedes erreichte Schwellenziel erhältst du ein Extraleben, höchstens bis zum Stand von 3. Bist du bereits
-        bei 3 von 3, wird daraus stattdessen eine zusätzliche Prüfung. Die Schwelle hängt nur davon ab, wie dicht die
-        Minen liegen: Je mehr Minen pro Feld, desto häufiger gibt es eine Belohnung. Sie wird so berechnet und auf die
-        nächste ganze Feldzahl aufgerundet, höchstens aber 9.999 Felder:</p>
+      <p>Mit der Spielregel „Extraleben“ startest du mit 3 Extraleben. Eine aufgedeckte Mine kostet ein Extraleben.
+        Erst wenn du bei 0 Extraleben eine weitere Mine auslöst, ist das Spiel verloren. Beim Aufdecken eines sicheren
+        Feldes steigt dein Score und dein Belohnungsfortschritt jeweils um 1. Der Fortschritt wird in der Siegesserie
+        pro Schwierigkeitsgrad gesammelt und über die nächste Runde hinweg gespeichert.</p>
+      <p>Für jedes erreichte Schwellenziel erhältst du eine Belohnung. Welche, hängt von den eingeschalteten
+        Spielregeln ab:</p>
+      <ul>
+        <li>Extraleben und Prüfen: ein Extraleben, höchstens bis zum Stand von 3. Bist du bereits bei 3 von 3, wird
+          daraus stattdessen eine zusätzliche Prüfung.</li>
+        <li>Nur Extraleben: ein Extraleben, höchstens bis zum Stand von 3. Bei 3 von 3 verfällt die Belohnung.</li>
+        <li>Nur Prüfen: eine zusätzliche Prüfung.</li>
+        <li>Keine der beiden Spielregeln: keine Belohnung und kein Belohnungsfortschritt.</li>
+      </ul>
+      <p>Die Schwelle hängt nur davon ab, wie dicht die Minen liegen: Je mehr Minen pro Feld, desto häufiger gibt es
+        eine Belohnung. Sie wird so berechnet und auf die nächste ganze Feldzahl aufgerundet, höchstens aber 9.999
+        Felder:</p>
       <p><code>0,8 · (Felder / Minen)<sup>4</sup></code></p>
       <p><code>Felder</code> ist die Gesamtzahl der Felder der Stufe, <code>Minen</code> deren Minenzahl. Die
-        Einstellungen zeigen die Schwelle für jeden Schwierigkeitsgrad an.</p>
+        Einstellungen zeigen die Schwelle für jeden Schwierigkeitsgrad an, solange Extraleben oder Prüfen
+        eingeschaltet ist.</p>
       <ul>
         <li>Anfänger: 3.444 sichere Felder</li>
         <li>Fortgeschritten: 1.343 sichere Felder</li>

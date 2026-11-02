@@ -25,9 +25,10 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   33 % mines, keeping the 3 × 3 start area free. Preset sizes are shown
   read-only; custom values are validated with a message per field
 - Rule switches in the settings: extra lives, Check, and less-guess placement.
-  Each combination of size, mines, and rules is a separate difficulty with its
-  own saved game and statistics. Disabled extra lives end the game on the next
-  mine, and disabled Check removes the Check mode and charges.
+  All three are on by default. Each combination of size, mines, and rules is a
+  separate difficulty with its own saved game and statistics. Disabled extra
+  lives end the game on the first mine, and disabled Check removes the Check
+  mode, its charges, and the `P` shortcut.
 - Less-guess placement avoids two small guess situations: two adjacent cells
   sharing one mine, and a 2 × 2 block with two mines, where the surrounding
   numbers cannot tell the possible layouts apart. A cell that would complete
@@ -39,17 +40,20 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Random mine placement and display of adjacent mine counts
 - Automatic revealing of connected empty areas
 - Four input modes: Reveal, Flag, Mark with a question mark, and limited Check
-- Mode switching through buttons or the `A`, `F`, `M`, and `P` keyboard shortcuts;
-  the selected mode is stored locally. If no
+- Mode switching through buttons or the `A`, `F`, `M`, and `P` keyboard shortcuts
+  (`P` only with Check enabled); the selected mode is stored locally. If no
   Check charges are left, the game starts in Reveal mode instead
-- Three starting extra lives; revealing a mine consumes one, and another mine
-  hit at zero lives ends the game
+- With extra lives enabled, the game starts with three extra lives; revealing a
+  mine consumes one, and another mine hit at zero lives ends the game
 - Safe reveals grant a reward for each difficulty-specific threshold:
   `ceil(0.8 * (fields / mines)^4)`, capped at 9,999 fields
   (Beginner: 3,444; Intermediate: 1,343; Expert: 443; Maximum: 500 fields).
-  The settings page shows the threshold for the selected difficulty.
-  Rewards restore an extra life up to three; at full lives, a reward adds a
-  Check charge instead
+  The settings page shows the threshold for the selected difficulty while
+  extra lives or Check are enabled. The reward depends on the enabled rules:
+  - Both: an extra life up to three; at full lives, a Check charge instead
+  - Extra lives only: an extra life up to three; at full lives, the reward is lost
+  - Check only: a Check charge
+  - Neither: no rewards and no reward progress
 - Check mode starts with three charges and uses one to flag a mine or reveal a
   safe cell; on the first move it reveals without using a charge. Marked
   question cells can be checked, while flags must be removed first
