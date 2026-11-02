@@ -108,7 +108,7 @@ const minesweeperDifficulty = (() => {
     const deviations = [
       config.extraLives ? null : 'ohne Extraleben',
       config.checks ? null : 'ohne Prüfen',
-      config.lessGuess ? null : 'ratearm'
+      config.lessGuess ? null : 'nicht ratearm'
     ].filter(Boolean);
 
     return [base, ...deviations].join(' · ');
