@@ -36,6 +36,14 @@ main {
   padding-inline: var(--space-medium);
 }
 
+.home-intro {
+  text-align: center;
+
+  .brand-image {
+    margin-inline: auto;
+  }
+}
+
 .app-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
