@@ -94,9 +94,89 @@ const minesweeperMinePlacement = (() => {
     return guessWindows;
   }
 
+  function createsGuessSituation(board, index) {
+    const row = Math.floor(index / board.columns);
+    const column = index % board.columns;
+
+    return guessWindowShapes.some((shape) => {
+      const lastTop = Math.min(board.rows - shape.rows, row + 1);
+      const lastLeft = Math.min(board.columns - shape.columns, column + 1);
+
+      for (let top = Math.max(0, row - shape.rows); top <= lastTop; top += 1) {
+        for (let left = Math.max(0, column - shape.columns); left <= lastLeft; left += 1) {
+          if (isGuessWindow(board, top, left, shape)) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    });
+  }
+
+  function getStartAreaIndexes(rows, columns, startIndex) {
+    const startRow = Math.floor(startIndex / columns);
+    const startColumn = startIndex % columns;
+    const startArea = new Set();
+
+    for (let row = Math.max(0, startRow - 1); row <= Math.min(rows - 1, startRow + 1); row += 1) {
+      for (let column = Math.max(0, startColumn - 1); column <= Math.min(columns - 1, startColumn + 1); column += 1) {
+        startArea.add(row * columns + column);
+      }
+    }
+
+    return startArea;
+  }
+
+  function shuffle(values, random) {
+    for (let index = values.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(random() * (index + 1));
+      [values[index], values[swapIndex]] = [values[swapIndex], values[index]];
+    }
+
+    return values;
+  }
+
+  // Mines are placed in random order and the start area stays free. With lessGuess, a cell that would complete a
+  // guess situation is locked; locked cells only receive the mines that are left when no free cell remains.
+  function placeMines({ rows, columns, mines, startIndex, lessGuess, random = Math.random }) {
+    const board = { rows, columns, isMine: new Uint8Array(rows * columns) };
+    const startArea = getStartAreaIndexes(rows, columns, startIndex);
+    const candidates = shuffle(
+      Array.from({ length: rows * columns }, (_, index) => index).filter((index) => !startArea.has(index)),
+      random
+    );
+    const mineIndexes = [];
+    const lockedIndexes = [];
+
+    for (const index of candidates) {
+      if (mineIndexes.length === mines) {
+        break;
+      }
+
+      board.isMine[index] = 1;
+
+      if (lessGuess && createsGuessSituation(board, index)) {
+        board.isMine[index] = 0;
+        lockedIndexes.push(index);
+      } else {
+        mineIndexes.push(index);
+      }
+    }
+
+    // Locked cells keep the shuffled order, so taking the first ones is a random choice.
+    const fallbackIndexes = lockedIndexes.slice(0, mines - mineIndexes.length);
+
+    return {
+      mineIndexes: [...mineIndexes, ...fallbackIndexes],
+      fallbackMines: fallbackIndexes.length
+    };
+  }
+
   return Object.freeze({
     guessWindowShapes,
     isGuessWindow,
-    findGuessWindows
+    findGuessWindows,
+    placeMines
   });
 })();
