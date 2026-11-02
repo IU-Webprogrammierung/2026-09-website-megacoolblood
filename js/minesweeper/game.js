@@ -164,6 +164,11 @@ function recordGameResult(won) {
 
 function addRevealedSafeFields(count) {
   series.revealedFields += count;
+
+  if (!hasExtraLives && !hasChecks) {
+    return [];
+  }
+
   series.revealProgress += count;
 
   let extraLivesAwarded = 0;
@@ -372,7 +377,9 @@ function registerHit(message) {
     gameOver = true;
     pauseGameTimer();
     recordGameResult(false);
-    gameStatus.textContent = `${message} Keine Extraleben mehr. Spiel verloren.`;
+    gameStatus.textContent = hasExtraLives
+      ? `${message} Keine Extraleben mehr. Spiel verloren.`
+      : `${message} Spiel verloren.`;
     gameOverRevealMines();
     return;
   }
@@ -979,7 +986,8 @@ function handleGlobalShortcut(event) {
   }
 
   const key = event.key.toLowerCase();
-  const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark', p: 'check' };
+  // Without the Check rule, P is not a shortcut at all.
+  const modeShortcuts = { a: 'reveal', f: 'flag', m: 'mark', ...(hasChecks ? { p: 'check' } : {}) };
   const mode = modeShortcuts[key];
 
   if (key === 'r' && !event.ctrlKey && !event.altKey && !event.metaKey && !event.repeat) {
@@ -1134,9 +1142,12 @@ async function startNewGame() {
 
   if (isNextRound) {
     const checkChargeLabel = series.checkCharges === 1 ? 'Prüfung' : 'Prüfungen';
-    const carriedLives = `${series.extraLives} von ${maxExtraLives} Extraleben`;
-    const carriedChecks = `${series.checkCharges} ${checkChargeLabel}`;
-    gameStatus.textContent = `Nächste Runde gestartet. Score von ${series.revealedFields.toLocaleString('de-DE')} übernommen. ${carriedLives} und ${carriedChecks} übernommen.`;
+    const carriedResources = [
+      hasExtraLives ? `${series.extraLives} von ${maxExtraLives} Extraleben` : null,
+      hasChecks ? `${series.checkCharges} ${checkChargeLabel}` : null
+    ].filter(Boolean);
+    const carriedText = carriedResources.length > 0 ? ` ${carriedResources.join(' und ')} übernommen.` : '';
+    gameStatus.textContent = `Nächste Runde gestartet. Score von ${series.revealedFields.toLocaleString('de-DE')} übernommen.${carriedText}`;
   }
   saveGameState();
 }
