@@ -70,18 +70,15 @@ const minesweeperRunState = (() => {
   function readDifficultyStatistics(statistics, difficulty) {
     const storedStatistics = statistics?.[difficulty];
     const source = storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
-    const currentStreak = toCount(source.currentStreak);
 
     return {
-      // Versions without best-streak tracking kept counting the current streak, so it can exceed the stored best.
-      bestStreak: Math.max(toCount(source.bestStreak), currentStreak),
+      bestStreak: toCount(source.bestStreak),
       bestSeriesRevealedFields: toCount(source.bestSeriesRevealedFields),
       bestTimeMs: toCount(source.bestTimeMs),
-      currentStreak,
+      currentStreak: toCount(source.currentStreak),
       gamesPlayed: toCount(source.gamesPlayed),
       minesCleared: toCount(source.minesCleared),
       slowestTimeMs: toCount(source.slowestTimeMs),
-      timedWins: toCount(source.timedWins),
       totalWinTimeMs: toCount(source.totalWinTimeMs),
       wins: toCount(source.wins),
       wrongFlags: toCount(source.wrongFlags)
@@ -94,16 +91,15 @@ const minesweeperRunState = (() => {
     difficultyStatistics.wrongFlags += toCount(wrongFlags);
   }
 
-  // Wins saved before time tracking have no time, so the average uses timedWins instead of wins.
+  // Called after the win has been counted, so the first win sets the best time.
   function addWinTime(difficultyStatistics, elapsedMs) {
     const time = toCount(elapsedMs);
 
-    difficultyStatistics.bestTimeMs = difficultyStatistics.timedWins > 0
+    difficultyStatistics.bestTimeMs = difficultyStatistics.wins > 1
       ? Math.min(difficultyStatistics.bestTimeMs, time)
       : time;
     difficultyStatistics.slowestTimeMs = Math.max(difficultyStatistics.slowestTimeMs, time);
     difficultyStatistics.totalWinTimeMs += time;
-    difficultyStatistics.timedWins += 1;
   }
 
   function updateBestSeriesRevealedFields(difficultyStatistics, revealedFields) {

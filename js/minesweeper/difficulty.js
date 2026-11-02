@@ -1,7 +1,6 @@
 // Central difficulty model: a difficulty is the board size, the mine count, and the rule switches.
 const minesweeperDifficulty = (() => {
   const storageKey = 'lycheelab-minesweeper-difficulty';
-  const legacyStorageKey = 'lycheelab-difficulty';
   const limits = Object.freeze({
     minSize: 5,
     maxSize: 100,
@@ -140,16 +139,10 @@ const minesweeperDifficulty = (() => {
     return '';
   }
 
-  // Invalid stored values lead to Anfänger; without a stored configuration the former preset choice is used.
+  // Missing or invalid stored values lead to Anfänger.
   function readStoredDifficulty() {
     try {
-      const stored = localStorage.getItem(storageKey);
-
-      if (stored !== null) {
-        return normalizeDifficulty(JSON.parse(stored));
-      }
-
-      return createPresetDifficulty(localStorage.getItem(legacyStorageKey)) ?? createPresetDifficulty('beginner');
+      return normalizeDifficulty(JSON.parse(localStorage.getItem(storageKey)));
     } catch {
       return createPresetDifficulty('beginner');
     }
@@ -168,7 +161,6 @@ const minesweeperDifficulty = (() => {
 
   return Object.freeze({
     storageKey,
-    legacyStorageKey,
     limits,
     presets,
     defaultRules,

@@ -97,7 +97,7 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   series. A win counts every
   mine as cleared; a lost or aborted round counts its correct flags as cleared
   mines and its wrong flags separately, both only when the round ends. Times
-  only cover wins recorded after time tracking was added
+  cover won games
 - No account, application backend, or tracking required
 - Serve the static files over HTTP; component loading and the local Panzoom ESM
   import are not supported by a plain `file://` launch

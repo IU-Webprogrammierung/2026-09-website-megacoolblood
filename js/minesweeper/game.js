@@ -1201,9 +1201,6 @@ function loadGameState() {
       : 'Gespeichertes Spiel fortgesetzt.';
   }
   updateNewGameButton();
-  if (canStartNextRound()) {
-    flagRemainingMines();
-  }
   if (gameOver) {
     gameOverRevealMines();
   }

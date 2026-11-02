@@ -86,8 +86,8 @@ function renderStatistics() {
     const gamesPlayed = data.gamesPlayed;
     const wins = data.wins;
     const successRate = gamesPlayed > 0 ? Math.round((wins / gamesPlayed) * 100) : 0;
-    const hasTimes = data.timedWins > 0;
-    const averageTimeMs = hasTimes ? Math.round(data.totalWinTimeMs / data.timedWins) : 0;
+    const hasTimes = wins > 0;
+    const averageTimeMs = hasTimes ? Math.round(data.totalWinTimeMs / wins) : 0;
     const formatCount = (value) => value.toLocaleString('de-DE');
 
     card.className = 'statistics-card';
