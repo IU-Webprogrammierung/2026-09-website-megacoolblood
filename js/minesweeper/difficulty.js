@@ -114,12 +114,12 @@ const minesweeperDifficulty = (() => {
     return [base, ...deviations].join(' · ');
   }
 
-  // Equivalent to ceil(fields / (mines * (mines / fields)^3 * 5 / 4)); denser boards reward more often.
+  // The coefficient controls reward frequency; denser boards still reward more often.
   function getRewardThreshold(raw) {
     const config = normalizeDifficulty(raw);
     const fieldsPerMine = (config.rows * config.columns) / config.mines;
 
-    return Math.min(maxRewardThreshold, Math.ceil(0.8 * fieldsPerMine ** 4));
+    return Math.min(maxRewardThreshold, Math.ceil(1.5 * fieldsPerMine ** 4));
   }
 
   // Empty when neither extra lives nor checks are enabled, because there is nothing to reward.
@@ -128,7 +128,7 @@ const minesweeperDifficulty = (() => {
     const every = `Alle ${getRewardThreshold(config).toLocaleString('de-DE')} aufgedeckten sicheren Felder`;
 
     if (config.extraLives && config.checks) {
-      return `${every}: +1 Extraleben, bei 3 Extraleben stattdessen +1 Prüfung.`;
+      return `${every}: +1 Extraleben, bei 3 Extraleben stattdessen +3 Prüfungen.`;
     }
     if (config.extraLives) {
       return `${every}: +1 Extraleben, höchstens 3.`;

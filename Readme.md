@@ -46,13 +46,13 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - With extra lives enabled, the game starts with three extra lives; revealing a
   mine consumes one, and another mine hit at zero lives ends the game
 - Safe reveals grant a reward for each difficulty-specific threshold:
-  `ceil(0.8 * (fields / mines)^4)`, capped at 9,999 fields
-  (Beginner: 3,444; Intermediate: 1,343; Expert: 443; Maximum: 500 fields).
+  `ceil(1.5 * (fields / mines)^4)`, capped at 9,999 fields
+  (Beginner: 6,458; Intermediate: 2,517; Expert: 829; Maximum: 938 fields).
   The settings page shows the threshold for the selected difficulty while
   extra lives or Check are enabled. The reward depends on the enabled rules:
-  - Both: an extra life up to three; at full lives, a Check charge instead
+  - Both: an extra life up to three; at full lives, three Check charges instead
   - Extra lives only: an extra life up to three; at full lives, the reward is lost
-  - Check only: a Check charge
+  - Check only: three Check charges
   - Neither: no rewards and no reward progress
 - Check mode starts with three charges and uses one to flag a mine or reveal a
   safe cell; on the first move it reveals without using a charge. Marked

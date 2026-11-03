@@ -180,8 +180,8 @@ function addRevealedSafeFields(count) {
       series.extraLives += 1;
       extraLivesAwarded += 1;
     } else if (hasChecks) {
-      series.checkCharges += 1;
-      checkChargesAwarded += 1;
+      series.checkCharges += 3;
+      checkChargesAwarded += 3;
     }
   }
 
