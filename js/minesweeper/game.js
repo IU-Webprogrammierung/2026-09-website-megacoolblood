@@ -368,7 +368,9 @@ function setAdjacentMineCount(cell, adjacentMines) {
   }
   cell.element.setAttribute(
     'aria-label',
-    `${cell.coordinate}, ${adjacentMines} angrenzende Minen`
+    cell.isWrongFlag
+      ? `${cell.coordinate}, falsche Flagge, ${adjacentMines} angrenzende Minen`
+      : `${cell.coordinate}, ${adjacentMines} angrenzende Minen`
   );
 }
 
@@ -577,11 +579,11 @@ function activeNumber(cell) {
       .filter((neighbor) => neighbor.isFlagged && !neighbor.isMine)
       .forEach((neighbor) => {
         neighbor.isWrongFlag = true;
-        neighbor.element.classList.add('is-wrong-flag');
-        neighbor.element.setAttribute(
-          'aria-label',
-          `Falsch gesetzte Flagge auf Feld ${neighbor.coordinate}`
-        );
+        neighbor.isFlagged = false;
+        neighbor.isRevealed = true;
+        mineCurrentCount += 1;
+        mineCount.textContent = mineCurrentCount;
+        restoreCellPresentation(neighbor);
       });
     registerHit(`Falsche Flaggen um Feld ${cell.coordinate}.`);
     return [];
