@@ -1219,8 +1219,22 @@ document.addEventListener('pointerup', handleBoardPointerEnd, true);
 document.addEventListener('pointercancel', handleBoardPointerEnd, true);
 board.addEventListener('click', preventClickAfterPan, true);
 
-zoomInButton.addEventListener('click', () => boardPanzoom?.zoomIn());
-zoomOutButton.addEventListener('click', () => boardPanzoom?.zoomOut());
+function zoomBoardAtViewportCenter(direction) {
+  if (!boardPanzoom) {
+    return;
+  }
+
+  const viewport = boardViewport.getBoundingClientRect();
+  boardPanzoom.zoomWithWheel(new WheelEvent('wheel', {
+    deltaY: direction > 0 ? -3 : 3,
+    clientX: viewport.left + viewport.width / 2,
+    clientY: viewport.top + viewport.height / 2,
+    cancelable: true
+  }));
+}
+
+zoomInButton.addEventListener('click', () => zoomBoardAtViewportCenter(1));
+zoomOutButton.addEventListener('click', () => zoomBoardAtViewportCenter(-1));
 resetViewButton.addEventListener('click', centerViewOnWorkArea);
 
 board.addEventListener('click', handleCellClick);
