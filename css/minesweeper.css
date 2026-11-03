@@ -21,13 +21,13 @@ body.minesweeper-game-shell {
   &.is-immersive {
     grid-template-rows: minmax(0, 1fr);
 
-    > main.minesweeper-game-page {
+    >main.minesweeper-game-page {
       max-width: none;
       padding: 0;
     }
 
-    > #site-header,
-    > #site-footer {
+    >#site-header,
+    >#site-footer {
       display: none;
     }
   }
@@ -49,7 +49,7 @@ main.minesweeper-game-page {
     min-height: 0;
   }
 
-  .game-panel > .game-header {
+  .game-panel>.game-header {
     position: relative;
     margin-bottom: 0;
   }
@@ -62,20 +62,20 @@ main.minesweeper-game-page {
     gap: var(--space-small);
     min-width: 0;
 
-    > #new-game,
-    > #game-chrome-toggle {
+    >#new-game,
+    >#game-chrome-toggle {
       flex: 0 0 auto;
       width: max-content;
     }
 
-    > dl {
+    >dl {
       flex: 0 1 auto;
       min-width: 0;
       gap: var(--space-small);
     }
   }
 
-  .game-header-actions > dl > div[hidden],
+  .game-header-actions>dl>div[hidden],
   .game-modes .mode-button[hidden] {
     display: none !important;
   }
@@ -123,7 +123,7 @@ main.minesweeper-game-page {
     }
   }
 
-  .game-panel > .game-footer {
+  .game-panel>.game-footer {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -145,6 +145,11 @@ main.minesweeper-game-page {
     display: flex;
     align-items: center;
     gap: var(--space-small);
+  }
+
+  #game-status:focus-visible {
+    outline: 0.2rem solid var(--color-accent-dark);
+    outline-offset: 0.15rem;
   }
 
   .game-board-viewport {
@@ -275,7 +280,13 @@ main.minesweeper-game-page {
 }
 
 @media (max-width: 480px) {
-  main.minesweeper-game-page .game-panel > .game-footer {
+  main.minesweeper-game-page .game-header-intro>#game-status {
+    block-size: 2lh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  main.minesweeper-game-page .game-panel>.game-footer {
     flex-wrap: nowrap;
     justify-content: flex-start;
     gap: 0.25rem;
@@ -290,10 +301,10 @@ main.minesweeper-game-page {
 }
 
 @media (max-width: 767px) {
-  main.minesweeper-game-page .game-modes > span {
+  main.minesweeper-game-page .game-modes>span {
     display: none;
   }
-  
+
 
   main.minesweeper-game-page .game-panel .game-modes .mode-button {
     display: grid;
@@ -304,7 +315,7 @@ main.minesweeper-game-page {
     height: 48px;
     padding: 0;
   }
-  
+
   main.minesweeper-game-page .mode-icon {
     width: 24px;
     height: 24px;
@@ -323,7 +334,7 @@ main.minesweeper-game-page {
     white-space: nowrap;
     border: 0;
   }
-  
+
 
   main.minesweeper-game-page .game-header .control-icon,
   main.minesweeper-game-page .game-header .info-icon {
@@ -333,11 +344,11 @@ main.minesweeper-game-page {
   }
 
   /* Below 768 px the toggle is an icon button in the corner; its label stays available to screen readers. */
-  main.minesweeper-game-page .game-panel > .game-header {
+  main.minesweeper-game-page .game-panel>.game-header {
     padding-inline-end: calc(48px + var(--space-small));
   }
 
-  main.minesweeper-game-page .game-panel .game-header-actions > #game-chrome-toggle {
+  main.minesweeper-game-page .game-panel .game-header-actions>#game-chrome-toggle {
     position: absolute;
     top: 0;
     right: 0;
@@ -371,7 +382,7 @@ main.minesweeper-game-page {
     gap: 0.25rem;
   }
 
-  main.minesweeper-game-page .game-panel .game-header > .game-header-actions {
+  main.minesweeper-game-page .game-panel .game-header>.game-header-actions {
     display: grid;
     flex: 1 0 100%;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -380,7 +391,7 @@ main.minesweeper-game-page {
     width: 100%;
   }
 
-  main.minesweeper-game-page .game-panel .game-header > .game-header-actions > #new-game {
+  main.minesweeper-game-page .game-panel .game-header>.game-header-actions>#new-game {
     display: grid;
     place-items: center;
     width: 100%;
@@ -389,14 +400,14 @@ main.minesweeper-game-page {
     padding: 0;
   }
 
-  main.minesweeper-game-page .game-panel .game-header > .game-header-actions > dl {
+  main.minesweeper-game-page .game-panel .game-header>.game-header-actions>dl {
     display: grid;
     grid-column: 2 / -1;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: var(--space-small);
   }
 
-  main.minesweeper-game-page .game-panel .game-header > .game-header-actions > dl > div {
+  main.minesweeper-game-page .game-panel .game-header>.game-header-actions>dl>div {
     justify-content: center;
     min-width: 0;
     flex-direction: column;
@@ -640,7 +651,7 @@ main.minesweeper-game-page {
   gap: var(--space-medium);
   max-width: 48rem;
 
-  > p {
+  >p {
     margin: 0;
   }
 
@@ -748,7 +759,7 @@ main.minesweeper-game-page {
     border-radius: 0.25rem;
   }
 
-  > button {
+  >button {
     justify-self: start;
     min-height: 44px;
     padding: 0.5rem 1rem;

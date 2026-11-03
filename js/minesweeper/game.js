@@ -188,13 +188,13 @@ function addRevealedSafeFields(count) {
   const announcements = [];
   if (extraLivesAwarded > 0) {
     announcements.push(
-      `Belohnung: ${extraLivesAwarded} Extraleben (${series.extraLives}/${maxExtraLives}).`
+      `Belohnung: +${extraLivesAwarded} Extraleben (${series.extraLives}/${maxExtraLives}).`
     );
   }
   if (checkChargesAwarded > 0) {
     const checkLabel = checkChargesAwarded === 1 ? 'Prüfung' : 'Prüfungen';
     announcements.push(
-      `Belohnung: ${checkChargesAwarded} ${checkLabel} (${series.checkCharges.toLocaleString('de-DE')} verbleibend).`
+      `Belohnung: +${checkChargesAwarded} ${checkLabel}.`
     );
   }
 
@@ -379,16 +379,14 @@ function registerHit(message) {
     gameOver = true;
     pauseGameTimer();
     recordGameResult(false);
-    gameStatus.textContent = hasExtraLives
-      ? `${message} Keine Extraleben mehr. Spiel verloren.`
-      : `${message} Spiel verloren.`;
+    gameStatus.textContent = `${message} Spiel verloren.`;
     gameOverRevealMines();
     return;
   }
 
   series.extraLives -= 1;
   updateExtraLivesDisplay();
-  gameStatus.textContent = `${message} Noch ${series.extraLives} von ${maxExtraLives} Extraleben.`;
+  gameStatus.textContent = `${message} Noch ${series.extraLives}/${maxExtraLives} Extraleben.`;
 }
 
 function revealCell(cell) {
@@ -402,7 +400,7 @@ function revealCell(cell) {
     cell.element.setAttribute('aria-label', `Ausgelöste Mine auf Feld ${cell.coordinate}`);
     mineCurrentCount -= 1;
     mineCount.textContent = mineCurrentCount;
-    registerHit(`Mine auf Feld ${cell.coordinate} ausgelöst.`);
+    registerHit(`Mine ${cell.coordinate} ausgelöst.`);
     return [];
   }
 
@@ -441,11 +439,11 @@ function revealCell(cell) {
     recordGameResult(true);
     flagRemainingMines();
     gameOverRevealMines();
-    gameStatus.textContent = `Gewonnen in ${minesweeperRunState.describeDuration(elapsedMs)}. Alle sicheren Felder sind aufgedeckt. Mit „Nächste Runde“ geht es weiter.`;
+    gameStatus.textContent = `Runde in ${minesweeperRunState.describeDuration(elapsedMs)} gewonnen.`;
     return rewardAnnouncements;
   }
 
-  gameStatus.textContent = `Feld ${cell.coordinate} aufgedeckt.`;
+  gameStatus.textContent = `${cell.coordinate} aufgedeckt.`;
   return rewardAnnouncements;
 }
 
@@ -465,8 +463,8 @@ function toggleFlag(cell) {
   mineCurrentCount = mineCurrentCount + (cell.isFlagged ? -1 : 1);
   mineCount.textContent = mineCurrentCount;
   gameStatus.textContent = cell.isFlagged
-    ? `Feld ${cell.coordinate} als vermutete Mine markiert.`
-    : `Markierung von Feld ${cell.coordinate} entfernt.`;
+    ? `Flagge auf ${cell.coordinate} gesetzt.`
+    : `Flagge auf ${cell.coordinate} entfernt.`;
 }
 
 function toggleMark(cell) {
@@ -481,8 +479,8 @@ function toggleMark(cell) {
     `${cell.isMarked ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
   );
   gameStatus.textContent = cell.isMarked
-    ? `Feld ${cell.coordinate} mit einem Fragezeichen markiert.`
-    : `Markierung von Feld ${cell.coordinate} entfernt.`;
+    ? `Fragezeichen auf ${cell.coordinate} gesetzt.`
+    : `Fragezeichen auf ${cell.coordinate} entfernt.`;
 }
 
 function setMode(mode) {
@@ -521,7 +519,7 @@ function useCheckMode(cell) {
   }
 
   if (cell.isFlagged) {
-    gameStatus.textContent = `Entferne zuerst die Flagge auf Feld ${cell.coordinate}.`;
+    gameStatus.textContent = `Flagge auf ${cell.coordinate} zuerst entfernen.`;
     return [];
   }
 
@@ -542,7 +540,7 @@ function useCheckMode(cell) {
 
   if (cell.isMine) {
     toggleFlag(cell);
-    gameStatus.textContent = `Prüfung: Auf Feld ${cell.coordinate} liegt eine Mine. Flagge gesetzt.`;
+    gameStatus.textContent = `${cell.coordinate}: Mine. Flagge gesetzt.`;
     if (!hasChecks || series.checkCharges === 0) {
       setMode('reveal');
     }
@@ -551,7 +549,7 @@ function useCheckMode(cell) {
 
   const rewardAnnouncements = revealCell(cell);
   if (!gameOver) {
-    gameStatus.textContent = `Prüfung: Feld ${cell.coordinate} ist sicher und wurde aufgedeckt.`;
+    gameStatus.textContent = `${cell.coordinate} aufgedeckt.`;
   }
   if (!hasChecks || series.checkCharges === 0) {
     setMode('reveal');
@@ -585,7 +583,7 @@ function activeNumber(cell) {
         mineCount.textContent = mineCurrentCount;
         restoreCellPresentation(neighbor);
       });
-    registerHit(`Falsche Flaggen um Feld ${cell.coordinate}.`);
+    registerHit(`Falsche Flaggen bei ${cell.coordinate}.`);
     return [];
   }
 
@@ -597,7 +595,7 @@ function useActiveMode(cell, mode = activeMode) {
   let rewardAnnouncements = [];
 
   if (isTriggeredMine(cell)) {
-    gameStatus.textContent = `Auf Feld ${cell.coordinate} liegt eine ausgelöste Mine.`;
+    gameStatus.textContent = `Mine auf ${cell.coordinate} bereits ausgelöst.`;
   } else {
     if (newGame) {
       // The first move always reveals because mines are placed around the starting cell.
@@ -1145,11 +1143,11 @@ async function startNewGame() {
   if (isNextRound) {
     const checkChargeLabel = series.checkCharges === 1 ? 'Prüfung' : 'Prüfungen';
     const carriedResources = [
-      hasExtraLives ? `${series.extraLives} von ${maxExtraLives} Extraleben` : null,
+      hasExtraLives ? `${series.extraLives}/${maxExtraLives} Leben` : null,
       hasChecks ? `${series.checkCharges} ${checkChargeLabel}` : null
     ].filter(Boolean);
-    const carriedText = carriedResources.length > 0 ? ` ${carriedResources.join(' und ')} übernommen.` : '';
-    gameStatus.textContent = `Nächste Runde gestartet. Score von ${series.revealedFields.toLocaleString('de-DE')} übernommen.${carriedText}`;
+    const carriedText = carriedResources.length > 0 ? `; ${carriedResources.join(', ')}` : '';
+    gameStatus.textContent = `Nächste Runde: Score ${series.revealedFields.toLocaleString('de-DE')}${carriedText}.`;
   }
   saveGameState();
 }
@@ -1199,7 +1197,7 @@ function loadGameState() {
     : mineTotal;
   mineCount.textContent = mineCurrentCount;
   if (canStartNextRound()) {
-    gameStatus.textContent = 'Gespeichertes Spiel gewonnen. Mit „Nächste Runde“ geht es weiter.';
+    gameStatus.textContent = 'Runde bereits gewonnen.';
   } else {
     gameStatus.textContent = gameOver
       ? 'Gespeichertes Spiel beendet.'
