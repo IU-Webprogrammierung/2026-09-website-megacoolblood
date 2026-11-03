@@ -408,7 +408,7 @@ main.minesweeper-game-page {
   --cell-size: clamp(2rem, 8vw, 3rem);
   --cell-color: #a5a5a5;
   --cell-revealed-color: #f2f2f2;
-  --cell-marked-color: #948a5a;
+  --cell-marked-color: #ffdf00;
   --cell-text-color: #000;
   --cell-bevel-light: #c4c4c4;
   --cell-bevel-dark: #4d4d4d;
