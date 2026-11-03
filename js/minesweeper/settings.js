@@ -180,7 +180,7 @@ function saveSettings(event) {
   // A custom size equal to a preset counts as that preset, so the selection follows the saved difficulty.
   difficultySelect.value = minesweeperDifficulty.getPresetName(config) ?? 'custom';
   applySelection();
-  settingsStatus.textContent = `Einstellungen gespeichert. Schwierigkeitsgrad: ${minesweeperDifficulty.getDifficultyLabel(config)}.`;
+  window.location.assign('game.html');
 }
 
 difficultySelect.addEventListener('change', applySelection);
