@@ -1219,13 +1219,30 @@ document.addEventListener('pointerup', handleBoardPointerEnd, true);
 document.addEventListener('pointercancel', handleBoardPointerEnd, true);
 board.addEventListener('click', preventClickAfterPan, true);
 
+function handleBoardWheelZoom(event) {
+  if (!boardPanzoom) {
+    return;
+  }
+
+  const transform = boardPanzoom.zoomWithWheel(event);
+  if (!transform) {
+    return;
+  }
+
+  boardPanzoom.setStyle('transition', 'none');
+  boardPanzoom.setStyle(
+    'transform',
+    `scale(${transform.scale}) translate(${transform.x}px, ${transform.y}px)`
+  );
+}
+
 function zoomBoardAtViewportCenter(direction) {
   if (!boardPanzoom) {
     return;
   }
 
   const viewport = boardViewport.getBoundingClientRect();
-  boardPanzoom.zoomWithWheel(new WheelEvent('wheel', {
+  handleBoardWheelZoom(new WheelEvent('wheel', {
     deltaY: direction > 0 ? -3 : 3,
     clientX: viewport.left + viewport.width / 2,
     clientY: viewport.top + viewport.height / 2,
@@ -1308,7 +1325,7 @@ async function initializeBoardPanzoom() {
 
     boardViewport.addEventListener(
       'wheel',
-      boardPanzoom.zoomWithWheel,
+      handleBoardWheelZoom,
       { passive: false }
     );
   } catch (error) {
