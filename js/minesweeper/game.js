@@ -1170,7 +1170,7 @@ function loadGameState() {
       cells[row][column].isMarked = savedCell.isMarked;
       cells[row][column].isRevealed = savedCell.isRevealed;
       cells[row][column].isWrongFlag = savedCell.isWrongFlag
-        && cells[row][column].isFlagged
+        && cells[row][column].isRevealed
         && !cells[row][column].isMine;
     });
   });
