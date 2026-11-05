@@ -872,8 +872,12 @@ function getLayoutOffset(element) {
   return { left, top };
 }
 
-function getWorkAreaTarget() {
-  return gameOver || newGame ? null : findFrontierCell(activeCell ?? cells[0][0]);
+function getWorkAreaTarget(reference = activeCell ?? getBoardCenterCell()) {
+  return gameOver || newGame ? null : findFrontierCell(reference);
+}
+
+function getBoardCenterCell() {
+  return cells[Math.floor((boardRows - 1) / 2)][Math.floor((boardColumns - 1) / 2)];
 }
 
 // Pan values at 100 % that center the cell, limited like Panzoom's "outside" containment.
@@ -1284,7 +1288,10 @@ async function initializeBoardPanzoom() {
 
   // The site header and footer change the viewport size, so the start position waits for them.
   await window.lycheelabComponentsLoaded;
-  const loadTarget = getWorkAreaTarget();
+  const loadTarget = getWorkAreaTarget({
+    row: (boardRows - 1) / 2,
+    column: (boardColumns - 1) / 2
+  });
 
   if (loadTarget) {
     setActiveCell(loadTarget);
@@ -1297,7 +1304,7 @@ async function initializeBoardPanzoom() {
 
     // Panzoom hides the overflow itself; doing it first keeps the measured start position exact.
     boardViewport.style.overflow = 'hidden';
-    const startPan = loadTarget ? getCenteringPan(loadTarget) : { x: 0, y: 0 };
+    const startPan = getCenteringPan(loadTarget ?? getBoardCenterCell());
 
     boardPanzoom = Panzoom(boardWorld, {
       startX: startPan.x,
@@ -1333,10 +1340,8 @@ async function initializeBoardPanzoom() {
     console.error('Panzoom konnte nicht geladen werden.', error);
     gameStatus.textContent = 'Pan-/Zoom-Ansicht nicht verfügbar; das Spielfeld bleibt scrollbar.';
 
-    if (loadTarget) {
-      const { scrollLeft, scrollTop } = getCenteringPan(loadTarget);
-      boardViewport.scrollTo({ left: scrollLeft, top: scrollTop });
-    }
+    const { scrollLeft, scrollTop } = getCenteringPan(loadTarget ?? getBoardCenterCell());
+    boardViewport.scrollTo({ left: scrollLeft, top: scrollTop });
   }
 }
 
