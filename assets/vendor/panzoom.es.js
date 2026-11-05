@@ -691,7 +691,12 @@ function Panzoom(elem, options) {
             // to determine the current scale
             const diff = getDistance(pointers) - startDistance;
             toScale = constrainScale((diff * options.step) / 80 + startScale).scale;
-            zoomToPoint(toScale, current, { animate: false }, event);
+            const zoomResult = zoomToPoint(toScale, current, { animate: false }, event);
+            if (zoomResult) {
+                // Sync before the next pointer event measures the transformed element.
+                setStyle(elem, 'transition', 'none');
+                options.setTransform(elem, zoomResult, options);
+            }
         }
         // Pan during pinch if pinchAndPan is true.
         // Note: some calculations may be off because the zoom
