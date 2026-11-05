@@ -844,17 +844,24 @@ function isFrontierCell(cell) {
 }
 
 function findFrontierCell(reference) {
+  const frontierCells = cells.flat().filter(isFrontierCell);
+  const referenceIndex = frontierCells.indexOf(reference);
+
+  if (referenceIndex !== -1) {
+    return frontierCells[(referenceIndex + 1) % frontierCells.length];
+  }
+
   let closestCell = null;
   let closestDistance = Infinity;
 
-  cells.forEach((row) => row.forEach((cell) => {
+  frontierCells.forEach((cell) => {
     const distance = (cell.row - reference.row) ** 2 + (cell.column - reference.column) ** 2;
 
-    if (distance < closestDistance && isFrontierCell(cell)) {
+    if (distance < closestDistance) {
       closestCell = cell;
       closestDistance = distance;
     }
-  }));
+  });
 
   return closestCell;
 }
