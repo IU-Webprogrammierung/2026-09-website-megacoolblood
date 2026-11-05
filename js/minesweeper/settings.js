@@ -1,5 +1,6 @@
 const settingsForm = document.querySelector('#settings-form');
 const difficultySelect = document.querySelector('#difficulty');
+const savedCustomDifficultyGroup = document.querySelector('#saved-custom-difficulties');
 const settingsStatus = document.querySelector('#settings-status');
 const sizeInputs = {
   rows: document.querySelector('#rows'),
@@ -54,7 +55,8 @@ function updateMinesLimit() {
 
 function readFormConfig() {
   const preset = minesweeperDifficulty.createPresetDifficulty(difficultySelect.value);
-  const size = preset ?? {
+  const savedDifficulty = minesweeperDifficulty.parseDifficultyKey(difficultySelect.value);
+  const size = preset ?? savedDifficulty ?? {
     rows: readInteger(sizeInputs.rows),
     columns: readInteger(sizeInputs.columns),
     mines: readInteger(sizeInputs.mines)
@@ -83,16 +85,74 @@ function updateRewardInfo() {
 // Preset sizes are shown read-only; "Benutzerdefiniert" keeps the shown values as a starting point.
 function applySelection() {
   const preset = minesweeperDifficulty.createPresetDifficulty(difficultySelect.value);
+  const savedDifficulty = preset ? null : minesweeperDifficulty.parseDifficultyKey(difficultySelect.value);
+  const selectedDifficulty = preset ?? savedDifficulty;
 
   Object.entries(sizeInputs).forEach(([name, input]) => {
-    input.readOnly = Boolean(preset);
-    if (preset) {
-      input.value = String(preset[name]);
+    input.readOnly = Boolean(selectedDifficulty);
+    if (selectedDifficulty) {
+      input.value = String(selectedDifficulty[name]);
       clearFieldError(input);
     }
   });
+
+  if (savedDifficulty) {
+    Object.entries(ruleInputs).forEach(([name, input]) => {
+      input.checked = savedDifficulty[name];
+    });
+  }
+
   updateMinesLimit();
   updateRewardInfo();
+}
+
+function renderSavedCustomDifficulties(currentConfig) {
+  const configurations = new Map();
+
+  minesweeperRunState.getStoredDifficultyKeys().forEach((key) => {
+    const config = minesweeperDifficulty.parseDifficultyKey(key);
+    if (config && !minesweeperDifficulty.getPresetName(config)) {
+      configurations.set(key, config);
+    }
+  });
+
+  if (!minesweeperDifficulty.getPresetName(currentConfig)) {
+    configurations.set(minesweeperDifficulty.getDifficultyKey(currentConfig), currentConfig);
+  }
+
+  const entries = [...configurations.entries()].sort((first, second) => {
+    const [firstKey, firstConfig] = first;
+    const [secondKey, secondConfig] = second;
+    const firstOrder = [
+      firstConfig.rows * firstConfig.columns,
+      firstConfig.rows,
+      firstConfig.columns,
+      firstConfig.mines,
+      firstKey
+    ];
+    const secondOrder = [
+      secondConfig.rows * secondConfig.columns,
+      secondConfig.rows,
+      secondConfig.columns,
+      secondConfig.mines,
+      secondKey
+    ];
+
+    for (let index = 0; index < firstOrder.length; index += 1) {
+      if (firstOrder[index] !== secondOrder[index]) {
+        return firstOrder[index] < secondOrder[index] ? -1 : 1;
+      }
+    }
+    return 0;
+  });
+
+  savedCustomDifficultyGroup.replaceChildren();
+  entries.forEach(([key, config]) => {
+    const option = document.createElement('option');
+    option.value = key;
+    option.textContent = minesweeperDifficulty.getDifficultyLabel(config);
+    savedCustomDifficultyGroup.append(option);
+  });
 }
 
 function setFieldError(input, message) {
@@ -146,14 +206,16 @@ function loadSettings() {
   }
 
   const config = minesweeperDifficulty.readStoredDifficulty();
+  const presetName = minesweeperDifficulty.getPresetName(config);
 
-  difficultySelect.value = minesweeperDifficulty.getPresetName(config) ?? 'custom';
   Object.entries(sizeInputs).forEach(([name, input]) => {
     input.value = String(config[name]);
   });
   Object.entries(ruleInputs).forEach(([name, input]) => {
     input.checked = config[name];
   });
+  renderSavedCustomDifficulties(config);
+  difficultySelect.value = presetName ?? minesweeperDifficulty.getDifficultyKey(config);
   applySelection();
 }
 

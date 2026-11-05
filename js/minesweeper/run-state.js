@@ -67,6 +67,42 @@ const minesweeperRunState = (() => {
     }
   }
 
+  function getStoredDifficultyKeys() {
+    const difficultyKeys = new Set();
+    const gameStatePrefix = `${storageKeys.gameStatePrefix}:`;
+
+    try {
+      for (let index = 0; index < localStorage.length; index += 1) {
+        const storageKey = localStorage.key(index);
+        if (typeof storageKey !== 'string' || !storageKey.startsWith(gameStatePrefix)) {
+          continue;
+        }
+
+        const difficulty = storageKey.slice(gameStatePrefix.length);
+        if (minesweeperDifficulty.parseDifficultyKey(difficulty)) {
+          difficultyKeys.add(difficulty);
+        }
+      }
+    } catch {
+      // Continue with statistics if storage key enumeration is unavailable.
+    }
+
+    const statistics = readStatistics();
+    if (statistics) {
+      Object.keys(statistics).forEach((difficulty) => {
+        if (
+          statistics[difficulty]
+          && typeof statistics[difficulty] === 'object'
+          && minesweeperDifficulty.parseDifficultyKey(difficulty)
+        ) {
+          difficultyKeys.add(difficulty);
+        }
+      });
+    }
+
+    return [...difficultyKeys];
+  }
+
   function readDifficultyStatistics(statistics, difficulty) {
     const storedStatistics = statistics?.[difficulty];
     const source = storedStatistics && typeof storedStatistics === 'object' ? storedStatistics : {};
@@ -281,6 +317,7 @@ const minesweeperRunState = (() => {
     normalizeSeries,
     readStatistics,
     writeStatistics,
+    getStoredDifficultyKeys,
     readDifficultyStatistics,
     addLossFlags,
     addWinTime,
