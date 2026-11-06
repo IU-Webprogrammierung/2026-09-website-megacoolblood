@@ -1,21 +1,23 @@
+/* Each color holds a light and a dark value; color-scheme picks one, data-theme overrides the system setting. */
 :root {
-  --color-background: #f4f1ea;
-  --color-surface: #fffdf8;
-  --color-text: #20231f;
-  --color-muted: #5c655b;
-  --color-accent: #236b52;
-  --color-accent-dark: #174936;
-  --color-border: #cbd4c8;
-  --color-on-accent: #fffdf8;
-  --color-shadow: rgb(32 35 31 / 10%);
-  --color-shadow-strong: rgb(32 35 31 / 15%);
-  --color-backdrop: rgb(32 35 31 / 60%);
-  --color-field-border: #767676;
-  --color-error: #a4161a;
-  --color-readonly-surface: #ebe7dd;
-  --color-info-surface: #e8f1ec;
-  --color-heart: #b00020;
-  --color-flag: #d40000;
+  color-scheme: light dark;
+  --color-background: light-dark(#f4f1ea, #1f1f1f);
+  --color-surface: light-dark(#fffdf8, #292929);
+  --color-text: light-dark(#20231f, #e4e8e1);
+  --color-muted: light-dark(#5c655b, #a9b3a5);
+  --color-accent: light-dark(#236b52, #4fae8a);
+  --color-accent-strong: light-dark(#174936, #8fd9b6);
+  --color-border: light-dark(#cbd4c8, #474747);
+  --color-on-accent: light-dark(#fffdf8, #0f1410);
+  --color-shadow: light-dark(rgb(32 35 31 / 10%), rgb(0 0 0 / 35%));
+  --color-shadow-strong: light-dark(rgb(32 35 31 / 15%), rgb(0 0 0 / 50%));
+  --color-backdrop: light-dark(rgb(32 35 31 / 60%), rgb(0 0 0 / 65%));
+  --color-field-border: light-dark(#767676, #8d968a);
+  --color-error: light-dark(#a4161a, #ff8f87);
+  --color-readonly-surface: light-dark(#ebe7dd, #363636);
+  --color-info-surface: light-dark(#e8f1ec, #264237);
+  --color-heart: light-dark(#b00020, #ff6b81);
+  --color-flag: light-dark(#d40000, #ff5a52);
   --space-small: 0.5rem;
   --space-medium: 1rem;
   --space-large: 1.5rem;
@@ -23,6 +25,14 @@
   font-family: system-ui, sans-serif;
   line-height: 1.5;
   color: var(--color-text);
+
+  &[data-theme='light'] {
+    color-scheme: light;
+  }
+
+  &[data-theme='dark'] {
+    color-scheme: dark;
+  }
 }
 
 *,
@@ -393,7 +403,7 @@ a {
 }
 
 a {
-  color: var(--color-accent-dark);
+  color: var(--color-accent-strong);
 }
 
 button,
@@ -407,7 +417,7 @@ button:disabled {
 
 button:focus-visible,
 a:focus-visible {
-  outline: 0.2rem solid var(--color-accent-dark);
+  outline: 0.2rem solid var(--color-accent-strong);
   outline-offset: 0.2rem;
 }
 
