@@ -34,25 +34,18 @@ const maxExtraLives = minesweeperRunState.maxExtraLives;
 const hasExtraLives = difficultyConfig.extraLives !== false;
 const hasChecks = difficultyConfig.checks !== false;
 const usesLessGuessPlacement = difficultyConfig.lessGuess !== false;
-const iconPaths = {
-  fullscreen: '../../assets/icons/fullscreen.svg',
-  fullscreenExit: '../../assets/icons/fullscreen-exit.svg',
-  menu: '../../assets/icons/menu.svg',
-  nextRound: '../../assets/icons/next-round.svg',
-  reload: '../../assets/icons/reload.svg'
-};
 
 // On narrow screens the hidden site navigation is what users look for, so the toggle offers the menu.
 function updateChromeToggle() {
   const isImmersive = document.body.classList.contains('is-immersive');
   const state = !isImmersive
-    ? { icon: iconPaths.fullscreen, label: 'Vollbild' }
+    ? { icon: 'fullscreen', label: 'Vollbild' }
     : mobileLayout.matches
-      ? { icon: iconPaths.menu, label: 'Menü anzeigen' }
-      : { icon: iconPaths.fullscreenExit, label: 'Vollbild beenden' };
+      ? { icon: 'menu', label: 'Menü anzeigen' }
+      : { icon: 'fullscreen-exit', label: 'Vollbild beenden' };
 
   gameChromeToggle.setAttribute('aria-expanded', String(!isImmersive));
-  gameChromeToggleIcon.setAttribute('src', state.icon);
+  gameChromeToggleIcon.dataset.icon = state.icon;
   gameChromeToggleLabel.textContent = state.label;
 }
 
@@ -238,11 +231,8 @@ function canStartNextRound() {
 
 function updateNewGameButton() {
   const isNextRound = canStartNextRound();
-  const iconPath = isNextRound ? iconPaths.nextRound : iconPaths.reload;
 
-  if (newGameIcon.getAttribute('src') !== iconPath) {
-    newGameIcon.setAttribute('src', iconPath);
-  }
+  newGameIcon.dataset.icon = isNextRound ? 'next-round' : 'reload';
   newGameLabel.textContent = isNextRound ? 'Nächste Runde (R)' : 'Neustart (R)';
 }
 

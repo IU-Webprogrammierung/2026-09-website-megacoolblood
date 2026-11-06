@@ -1,3 +1,63 @@
+/* Icons are SVG masks filled with the current text color, so they follow the color scheme. */
+.icon {
+  display: inline-block;
+  background-color: currentColor;
+  mask: center / contain no-repeat content-box;
+
+  &[data-icon='center'] {
+    mask-image: url('../assets/icons/center.svg');
+  }
+
+  &[data-icon='check'] {
+    mask-image: url('../assets/icons/check.svg');
+  }
+
+  &[data-icon='fullscreen'] {
+    mask-image: url('../assets/icons/fullscreen.svg');
+  }
+
+  &[data-icon='fullscreen-exit'] {
+    mask-image: url('../assets/icons/fullscreen-exit.svg');
+  }
+
+  &[data-icon='heart'] {
+    background-color: var(--color-heart);
+    mask-image: url('../assets/icons/heart.svg');
+  }
+
+  &[data-icon='increase'] {
+    mask-image: url('../assets/icons/increase.svg');
+  }
+
+  &[data-icon='menu'] {
+    mask-image: url('../assets/icons/menu.svg');
+  }
+
+  &[data-icon='mine'] {
+    mask-image: url('../assets/icons/mine.svg');
+  }
+
+  &[data-icon='next-round'] {
+    mask-image: url('../assets/icons/next-round.svg');
+  }
+
+  &[data-icon='questionmark'] {
+    mask-image: url('../assets/icons/questionmark.svg');
+  }
+
+  &[data-icon='reload'] {
+    mask-image: url('../assets/icons/reload.svg');
+  }
+
+  &[data-icon='zoom-in'] {
+    mask-image: url('../assets/icons/zoom-in.svg');
+  }
+
+  &[data-icon='zoom-out'] {
+    mask-image: url('../assets/icons/zoom-out.svg');
+  }
+}
+
 .info-icon,
 .control-icon,
 .mode-icon {
@@ -231,7 +291,7 @@ main.minesweeper-game-page {
       font-size: 1.25rem;
     }
 
-    img {
+    .zoom-control-icon {
       width: 24px;
       height: 24px;
       padding: 0;
@@ -528,12 +588,18 @@ main.minesweeper-game-page {
       background-image: url('../assets/icons/flag.svg');
     }
 
+    &.is-marked::before,
+    &.is-mine::before {
+      background-color: currentColor;
+      mask: center / contain no-repeat;
+    }
+
     &.is-marked::before {
-      background-image: url('../assets/icons/questionmark.svg');
+      mask-image: url('../assets/icons/questionmark.svg');
     }
 
     &.is-mine::before {
-      background-image: url('../assets/icons/mine.svg');
+      mask-image: url('../assets/icons/mine.svg');
     }
 
     &.is-revealed.is-wrong-flag::before {

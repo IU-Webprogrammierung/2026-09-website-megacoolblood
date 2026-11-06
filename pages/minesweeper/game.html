@@ -30,36 +30,28 @@
           </div>
           <div class="game-header-actions">
             <button type="button" id="new-game">
-              <img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true" /><span
-                class="game-header-label"
-                >Neustart (R)</span
-              >
+              <span class="icon control-icon" data-icon="reload" aria-hidden="true"></span
+              ><span class="game-header-label">Neustart (R)</span>
             </button>
             <dl>
               <div>
                 <dt>
-                  <img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true" /><span
-                    class="game-header-label"
-                    >Verbleibende Minen</span
-                  >
+                  <span class="icon info-icon" data-icon="mine" aria-hidden="true"></span
+                  ><span class="game-header-label">Verbleibende Minen</span>
                 </dt>
                 <dd id="mine-count">0</dd>
               </div>
               <div>
                 <dt>
-                  <img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true" /><span
-                    class="game-header-label"
-                    >Score</span
-                  >
+                  <span class="icon info-icon" data-icon="increase" aria-hidden="true"></span
+                  ><span class="game-header-label">Score</span>
                 </dt>
                 <dd id="series-revealed-fields">0</dd>
               </div>
               <div>
                 <dt>
-                  <img class="info-icon" src="../../assets/icons/heart.svg" alt="" aria-hidden="true" /><span
-                    class="game-header-label"
-                    >Extraleben</span
-                  >
+                  <span class="icon info-icon" data-icon="heart" aria-hidden="true"></span
+                  ><span class="game-header-label">Extraleben</span>
                 </dt>
                 <dd id="extra-lives">
                   <span aria-hidden="true">3/3</span><span class="visually-hidden">3 von 3</span>
@@ -73,10 +65,8 @@
               aria-controls="site-header site-footer"
               aria-expanded="true"
             >
-              <img class="control-icon" src="../../assets/icons/fullscreen.svg" alt="" aria-hidden="true" /><span
-                class="game-header-label"
-                >Vollbild</span
-              >
+              <span class="icon control-icon" data-icon="fullscreen" aria-hidden="true"></span
+              ><span class="game-header-label">Vollbild</span>
             </button>
           </div>
         </header>
@@ -102,7 +92,7 @@
               aria-controls="game-board"
               disabled
             >
-              <img class="zoom-control-icon" src="../../assets/icons/zoom-out.svg" alt="" aria-hidden="true" />
+              <span class="icon zoom-control-icon" data-icon="zoom-out" aria-hidden="true"></span>
             </button>
             <button
               type="button"
@@ -112,7 +102,7 @@
               aria-controls="game-board"
               disabled
             >
-              <img class="zoom-control-icon" src="../../assets/icons/zoom-in.svg" alt="" aria-hidden="true" />
+              <span class="icon zoom-control-icon" data-icon="zoom-in" aria-hidden="true"></span>
             </button>
             <button
               type="button"
@@ -122,16 +112,14 @@
               aria-controls="game-board"
               disabled
             >
-              <img class="zoom-control-icon" src="../../assets/icons/center.svg" alt="" aria-hidden="true" />
+              <span class="icon zoom-control-icon" data-icon="center" aria-hidden="true"></span>
             </button>
           </div>
           <div class="game-modes" role="group" aria-label="Eingabemodus">
             <span>Modus:</span>
             <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true">
-              <img class="mode-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true" /><span
-                class="mode-button-label"
-                >Aufdecken (A)</span
-              >
+              <span class="icon mode-icon" data-icon="mine" aria-hidden="true"></span
+              ><span class="mode-button-label">Aufdecken (A)</span>
             </button>
             <button type="button" class="mode-button" data-mode="flag" aria-pressed="false">
               <img class="mode-icon" src="../../assets/icons/flag.svg" alt="" aria-hidden="true" /><span
@@ -140,10 +128,8 @@
               >
             </button>
             <button type="button" class="mode-button" data-mode="mark" aria-pressed="false">
-              <img class="mode-icon" src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true" /><span
-                class="mode-button-label"
-                >Markieren (M)</span
-              >
+              <span class="icon mode-icon" data-icon="questionmark" aria-hidden="true"></span
+              ><span class="mode-button-label">Markieren (M)</span>
             </button>
             <button
               type="button"
@@ -154,12 +140,8 @@
               aria-label="Prüfen (P), 3 verbleibend"
             >
               <span class="check-mode-icon"
-                ><img class="mode-icon" src="../../assets/icons/check.svg" alt="" aria-hidden="true" /><span
-                  id="check-charges"
-                  class="check-charge-count"
-                  aria-hidden="true"
-                  >3</span
-                ></span
+                ><span class="icon mode-icon" data-icon="check" aria-hidden="true"></span
+                ><span id="check-charges" class="check-charge-count" aria-hidden="true">3</span></span
               ><span class="mode-button-label">Prüfen (P)</span>
             </button>
           </div>
