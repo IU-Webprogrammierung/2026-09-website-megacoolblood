@@ -12,6 +12,30 @@
     mask-image: url('../assets/icons/check.svg');
   }
 
+  /* A mask clips its pseudo-elements too, so the two-colored flag stacks two masked layers instead. */
+  &[data-icon='flag'] {
+    display: inline-grid;
+    background: none;
+    mask: none;
+
+    &::before,
+    &::after {
+      content: '';
+      grid-area: 1 / 1;
+      mask: center / contain no-repeat;
+    }
+
+    &::before {
+      background-color: var(--color-flag);
+      mask-image: url('../assets/icons/flag-cloth.svg');
+    }
+
+    &::after {
+      background-color: currentColor;
+      mask-image: url('../assets/icons/flag-pole.svg');
+    }
+  }
+
   &[data-icon='fullscreen'] {
     mask-image: url('../assets/icons/fullscreen.svg');
   }
@@ -64,7 +88,6 @@
   width: 1.25rem;
   height: 1.25rem;
   padding-right: 0.5rem;
-  object-fit: contain;
 }
 
 body.minesweeper-game-shell {
@@ -575,23 +598,38 @@ main.minesweeper-game-page {
 
     /* Icons follow the state classes, so a cell cannot show a state without its icon. */
     &.is-flagged::before,
+    &.is-flagged::after,
     &.is-marked::before,
     &.is-mine::before,
-    &.is-revealed.is-wrong-flag::before {
+    &.is-revealed.is-wrong-flag::before,
+    &.is-revealed.is-wrong-flag::after {
       content: '';
       width: 65%;
       height: 65%;
-      background: center / contain no-repeat;
+      mask: center / contain no-repeat;
     }
 
-    &.is-flagged::before {
-      background-image: url('../assets/icons/flag.svg');
+    /* The two-colored flag stacks the pole and its outline (::after) on top of the cloth (::before). */
+    &.is-flagged::before,
+    &.is-flagged::after {
+      grid-area: 1 / 1;
+    }
+
+    &.is-flagged::before,
+    &.is-revealed.is-wrong-flag::before {
+      background-color: var(--color-flag);
+      mask-image: url('../assets/icons/flag-cloth.svg');
+    }
+
+    &.is-flagged::after,
+    &.is-revealed.is-wrong-flag::after {
+      background-color: var(--cell-text-color);
+      mask-image: url('../assets/icons/flag-pole.svg');
     }
 
     &.is-marked::before,
     &.is-mine::before {
       background-color: currentColor;
-      mask: center / contain no-repeat;
     }
 
     &.is-marked::before {
@@ -602,14 +640,13 @@ main.minesweeper-game-page {
       mask-image: url('../assets/icons/mine.svg');
     }
 
-    &.is-revealed.is-wrong-flag::before {
+    &.is-revealed.is-wrong-flag::before,
+    &.is-revealed.is-wrong-flag::after {
       position: absolute;
-      z-index: 1;
       right: 1px;
       bottom: 1px;
       width: 28%;
       height: 28%;
-      background-image: url('../assets/icons/flag.svg');
       pointer-events: none;
     }
 
@@ -653,13 +690,8 @@ main.minesweeper-game-page {
         );
     }
 
-    &.is-revealed.is-wrong-flag::after {
-      position: absolute;
-      z-index: 0;
-      right: 1px;
-      bottom: 1px;
-      width: 28%;
-      height: 28%;
+    /* A revealed wrong flag keeps its number; the small crossed-out flag sits in the corner. */
+    &.is-revealed.is-wrong-flag {
       background-image:
         linear-gradient(
           45deg,
@@ -675,8 +707,9 @@ main.minesweeper-game-page {
           var(--cell-wrong-flag-cross-color) 55%,
           transparent 58%
         );
-      content: '';
-      pointer-events: none;
+      background-position: right 1px bottom 1px;
+      background-size: 28% 28%;
+      background-repeat: no-repeat;
     }
   }
 }
