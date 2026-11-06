@@ -1,120 +1,201 @@
 <!doctype html>
 <html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Minesweeper spielen | LycheeLab</title>
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/minesweeper.css" />
+    <link rel="icon" type="image/png" href="../../assets/images/LycheeLab.png" />
+    <script src="../../js/components.js" defer></script>
+    <script src="../../js/minesweeper/difficulty.js" defer></script>
+    <script src="../../js/minesweeper/run-state.js" defer></script>
+    <script src="../../js/minesweeper/mine-placement.js" defer></script>
+    <script src="../../js/minesweeper/game.js" defer></script>
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Minesweeper spielen | LycheeLab</title>
-  <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="../../css/minesweeper.css">
-  <link rel="icon" type="image/png" href="../../assets/images/LycheeLab.png">
-  <script src="../../js/components.js" defer></script>
-  <script src="../../js/minesweeper/difficulty.js" defer></script>
-  <script src="../../js/minesweeper/run-state.js" defer></script>
-  <script src="../../js/minesweeper/mine-placement.js" defer></script>
-  <script src="../../js/minesweeper/game.js" defer></script>
-</head>
+  <body class="minesweeper-game-shell">
+    <component path="../../components/header.html"></component>
 
-<body class="minesweeper-game-shell">
-  <component path="../../components/header.html"></component>
-
-  <main id="main-content" class="minesweeper-game-page" tabindex="-1">
-    <section class="game-panel" aria-labelledby="game-heading">
-      <header class="game-header">
-        <div class="game-header-intro">
-          <div class="game-header-title-row">
-            <h1 id="game-heading">Minesweeper</h1>
+    <main id="main-content" class="minesweeper-game-page" tabindex="-1">
+      <section class="game-panel" aria-labelledby="game-heading">
+        <header class="game-header">
+          <div class="game-header-intro">
+            <div class="game-header-title-row">
+              <h1 id="game-heading">Minesweeper</h1>
+            </div>
+            <p id="game-status" tabindex="0" role="status" aria-live="polite" aria-atomic="true">
+              Bereit für ein neues Spiel.
+            </p>
           </div>
-          <p id="game-status" tabindex="0" role="status" aria-live="polite" aria-atomic="true">Bereit für ein neues Spiel.</p>
+          <div class="game-header-actions">
+            <button type="button" id="new-game">
+              <img class="control-icon" src="../../assets/icons/reload.svg" alt="" aria-hidden="true" /><span
+                class="game-header-label"
+                >Neustart (R)</span
+              >
+            </button>
+            <dl>
+              <div>
+                <dt>
+                  <img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true" /><span
+                    class="game-header-label"
+                    >Verbleibende Minen</span
+                  >
+                </dt>
+                <dd id="mine-count">0</dd>
+              </div>
+              <div>
+                <dt>
+                  <img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true" /><span
+                    class="game-header-label"
+                    >Score</span
+                  >
+                </dt>
+                <dd id="series-revealed-fields">0</dd>
+              </div>
+              <div>
+                <dt>
+                  <img class="info-icon" src="../../assets/icons/heart.svg" alt="" aria-hidden="true" /><span
+                    class="game-header-label"
+                    >Extraleben</span
+                  >
+                </dt>
+                <dd id="extra-lives">
+                  <span aria-hidden="true">3/3</span><span class="visually-hidden">3 von 3</span>
+                </dd>
+              </div>
+            </dl>
+            <button
+              type="button"
+              id="game-chrome-toggle"
+              class="game-chrome-toggle"
+              aria-controls="site-header site-footer"
+              aria-expanded="true"
+            >
+              <img class="control-icon" src="../../assets/icons/fullscreen.svg" alt="" aria-hidden="true" /><span
+                class="game-header-label"
+                >Vollbild</span
+              >
+            </button>
+          </div>
+        </header>
+        <div class="game-board-viewport">
+          <output id="zoom-level" class="zoom-level" aria-live="polite" aria-atomic="true">100%</output>
+          <div class="game-board-world">
+            <div
+              id="game-board"
+              class="game-board"
+              role="grid"
+              aria-labelledby="game-heading"
+              aria-describedby="game-status"
+            ></div>
+          </div>
         </div>
-        <div class="game-header-actions">
-          <button type="button" id="new-game"><img class="control-icon" src="../../assets/icons/reload.svg" alt=""
-              aria-hidden="true"><span class="game-header-label">Neustart (R)</span></button>
-          <dl>
-            <div>
-              <dt><img class="info-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true"><span
-                  class="game-header-label">Verbleibende Minen</span></dt>
-              <dd id="mine-count">0</dd>
-            </div>
-            <div>
-              <dt><img class="info-icon" src="../../assets/icons/increase.svg" alt="" aria-hidden="true"><span
-                  class="game-header-label">Score</span></dt>
-              <dd id="series-revealed-fields">0</dd>
-            </div>
-            <div>
-              <dt><img class="info-icon" src="../../assets/icons/heart.svg" alt="" aria-hidden="true"><span
-                  class="game-header-label">Extraleben</span></dt>
-              <dd id="extra-lives"><span aria-hidden="true">3/3</span><span class="visually-hidden">3 von 3</span></dd>
-            </div>
-          </dl>
-          <button type="button" id="game-chrome-toggle" class="game-chrome-toggle"
-            aria-controls="site-header site-footer" aria-expanded="true"><img class="control-icon"
-              src="../../assets/icons/fullscreen.svg" alt="" aria-hidden="true"><span
-              class="game-header-label">Vollbild</span></button>
-        </div>
-      </header>
-      <div class="game-board-viewport">
-        <output id="zoom-level" class="zoom-level" aria-live="polite" aria-atomic="true">100%</output>
-        <div class="game-board-world">
-          <div id="game-board" class="game-board" role="grid" aria-labelledby="game-heading"
-            aria-describedby="game-status"></div>
-        </div>
-      </div>
-      <footer class="game-footer">
-        <div class="game-zoom-controls" role="group" aria-label="Spielfeldansicht">
-          <button type="button" id="zoom-out" aria-label="Ansicht verkleinern (-)" title="Ansicht verkleinern (-)"
-            aria-controls="game-board" disabled><img class="zoom-control-icon" src="../../assets/icons/zoom-out.svg"
-              alt="" aria-hidden="true"></button>
-          <button type="button" id="zoom-in" aria-label="Ansicht vergrößern (+)" title="Ansicht vergrößern (+)"
-            aria-controls="game-board" disabled><img class="zoom-control-icon" src="../../assets/icons/zoom-in.svg"
-              alt="" aria-hidden="true"></button>
-          <button type="button" id="reset-view" aria-label="Ansicht zentrieren (0)" title="Ansicht zentrieren (0)"
-            aria-controls="game-board" disabled><img class="zoom-control-icon" src="../../assets/icons/center.svg"
-              alt="" aria-hidden="true"></button>
-        </div>
-        <div class="game-modes" role="group" aria-label="Eingabemodus">
-          <span>Modus:</span>
-          <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true"><img
-              class="mode-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true"><span
-              class="mode-button-label">Aufdecken (A)</span></button>
-          <button type="button" class="mode-button" data-mode="flag" aria-pressed="false"><img class="mode-icon"
-              src="../../assets/icons/flag.svg" alt="" aria-hidden="true"><span class="mode-button-label">Flagge
-              (F)</span></button>
-          <button type="button" class="mode-button" data-mode="mark" aria-pressed="false"><img class="mode-icon"
-              src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true"><span
-              class="mode-button-label">Markieren (M)</span></button>
-          <button type="button" class="mode-button" data-mode="check" aria-pressed="false" aria-disabled="false"
-            aria-label="Prüfen (P), 3 verbleibend"><span class="check-mode-icon"><img class="mode-icon"
-                src="../../assets/icons/check.svg" alt="" aria-hidden="true"><span id="check-charges"
-                class="check-charge-count" aria-hidden="true">3</span></span><span class="mode-button-label">Prüfen
-              (P)</span></button>
-        </div>
-      </footer>
-    </section>
-    <dialog id="series-reset-dialog" class="confirm-dialog" aria-labelledby="series-reset-title"
-      aria-describedby="series-reset-message">
-      <form method="dialog">
-        <h2 id="series-reset-title">Neues Spiel starten?</h2>
-        <p id="series-reset-message"></p>
-        <div class="confirm-dialog-actions">
-          <button type="submit" value="cancel" autofocus>Abbrechen</button>
-          <button type="submit" value="confirm">Neu starten</button>
-        </div>
-      </form>
-    </dialog>
-    <dialog id="win-dialog" class="confirm-dialog win-dialog" aria-labelledby="win-dialog-title"
-      aria-describedby="win-dialog-message">
-      <form method="dialog">
-        <h2 id="win-dialog-title">Gewonnen! Alle Minen entschärft!</h2>
-        <p id="win-dialog-message"></p>
-        <div class="confirm-dialog-actions">
-          <button type="submit" value="view">Spielfeld anschauen</button>
-          <button type="submit" value="next" autofocus>Nächste Runde</button>
-        </div>
-      </form>
-    </dialog>
-  </main>
-  <component path="../../components/footer.html"></component>
-</body>
-
+        <footer class="game-footer">
+          <div class="game-zoom-controls" role="group" aria-label="Spielfeldansicht">
+            <button
+              type="button"
+              id="zoom-out"
+              aria-label="Ansicht verkleinern (-)"
+              title="Ansicht verkleinern (-)"
+              aria-controls="game-board"
+              disabled
+            >
+              <img class="zoom-control-icon" src="../../assets/icons/zoom-out.svg" alt="" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              id="zoom-in"
+              aria-label="Ansicht vergrößern (+)"
+              title="Ansicht vergrößern (+)"
+              aria-controls="game-board"
+              disabled
+            >
+              <img class="zoom-control-icon" src="../../assets/icons/zoom-in.svg" alt="" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              id="reset-view"
+              aria-label="Ansicht zentrieren (0)"
+              title="Ansicht zentrieren (0)"
+              aria-controls="game-board"
+              disabled
+            >
+              <img class="zoom-control-icon" src="../../assets/icons/center.svg" alt="" aria-hidden="true" />
+            </button>
+          </div>
+          <div class="game-modes" role="group" aria-label="Eingabemodus">
+            <span>Modus:</span>
+            <button type="button" class="mode-button is-active" data-mode="reveal" aria-pressed="true">
+              <img class="mode-icon" src="../../assets/icons/mine.svg" alt="" aria-hidden="true" /><span
+                class="mode-button-label"
+                >Aufdecken (A)</span
+              >
+            </button>
+            <button type="button" class="mode-button" data-mode="flag" aria-pressed="false">
+              <img class="mode-icon" src="../../assets/icons/flag.svg" alt="" aria-hidden="true" /><span
+                class="mode-button-label"
+                >Flagge (F)</span
+              >
+            </button>
+            <button type="button" class="mode-button" data-mode="mark" aria-pressed="false">
+              <img class="mode-icon" src="../../assets/icons/questionmark.svg" alt="" aria-hidden="true" /><span
+                class="mode-button-label"
+                >Markieren (M)</span
+              >
+            </button>
+            <button
+              type="button"
+              class="mode-button"
+              data-mode="check"
+              aria-pressed="false"
+              aria-disabled="false"
+              aria-label="Prüfen (P), 3 verbleibend"
+            >
+              <span class="check-mode-icon"
+                ><img class="mode-icon" src="../../assets/icons/check.svg" alt="" aria-hidden="true" /><span
+                  id="check-charges"
+                  class="check-charge-count"
+                  aria-hidden="true"
+                  >3</span
+                ></span
+              ><span class="mode-button-label">Prüfen (P)</span>
+            </button>
+          </div>
+        </footer>
+      </section>
+      <dialog
+        id="series-reset-dialog"
+        class="confirm-dialog"
+        aria-labelledby="series-reset-title"
+        aria-describedby="series-reset-message"
+      >
+        <form method="dialog">
+          <h2 id="series-reset-title">Neues Spiel starten?</h2>
+          <p id="series-reset-message"></p>
+          <div class="confirm-dialog-actions">
+            <button type="submit" value="cancel" autofocus>Abbrechen</button>
+            <button type="submit" value="confirm">Neu starten</button>
+          </div>
+        </form>
+      </dialog>
+      <dialog
+        id="win-dialog"
+        class="confirm-dialog win-dialog"
+        aria-labelledby="win-dialog-title"
+        aria-describedby="win-dialog-message"
+      >
+        <form method="dialog">
+          <h2 id="win-dialog-title">Gewonnen! Alle Minen entschärft!</h2>
+          <p id="win-dialog-message"></p>
+          <div class="confirm-dialog-actions">
+            <button type="submit" value="view">Spielfeld anschauen</button>
+            <button type="submit" value="next" autofocus>Nächste Runde</button>
+          </div>
+        </form>
+      </dialog>
+    </main>
+    <component path="../../components/footer.html"></component>
+  </body>
 </html>

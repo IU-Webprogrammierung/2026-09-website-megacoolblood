@@ -56,11 +56,12 @@ function updateMinesLimit() {
 function readFormConfig() {
   const preset = minesweeperDifficulty.createPresetDifficulty(difficultySelect.value);
   const savedDifficulty = minesweeperDifficulty.parseDifficultyKey(difficultySelect.value);
-  const size = preset ?? savedDifficulty ?? {
-    rows: readInteger(sizeInputs.rows),
-    columns: readInteger(sizeInputs.columns),
-    mines: readInteger(sizeInputs.mines)
-  };
+  const size = preset ??
+    savedDifficulty ?? {
+      rows: readInteger(sizeInputs.rows),
+      columns: readInteger(sizeInputs.columns),
+      mines: readInteger(sizeInputs.mines)
+    };
 
   return {
     rows: size.rows,
@@ -74,8 +75,12 @@ function readFormConfig() {
 
 function updateRewardInfo() {
   const config = readFormConfig();
-  const hasValidSize = isValidSize(config.rows) && isValidSize(config.columns) && config.mines !== null
-    && config.mines >= limits.minMines && config.mines <= minesweeperDifficulty.getMaxMines(config.rows, config.columns);
+  const hasValidSize =
+    isValidSize(config.rows) &&
+    isValidSize(config.columns) &&
+    config.mines !== null &&
+    config.mines >= limits.minMines &&
+    config.mines <= minesweeperDifficulty.getMaxMines(config.rows, config.columns);
   const description = hasValidSize ? minesweeperDifficulty.describeReward(config) : '';
 
   rewardInfo.textContent = description;
@@ -191,9 +196,12 @@ function validateCustomSize() {
   if (isValidMines) {
     clearFieldError(sizeInputs.mines);
   } else {
-    setFieldError(sizeInputs.mines, maxMines === null
-      ? `Bitte gib eine ganze Zahl ab ${limits.minMines} ein.`
-      : `Bitte gib eine ganze Zahl von ${limits.minMines} bis ${maxMines.toLocaleString('de-DE')} ein.`);
+    setFieldError(
+      sizeInputs.mines,
+      maxMines === null
+        ? `Bitte gib eine ganze Zahl ab ${limits.minMines} ein.`
+        : `Bitte gib eine ganze Zahl von ${limits.minMines} bis ${maxMines.toLocaleString('de-DE')} ein.`
+    );
     invalidInputs.push(sizeInputs.mines);
   }
 

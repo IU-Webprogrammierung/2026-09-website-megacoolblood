@@ -1,12 +1,12 @@
 function isGlobalShortcutBlocked(event) {
   const target = event.target;
 
-  return target instanceof Element
-    && (
-      target.matches('input, select, textarea')
-      || target.closest('[contenteditable]:not([contenteditable="false"])')
-      || target.closest('dialog[open]')
-    );
+  return (
+    target instanceof Element &&
+    (target.matches('input, select, textarea') ||
+      target.closest('[contenteditable]:not([contenteditable="false"])') ||
+      target.closest('dialog[open]'))
+  );
 }
 
 function markCurrentPage(link) {
@@ -78,9 +78,7 @@ function initializeMainNavigation(template) {
 }
 
 async function createSubnavigation(template) {
-  const gameDirectory = window.location.pathname.match(
-    /^(.*\/pages\/[^/]+\/)/
-  );
+  const gameDirectory = window.location.pathname.match(/^(.*\/pages\/[^/]+\/)/);
 
   if (!gameDirectory) {
     return;
@@ -113,8 +111,7 @@ function resolveComponentPaths(template, rootPath) {
     const attribute = element.hasAttribute('href') ? 'href' : 'src';
     const value = element.getAttribute(attribute);
 
-    const isAbsolute = ['#', '/', 'http', 'mailto:']
-      .some((prefix) => value.startsWith(prefix));
+    const isAbsolute = ['#', '/', 'http', 'mailto:'].some((prefix) => value.startsWith(prefix));
 
     if (!isAbsolute) {
       element.setAttribute(attribute, rootPath + value);
@@ -142,10 +139,7 @@ async function loadComponent(component) {
 }
 
 async function loadComponents() {
-  await Promise.all(
-    [...document.querySelectorAll('component[path]')]
-      .map(loadComponent)
-  );
+  await Promise.all([...document.querySelectorAll('component[path]')].map(loadComponent));
 }
 
 // Pages can wait for the header and footer, for example before measuring layout.

@@ -187,15 +187,11 @@ function addRevealedSafeFields(count) {
 
   const announcements = [];
   if (extraLivesAwarded > 0) {
-    announcements.push(
-      `Belohnung: +${extraLivesAwarded} Extraleben (${series.extraLives}/${maxExtraLives}).`
-    );
+    announcements.push(`Belohnung: +${extraLivesAwarded} Extraleben (${series.extraLives}/${maxExtraLives}).`);
   }
   if (checkChargesAwarded > 0) {
     const checkLabel = checkChargesAwarded === 1 ? 'Prüfung' : 'Prüfungen';
-    announcements.push(
-      `Belohnung: +${checkChargesAwarded} ${checkLabel}.`
-    );
+    announcements.push(`Belohnung: +${checkChargesAwarded} ${checkLabel}.`);
   }
 
   return announcements;
@@ -211,10 +207,8 @@ function updateExtraLivesDisplay() {
     return;
   }
 
-  extraLivesElement.querySelector('[aria-hidden="true"]').textContent =
-    `${series.extraLives}/${maxExtraLives}`;
-  extraLivesElement.querySelector('.visually-hidden').textContent =
-    `${series.extraLives} von ${maxExtraLives}`;
+  extraLivesElement.querySelector('[aria-hidden="true"]').textContent = `${series.extraLives}/${maxExtraLives}`;
+  extraLivesElement.querySelector('.visually-hidden').textContent = `${series.extraLives} von ${maxExtraLives}`;
 }
 
 function updateCheckChargesDisplay() {
@@ -474,10 +468,7 @@ function toggleMark(cell) {
 
   cell.isMarked = !cell.isMarked;
   cell.element.classList.toggle('is-marked', cell.isMarked);
-  cell.element.setAttribute(
-    'aria-label',
-    `${cell.isMarked ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`
-  );
+  cell.element.setAttribute('aria-label', `${cell.isMarked ? 'Markiertes' : 'Unaufgedecktes'} Feld ${cell.coordinate}`);
   gameStatus.textContent = cell.isMarked
     ? `Fragezeichen auf ${cell.coordinate} gesetzt.`
     : `Fragezeichen auf ${cell.coordinate} entfernt.`;
@@ -559,8 +550,7 @@ function useCheckMode(cell) {
 
 function activeNumber(cell) {
   const neighbors = getNeighbors(cell.row, cell.column);
-  const flaggedAndTriggeredMines = countFlags(neighbors)
-    + neighbors.filter(isTriggeredMine).length;
+  const flaggedAndTriggeredMines = countFlags(neighbors) + neighbors.filter(isTriggeredMine).length;
   const adjacentMines = countMines(neighbors);
 
   if (flaggedAndTriggeredMines !== adjacentMines) {
@@ -721,10 +711,7 @@ function handleBoardPointerMove(event) {
     return;
   }
 
-  const distance = Math.hypot(
-    event.clientX - boardPointerGesture.startX,
-    event.clientY - boardPointerGesture.startY
-  );
+  const distance = Math.hypot(event.clientX - boardPointerGesture.startX, event.clientY - boardPointerGesture.startY);
 
   if (!boardPointerGesture.moved && distance <= boardPanThreshold) {
     event.stopImmediatePropagation();
@@ -773,10 +760,7 @@ function preventClickAfterPan(event) {
   }
 
   const cellElement = event.target.closest('.game-cell');
-  const releaseDistance = Math.hypot(
-    event.clientX - suppressedPanClick.x,
-    event.clientY - suppressedPanClick.y
-  );
+  const releaseDistance = Math.hypot(event.clientX - suppressedPanClick.x, event.clientY - suppressedPanClick.y);
 
   if (cellElement && releaseDistance <= panClickSuppressionRadius) {
     event.preventDefault();
@@ -839,8 +823,12 @@ function scheduleBoardEdgeHints() {
 }
 
 function isFrontierCell(cell) {
-  return !cell.isRevealed && !cell.isFlagged && !cell.isMarked
-    && getNeighbors(cell.row, cell.column).some((neighbor) => neighbor.isRevealed && !neighbor.isMine);
+  return (
+    !cell.isRevealed &&
+    !cell.isFlagged &&
+    !cell.isMarked &&
+    getNeighbors(cell.row, cell.column).some((neighbor) => neighbor.isRevealed && !neighbor.isMine)
+  );
 }
 
 function findFrontierCell(reference) {
@@ -894,8 +882,10 @@ function getCenteringPan(cell) {
   const worldOffset = getLayoutOffset(boardWorld);
   const worldLeft = worldOffset.left - viewportOffset.left;
   const worldTop = worldOffset.top - viewportOffset.top;
-  const scrollLeft = cellOffset.left - viewportOffset.left + cell.element.offsetWidth / 2 - boardViewport.clientWidth / 2;
-  const scrollTop = cellOffset.top - viewportOffset.top + cell.element.offsetHeight / 2 - boardViewport.clientHeight / 2;
+  const scrollLeft =
+    cellOffset.left - viewportOffset.left + cell.element.offsetWidth / 2 - boardViewport.clientWidth / 2;
+  const scrollTop =
+    cellOffset.top - viewportOffset.top + cell.element.offsetHeight / 2 - boardViewport.clientHeight / 2;
   const minX = boardViewport.clientWidth - worldLeft - boardWorld.offsetWidth;
   const minY = boardViewport.clientHeight - worldTop - boardWorld.offsetHeight;
 
@@ -948,12 +938,7 @@ function moveFocus(currentCell, rowOffset, columnOffset) {
   const targetRow = currentCell.row + rowOffset;
   const targetColumn = currentCell.column + columnOffset;
 
-  if (
-    targetRow < 0 ||
-    targetRow >= boardRows ||
-    targetColumn < 0 ||
-    targetColumn >= boardColumns
-  ) {
+  if (targetRow < 0 || targetRow >= boardRows || targetColumn < 0 || targetColumn >= boardColumns) {
     return;
   }
 
@@ -990,7 +975,6 @@ function handleCellKeyDown(event) {
   }
 }
 
-
 function handleGlobalShortcut(event) {
   if (isGlobalShortcutBlocked(event)) {
     return;
@@ -1017,16 +1001,12 @@ function handleGlobalShortcut(event) {
     '+': () => zoomInButton.click(),
     '=': () => zoomInButton.click(),
     '-': () => zoomOutButton.click(),
-    '0': () => resetViewButton.click()
+    0: () => resetViewButton.click()
   };
   const viewAction = viewActions[key];
 
   if (viewAction && !event.ctrlKey && !event.altKey && !event.metaKey && !event.repeat) {
-    const button = key === '+' || key === '='
-      ? zoomInButton
-      : key === '-'
-        ? zoomOutButton
-        : resetViewButton;
+    const button = key === '+' || key === '=' ? zoomInButton : key === '-' ? zoomOutButton : resetViewButton;
 
     if (!button.disabled) {
       event.preventDefault();
@@ -1087,34 +1067,46 @@ function createBoard() {
 
 // After a win every remaining mine gets a flag, as in classic Minesweeper, so all flags show as correct.
 function flagRemainingMines() {
-  cells.forEach((row) => row.forEach((cell) => {
-    if (cell.isMine && !cell.isFlagged && !isTriggeredMine(cell)) {
-      cell.isFlagged = true;
-      cell.isMarked = false;
-      cell.element.classList.remove('is-marked');
-      cell.element.classList.add('is-flagged');
-    }
-  }));
+  cells.forEach((row) =>
+    row.forEach((cell) => {
+      if (cell.isMine && !cell.isFlagged && !isTriggeredMine(cell)) {
+        cell.isFlagged = true;
+        cell.isMarked = false;
+        cell.element.classList.remove('is-marked');
+        cell.element.classList.add('is-flagged');
+      }
+    })
+  );
   mineCurrentCount = 0;
   mineCount.textContent = mineCurrentCount;
 }
 
 function gameOverRevealMines() {
-  cells.forEach(row => row.filter((currentCell) => (
-    currentCell.isMine && !currentCell.isFlagged && !isTriggeredMine(currentCell)
-  )).forEach((mine) => {
-    mine.element.setAttribute('aria-label', `Mine auf Feld ${mine.coordinate}`);
-    mine.element.classList.add('is-mine');
-  }));
-  cells.forEach(row => row.filter((currentCell) => !currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
-    flag.isWrongFlag = true;
-    flag.element.setAttribute('aria-label', `Falsch gesetzte Flagge auf Feld ${flag.coordinate}`);
-    flag.element.classList.add('is-wrong-flag');
-  }));
-  cells.forEach(row => row.filter((currentCell) => currentCell.isMine && currentCell.isFlagged).forEach((flag) => {
-    flag.element.setAttribute('aria-label', `Richtig als Flagge markiertes Feld ${flag.coordinate}`);
-    flag.element.classList.add('is-correct-flag');
-  }));
+  cells.forEach((row) =>
+    row
+      .filter((currentCell) => currentCell.isMine && !currentCell.isFlagged && !isTriggeredMine(currentCell))
+      .forEach((mine) => {
+        mine.element.setAttribute('aria-label', `Mine auf Feld ${mine.coordinate}`);
+        mine.element.classList.add('is-mine');
+      })
+  );
+  cells.forEach((row) =>
+    row
+      .filter((currentCell) => !currentCell.isMine && currentCell.isFlagged)
+      .forEach((flag) => {
+        flag.isWrongFlag = true;
+        flag.element.setAttribute('aria-label', `Falsch gesetzte Flagge auf Feld ${flag.coordinate}`);
+        flag.element.classList.add('is-wrong-flag');
+      })
+  );
+  cells.forEach((row) =>
+    row
+      .filter((currentCell) => currentCell.isMine && currentCell.isFlagged)
+      .forEach((flag) => {
+        flag.element.setAttribute('aria-label', `Richtig als Flagge markiertes Feld ${flag.coordinate}`);
+        flag.element.classList.add('is-correct-flag');
+      })
+  );
 }
 
 async function startNewGame() {
@@ -1180,9 +1172,8 @@ function loadGameState() {
       cells[row][column].isFlagged = savedCell.isFlagged;
       cells[row][column].isMarked = savedCell.isMarked;
       cells[row][column].isRevealed = savedCell.isRevealed;
-      cells[row][column].isWrongFlag = savedCell.isWrongFlag
-        && cells[row][column].isRevealed
-        && !cells[row][column].isMine;
+      cells[row][column].isWrongFlag =
+        savedCell.isWrongFlag && cells[row][column].isRevealed && !cells[row][column].isMine;
     });
   });
 
@@ -1199,20 +1190,14 @@ function loadGameState() {
   updateSeriesDisplay();
   gameOver = Boolean(savedGameState.gameOver);
   newGame = Boolean(savedGameState.newGame);
-  elapsedMs = Number.isFinite(savedGameState.elapsedMs) && savedGameState.elapsedMs > 0
-    ? savedGameState.elapsedMs
-    : 0;
+  elapsedMs = Number.isFinite(savedGameState.elapsedMs) && savedGameState.elapsedMs > 0 ? savedGameState.elapsedMs : 0;
   resumeGameTimer();
-  mineCurrentCount = Number.isFinite(savedGameState.mineCurrentCount)
-    ? savedGameState.mineCurrentCount
-    : mineTotal;
+  mineCurrentCount = Number.isFinite(savedGameState.mineCurrentCount) ? savedGameState.mineCurrentCount : mineTotal;
   mineCount.textContent = mineCurrentCount;
   if (canStartNextRound()) {
     gameStatus.textContent = 'Runde bereits gewonnen.';
   } else {
-    gameStatus.textContent = gameOver
-      ? 'Gespeichertes Spiel beendet.'
-      : 'Gespeichertes Spiel fortgesetzt.';
+    gameStatus.textContent = gameOver ? 'Gespeichertes Spiel beendet.' : 'Gespeichertes Spiel fortgesetzt.';
   }
   updateNewGameButton();
   if (gameOver) {
@@ -1241,10 +1226,7 @@ function handleBoardWheelZoom(event) {
   }
 
   boardPanzoom.setStyle('transition', 'none');
-  boardPanzoom.setStyle(
-    'transform',
-    `scale(${transform.scale}) translate(${transform.x}px, ${transform.y}px)`
-  );
+  boardPanzoom.setStyle('transform', `scale(${transform.scale}) translate(${transform.x}px, ${transform.y}px)`);
 }
 
 function zoomBoardAtViewportCenter(direction) {
@@ -1253,12 +1235,14 @@ function zoomBoardAtViewportCenter(direction) {
   }
 
   const viewport = boardViewport.getBoundingClientRect();
-  handleBoardWheelZoom(new WheelEvent('wheel', {
-    deltaY: direction > 0 ? -3 : 3,
-    clientX: viewport.left + viewport.width / 2,
-    clientY: viewport.top + viewport.height / 2,
-    cancelable: true
-  }));
+  handleBoardWheelZoom(
+    new WheelEvent('wheel', {
+      deltaY: direction > 0 ? -3 : 3,
+      clientX: viewport.left + viewport.width / 2,
+      clientY: viewport.top + viewport.height / 2,
+      cancelable: true
+    })
+  );
 }
 
 zoomInButton.addEventListener('click', () => zoomBoardAtViewportCenter(1));
@@ -1305,9 +1289,7 @@ async function initializeBoardPanzoom() {
   }
 
   try {
-    const { default: Panzoom } = await import(
-      '../../assets/vendor/panzoom.es.js'
-    );
+    const { default: Panzoom } = await import('../../assets/vendor/panzoom.es.js');
 
     // Panzoom hides the overflow itself; doing it first keeps the measured start position exact.
     boardViewport.style.overflow = 'hidden';
@@ -1337,11 +1319,7 @@ async function initializeBoardPanzoom() {
       button.disabled = false;
     });
 
-    boardViewport.addEventListener(
-      'wheel',
-      handleBoardWheelZoom,
-      { passive: false }
-    );
+    boardViewport.addEventListener('wheel', handleBoardWheelZoom, { passive: false });
   } catch (error) {
     boardViewport.style.overflow = 'auto';
     console.error('Panzoom konnte nicht geladen werden.', error);

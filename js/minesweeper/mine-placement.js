@@ -29,9 +29,10 @@ const minesweeperMinePlacement = (() => {
 
   // Bit i of a layout mask stands for window cell i.
   function getWindowMineMask(board, windowCells) {
-    return windowCells.reduce((mask, cell, bit) => (
-      board.isMine[cell.row * board.columns + cell.column] ? mask | (1 << bit) : mask
-    ), 0);
+    return windowCells.reduce(
+      (mask, cell, bit) => (board.isMine[cell.row * board.columns + cell.column] ? mask | (1 << bit) : mask),
+      0
+    );
   }
 
   // One mask per safe cell around the window; bit i is set when that cell touches window cell i.
@@ -39,13 +40,21 @@ const minesweeperMinePlacement = (() => {
     const touchMasks = [];
 
     for (let row = Math.max(0, top - 1); row <= Math.min(board.rows - 1, top + shape.rows); row += 1) {
-      for (let column = Math.max(0, left - 1); column <= Math.min(board.columns - 1, left + shape.columns); column += 1) {
+      for (
+        let column = Math.max(0, left - 1);
+        column <= Math.min(board.columns - 1, left + shape.columns);
+        column += 1
+      ) {
         const isInWindow = row >= top && row < top + shape.rows && column >= left && column < left + shape.columns;
 
         if (!isInWindow && !board.isMine[row * board.columns + column]) {
-          touchMasks.push(windowCells.reduce((mask, cell, bit) => (
-            Math.abs(cell.row - row) <= 1 && Math.abs(cell.column - column) <= 1 ? mask | (1 << bit) : mask
-          ), 0));
+          touchMasks.push(
+            windowCells.reduce(
+              (mask, cell, bit) =>
+                Math.abs(cell.row - row) <= 1 && Math.abs(cell.column - column) <= 1 ? mask | (1 << bit) : mask,
+              0
+            )
+          );
         }
       }
     }
@@ -67,9 +76,9 @@ const minesweeperMinePlacement = (() => {
 
     for (let otherMask = 0; otherMask < 1 << windowCells.length; otherMask += 1) {
       if (
-        otherMask !== mineMask
-        && countBits(otherMask) === shape.mines
-        && touchMasks.every((touchMask) => countBits(mineMask & touchMask) === countBits(otherMask & touchMask))
+        otherMask !== mineMask &&
+        countBits(otherMask) === shape.mines &&
+        touchMasks.every((touchMask) => countBits(mineMask & touchMask) === countBits(otherMask & touchMask))
       ) {
         return true;
       }

@@ -43,8 +43,7 @@ function readBestScore() {
 function saveBestScore() {
   try {
     localStorage.setItem(bestScoreKey, String(bestScore));
-  } catch {
-  }
+  } catch {}
 }
 
 function getDefaultStatistics() {
@@ -79,8 +78,7 @@ function readStatistics() {
 function writeStatistics(statistics) {
   try {
     localStorage.setItem(statisticsKey, JSON.stringify(statistics));
-  } catch {
-  }
+  } catch {}
 }
 
 function recordNewGame() {
@@ -183,7 +181,9 @@ function setLine(direction, index, line) {
 }
 
 function hasBoardChanged(previousBoard) {
-  return board.some((row, rowIndex) => row.some((value, columnIndex) => value !== previousBoard[rowIndex][columnIndex]));
+  return board.some((row, rowIndex) =>
+    row.some((value, columnIndex) => value !== previousBoard[rowIndex][columnIndex])
+  );
 }
 
 function canMove() {
@@ -344,8 +344,7 @@ function handleGlobalKeyDown(event) {
   }
 
   const key = event.key.toLowerCase();
-  const isUndoShortcut = event.key === 'Backspace'
-    || (event.ctrlKey && key === 'z');
+  const isUndoShortcut = event.key === 'Backspace' || (event.ctrlKey && key === 'z');
   const isRestartShortcut = !event.ctrlKey && !event.altKey && key === 'r';
 
   if (!isUndoShortcut && !isRestartShortcut) {
@@ -388,9 +387,7 @@ function handlePointerUp(event) {
     return;
   }
 
-  const direction = Math.abs(deltaX) > Math.abs(deltaY)
-    ? (deltaX > 0 ? 'right' : 'left')
-    : (deltaY > 0 ? 'down' : 'up');
+  const direction = Math.abs(deltaX) > Math.abs(deltaY) ? (deltaX > 0 ? 'right' : 'left') : deltaY > 0 ? 'down' : 'up';
   move(direction);
 }
 

@@ -1,33 +1,35 @@
 <!doctype html>
 <html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Minesweeper-Statistiken | LycheeLab</title>
+    <link rel="stylesheet" href="../../css/style.css" />
+    <link rel="stylesheet" href="../../css/minesweeper.css" />
+    <link rel="icon" type="image/png" href="../../assets/images/LycheeLab.png" />
+    <script src="../../js/components.js" defer></script>
+    <script src="../../js/minesweeper/difficulty.js" defer></script>
+    <script src="../../js/minesweeper/run-state.js" defer></script>
+    <script src="../../js/minesweeper/statistics.js" defer></script>
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Minesweeper-Statistiken | LycheeLab</title>
-  <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="../../css/minesweeper.css">
-  <link rel="icon" type="image/png" href="../../assets/images/LycheeLab.png">
-  <script src="../../js/components.js" defer></script>
-  <script src="../../js/minesweeper/difficulty.js" defer></script>
-  <script src="../../js/minesweeper/run-state.js" defer></script>
-  <script src="../../js/minesweeper/statistics.js" defer></script>
-</head>
+  <body>
+    <component path="../../components/header.html"></component>
 
-<body>
-  <component path="../../components/header.html"></component>
-
-  <main id="main-content" tabindex="-1">
-    <h1>Minesweeper-Statistiken</h1>
-    <p id="statistics-status" role="status">Lokal gespeicherte Spielstatistiken.</p>
-    <p>Der höchste Score zeigt die meisten sicheren Felder, die du in einer zusammenhängenden Siegesserie aufgedeckt
-      hast. Die letzte Runde zählt auch bei einer Niederlage oder einem Neustart mit.</p>
-    <p>Geräumte Minen zählen bei einem Sieg alle Minen des Spielfelds, bei einer Niederlage oder einem abgebrochenen
-      Spiel die richtig gesetzten Flaggen. Falsche Flaggen werden ebenfalls erst bei Spielende gezählt. Bestzeit,
-      Durchschnittszeit und langsamste Zeit beziehen sich auf gewonnene Spiele.</p>
-    <section id="statistics-list" class="statistics-grid" aria-label="Statistiken nach Schwierigkeitsgrad"></section>
-  </main>
-  <component path="../../components/footer.html"></component>
-</body>
-
+    <main id="main-content" tabindex="-1">
+      <h1>Minesweeper-Statistiken</h1>
+      <p id="statistics-status" role="status">Lokal gespeicherte Spielstatistiken.</p>
+      <p>
+        Der höchste Score zeigt die meisten sicheren Felder, die du in einer zusammenhängenden Siegesserie aufgedeckt
+        hast. Die letzte Runde zählt auch bei einer Niederlage oder einem Neustart mit.
+      </p>
+      <p>
+        Geräumte Minen zählen bei einem Sieg alle Minen des Spielfelds, bei einer Niederlage oder einem abgebrochenen
+        Spiel die richtig gesetzten Flaggen. Falsche Flaggen werden ebenfalls erst bei Spielende gezählt. Bestzeit,
+        Durchschnittszeit und langsamste Zeit beziehen sich auf gewonnene Spiele.
+      </p>
+      <section id="statistics-list" class="statistics-grid" aria-label="Statistiken nach Schwierigkeitsgrad"></section>
+    </main>
+    <component path="../../components/footer.html"></component>
+  </body>
 </html>

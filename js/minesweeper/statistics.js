@@ -16,12 +16,10 @@ function getRulesRank(config) {
 function compareDifficulties(first, second) {
   const firstPreset = minesweeperDifficulty.getPresetName(first.config);
   const secondPreset = minesweeperDifficulty.getPresetName(second.config);
-  const sizeOrder = (entry, preset) => (preset ? [0, presetOrder.indexOf(preset), 0, 0] : [
-    1,
-    entry.config.rows * entry.config.columns,
-    entry.config.mines,
-    entry.config.rows
-  ]);
+  const sizeOrder = (entry, preset) =>
+    preset
+      ? [0, presetOrder.indexOf(preset), 0, 0]
+      : [1, entry.config.rows * entry.config.columns, entry.config.mines, entry.config.rows];
   const firstOrder = [...sizeOrder(first, firstPreset), getRulesRank(first.config)];
   const secondOrder = [...sizeOrder(second, secondPreset), getRulesRank(second.config)];
   const difference = firstOrder.findIndex((value, index) => value !== secondOrder[index]);

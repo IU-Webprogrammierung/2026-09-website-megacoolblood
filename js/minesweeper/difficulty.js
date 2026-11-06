@@ -17,7 +17,8 @@ const minesweeperDifficulty = (() => {
   });
   const defaultRules = Object.freeze({ extraLives: true, checks: true, lessGuess: true });
   const maxRewardThreshold = 9999;
-  const keyPattern = /^(beginner|intermediate|expert|maximum|custom-(\d+)x(\d+)-(\d+))(-lives)?(-checks)?(-lessguess)?$/;
+  const keyPattern =
+    /^(beginner|intermediate|expert|maximum|custom-(\d+)x(\d+)-(\d+))(-lives)?(-checks)?(-lessguess)?$/;
 
   function clamp(value, minimum, maximum) {
     return Math.min(Math.max(value, minimum), maximum);
@@ -29,17 +30,15 @@ const minesweeperDifficulty = (() => {
 
   function createPresetDifficulty(presetName) {
     const preset = typeof presetName === 'string' && Object.hasOwn(presets, presetName) ? presets[presetName] : null;
-    return preset
-      ? { rows: preset.rows, columns: preset.columns, mines: preset.mines, ...defaultRules }
-      : null;
+    return preset ? { rows: preset.rows, columns: preset.columns, mines: preset.mines, ...defaultRules } : null;
   }
 
   // Non-numeric sizes fall back to Anfänger; numbers outside the limits are clamped.
   function normalizeDifficulty(raw) {
     const source = raw && typeof raw === 'object' ? raw : {};
-    const [rows, columns, mines] = [source.rows, source.columns, source.mines].map((value) => (
+    const [rows, columns, mines] = [source.rows, source.columns, source.mines].map((value) =>
       typeof value === 'number' || (typeof value === 'string' && value.trim() !== '') ? Number(value) : NaN
-    ));
+    );
 
     if (![rows, columns, mines].every(Number.isFinite)) {
       return createPresetDifficulty('beginner');
@@ -59,11 +58,14 @@ const minesweeperDifficulty = (() => {
   }
 
   function getPresetName(config) {
-    return Object.keys(presets).find((name) => (
-      presets[name].rows === config.rows
-      && presets[name].columns === config.columns
-      && presets[name].mines === config.mines
-    )) ?? null;
+    return (
+      Object.keys(presets).find(
+        (name) =>
+          presets[name].rows === config.rows &&
+          presets[name].columns === config.columns &&
+          presets[name].mines === config.mines
+      ) ?? null
+    );
   }
 
   // Suffixes only describe deviations from the default rules, so existing saves under "beginner" etc. stay valid.
@@ -71,10 +73,12 @@ const minesweeperDifficulty = (() => {
     const config = normalizeDifficulty(raw);
     const base = getPresetName(config) ?? `custom-${config.rows}x${config.columns}-${config.mines}`;
 
-    return base
-      + (config.extraLives ? '' : '-lives')
-      + (config.checks ? '' : '-checks')
-      + (config.lessGuess ? '' : '-lessguess');
+    return (
+      base +
+      (config.extraLives ? '' : '-lives') +
+      (config.checks ? '' : '-checks') +
+      (config.lessGuess ? '' : '-lessguess')
+    );
   }
 
   // Returns the configuration for a canonical key, or null for unknown or out-of-range keys.

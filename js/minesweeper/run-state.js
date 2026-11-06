@@ -39,7 +39,8 @@ const minesweeperRunState = (() => {
     const source = savedSeries && typeof savedSeries === 'object' ? savedSeries : {};
 
     return {
-      extraLives: rules.extraLives === false ? 0 : normalizeCount(source.extraLives, defaults.extraLives, maxExtraLives),
+      extraLives:
+        rules.extraLives === false ? 0 : normalizeCount(source.extraLives, defaults.extraLives, maxExtraLives),
       checkCharges: rules.checks === false ? 0 : normalizeCount(source.checkCharges, defaults.checkCharges),
       revealProgress: normalizeCount(source.revealProgress, defaults.revealProgress),
       revealedFields: normalizeCount(source.revealedFields, defaults.revealedFields)
@@ -91,9 +92,9 @@ const minesweeperRunState = (() => {
     if (statistics) {
       Object.keys(statistics).forEach((difficulty) => {
         if (
-          statistics[difficulty]
-          && typeof statistics[difficulty] === 'object'
-          && minesweeperDifficulty.parseDifficultyKey(difficulty)
+          statistics[difficulty] &&
+          typeof statistics[difficulty] === 'object' &&
+          minesweeperDifficulty.parseDifficultyKey(difficulty)
         ) {
           difficultyKeys.add(difficulty);
         }
@@ -131,18 +132,14 @@ const minesweeperRunState = (() => {
   function addWinTime(difficultyStatistics, elapsedMs) {
     const time = toCount(elapsedMs);
 
-    difficultyStatistics.bestTimeMs = difficultyStatistics.wins > 1
-      ? Math.min(difficultyStatistics.bestTimeMs, time)
-      : time;
+    difficultyStatistics.bestTimeMs =
+      difficultyStatistics.wins > 1 ? Math.min(difficultyStatistics.bestTimeMs, time) : time;
     difficultyStatistics.slowestTimeMs = Math.max(difficultyStatistics.slowestTimeMs, time);
     difficultyStatistics.totalWinTimeMs += time;
   }
 
   function updateBestSeriesRevealedFields(difficultyStatistics, revealedFields) {
-    const bestScore = Math.max(
-      difficultyStatistics.bestSeriesRevealedFields,
-      toCount(revealedFields)
-    );
+    const bestScore = Math.max(difficultyStatistics.bestSeriesRevealedFields, toCount(revealedFields));
     const hasChanged = bestScore !== difficultyStatistics.bestSeriesRevealedFields;
 
     difficultyStatistics.bestSeriesRevealedFields = bestScore;
@@ -154,21 +151,33 @@ const minesweeperRunState = (() => {
   const cellProperties = Object.freeze(['isMine', 'isRevealed', 'isFlagged', 'isMarked', 'isWrongFlag']);
 
   function encodeCells(cells) {
-    return cells.flat().map((cell) => cellAlphabet[
-      cellProperties.reduce((bits, property, index) => (cell[property] ? bits | (1 << index) : bits), 0)
-    ]).join('');
+    return cells
+      .flat()
+      .map(
+        (cell) =>
+          cellAlphabet[
+            cellProperties.reduce((bits, property, index) => (cell[property] ? bits | (1 << index) : bits), 0)
+          ]
+      )
+      .join('');
   }
 
   // Returns the cell states as rows, or null when the saved text does not match the board.
   function decodeCells(encodedCells, rows, columns) {
-    if (typeof encodedCells !== 'string' || encodedCells.length !== rows * columns || !/^[0-9a-v]*$/.test(encodedCells)) {
+    if (
+      typeof encodedCells !== 'string' ||
+      encodedCells.length !== rows * columns ||
+      !/^[0-9a-v]*$/.test(encodedCells)
+    ) {
       return null;
     }
 
-    return Array.from({ length: rows }, (_, row) => Array.from({ length: columns }, (_, column) => {
-      const bits = cellAlphabet.indexOf(encodedCells[row * columns + column]);
-      return Object.fromEntries(cellProperties.map((property, index) => [property, (bits & (1 << index)) !== 0]));
-    }));
+    return Array.from({ length: rows }, (_, row) =>
+      Array.from({ length: columns }, (_, column) => {
+        const bits = cellAlphabet.indexOf(encodedCells[row * columns + column]);
+        return Object.fromEntries(cellProperties.map((property, index) => [property, (bits & (1 << index)) !== 0]));
+      })
+    );
   }
 
   function readSavedGame(difficulty) {
