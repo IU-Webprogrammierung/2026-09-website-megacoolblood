@@ -472,9 +472,7 @@ function setMode(mode) {
 
   activeMode = mode;
   modeButtons.forEach((button) => {
-    const isActive = button.dataset.mode === activeMode;
-    button.classList.toggle('is-active', isActive);
-    button.setAttribute('aria-pressed', String(isActive));
+    button.setAttribute('aria-pressed', String(button.dataset.mode === activeMode));
   });
   return true;
 }
