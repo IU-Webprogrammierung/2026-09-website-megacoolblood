@@ -506,13 +506,13 @@ main.minesweeper-game-page {
 
 .game-board {
   --cell-size: clamp(2rem, 8vw, 3rem);
-  --cell-color: light-dark(#a5a5a5, #747474);
+  --cell-color: light-dark(#888888, #747474);
   --cell-revealed-color: light-dark(#f2f2f2, #262626);
   --cell-marked-color: light-dark(#ffdf00, #c8a62a);
   --cell-text-color: #000;
   --cell-focus-color: light-dark(#000, #fff);
   --cell-bevel-light: light-dark(#c4c4c4, #a0a0a0);
-  --cell-bevel-dark: light-dark(#4d4d4d, #3a3a3a);
+  --cell-bevel-dark: #3a3a3a;
   --cell-border-dark: light-dark(#808080, #474747);
   --cell-mine-color: light-dark(#f4cccc, #b07c7c);
   --cell-triggered-mine-color: light-dark(#f00, #d93636);
