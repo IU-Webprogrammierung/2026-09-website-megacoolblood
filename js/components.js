@@ -77,6 +77,25 @@ function initializeMainNavigation(template) {
   updateNavigation();
 }
 
+function initializeThemeSelect(template) {
+  const select = template.content.querySelector('[data-theme-select]');
+
+  if (!select) {
+    return;
+  }
+
+  // Without the early theme script the control could not do anything, so it is removed.
+  if (!window.lycheelabTheme) {
+    select.closest('.theme-setting')?.remove();
+    return;
+  }
+
+  select.value = window.lycheelabTheme.getPreference();
+  select.addEventListener('change', () => {
+    window.lycheelabTheme.setPreference(select.value);
+  });
+}
+
 async function createSubnavigation(template) {
   const gameDirectory = window.location.pathname.match(/^(.*\/pages\/[^/]+\/)/);
 
@@ -134,6 +153,7 @@ async function loadComponent(component) {
   });
 
   initializeMainNavigation(template);
+  initializeThemeSelect(template);
   await createSubnavigation(template);
   component.replaceWith(template.content);
 }

@@ -136,7 +136,7 @@ p {
     }
   }
 
-  nav[data-main-navigation] a[aria-current='page'] {
+  [data-main-navigation] a[aria-current='page'] {
     color: var(--color-text);
     background: var(--color-background);
     font-weight: 700;
@@ -340,7 +340,7 @@ p {
   transform: translateY(0.475rem);
 }
 
-nav[data-main-navigation] {
+[data-main-navigation] {
   position: absolute;
   z-index: 11;
   top: 100%;
@@ -374,6 +374,25 @@ nav[data-main-navigation] {
 
 [data-subnavigation] ul {
   gap: var(--space-small);
+}
+
+.theme-setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-small);
+  margin-top: var(--space-small);
+  padding: var(--space-small);
+  border-top: 1px solid var(--color-border);
+
+  select {
+    min-height: 44px;
+    padding: 0.25rem 0.5rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-field-border);
+    border-radius: 0.25rem;
+  }
 }
 
 .skip-link {
@@ -416,7 +435,8 @@ button:disabled {
 }
 
 button:focus-visible,
-a:focus-visible {
+a:focus-visible,
+select:focus-visible {
   outline: 0.2rem solid var(--color-accent-strong);
   outline-offset: 0.2rem;
 }
@@ -436,30 +456,44 @@ a:focus-visible {
     display: none;
   }
 
-  nav[data-main-navigation] {
+  [data-main-navigation] {
     display: flex;
+    flex: 1 1 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
     align-items: center;
-    gap: var(--space-medium);
+    gap: var(--space-small) var(--space-medium);
     position: static;
     width: auto;
-    margin-left: auto;
+    min-width: 0;
     padding: 0;
     background: transparent;
     border: 0;
     box-shadow: none;
+
+    > nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-medium);
+    }
   }
 
-  nav[data-main-navigation] ul {
+  [data-main-navigation] ul {
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
   }
 
-  [data-subnavigation] {
+  [data-subnavigation],
+  .theme-setting {
     margin: 0;
     padding: 0 0 0 var(--space-medium);
     border-top: 0;
     border-left: 1px solid var(--color-border);
+  }
+
+  .theme-setting {
+    flex-wrap: nowrap;
   }
 
   [data-subnavigation] ul {

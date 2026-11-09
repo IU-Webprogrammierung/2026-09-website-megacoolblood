@@ -15,12 +15,22 @@
       <span></span>
     </span>
   </button>
-  <nav id="main-navigation" data-main-navigation aria-label="Hauptnavigation" hidden>
-    <ul>
-      <li><a href="index.html">Übersicht</a></li>
-      <li><a href="pages/minesweeper/game.html">Minesweeper</a></li>
-      <li><a href="pages/2048/game.html">2048</a></li>
-    </ul>
-    <div data-subnavigation role="navigation" aria-label="Spielnavigation" hidden></div>
-  </nav>
+  <div id="main-navigation" data-main-navigation hidden>
+    <nav aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="index.html">Übersicht</a></li>
+        <li><a href="pages/minesweeper/game.html">Minesweeper</a></li>
+        <li><a href="pages/2048/game.html">2048</a></li>
+      </ul>
+      <div data-subnavigation role="navigation" aria-label="Spielnavigation" hidden></div>
+    </nav>
+    <div class="theme-setting">
+      <label for="theme-select">Farbschema</label>
+      <select id="theme-select" data-theme-select>
+        <option value="system">System</option>
+        <option value="light">Hell</option>
+        <option value="dark">Dunkel</option>
+      </select>
+    </div>
+  </div>
 </header>
