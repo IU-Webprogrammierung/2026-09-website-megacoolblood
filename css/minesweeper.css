@@ -220,7 +220,7 @@ main.minesweeper-game-page {
   }
 
   .game-board-world {
-    --board-color: #c0c0c0;
+    --board-color: light-dark(#c0c0c0, #4a4a4a);
     background-color: var(--board-surface-color);
     background-image: radial-gradient(circle, var(--color-border) 1px, transparent 1.5px);
     background-size: 1rem 1rem;
@@ -249,7 +249,7 @@ main.minesweeper-game-page {
      * keeps the overlay from slowing down re-rasterizing the zoomed board.
      */
     &::after {
-      --edge-shadow-color: rgb(32 35 31 / 0.5);
+      --edge-shadow-color: light-dark(rgb(32 35 31 / 0.5), rgb(0 0 0 / 0.75));
       --edge-size: 1.5rem;
       --edge-left: transparent;
       --edge-right: transparent;
@@ -505,27 +505,31 @@ main.minesweeper-game-page {
 
 .game-board {
   --cell-size: clamp(2rem, 8vw, 3rem);
-  --cell-color: #a5a5a5;
-  --cell-revealed-color: #f2f2f2;
-  --cell-marked-color: #ffdf00;
+  --cell-color: light-dark(#a5a5a5, #747474);
+  --cell-revealed-color: light-dark(#f2f2f2, #262626);
+  --cell-marked-color: light-dark(#ffdf00, #c8a62a);
   --cell-text-color: #000;
-  --cell-bevel-light: #c4c4c4;
-  --cell-bevel-dark: #4d4d4d;
-  --cell-border-dark: #808080;
-  --cell-mine-color: #f4cccc;
-  --cell-triggered-mine-color: #f00;
-  --cell-triggered-mine-border-color: #800000;
-  --cell-correct-flag-color: #c6efce;
-  --cell-wrong-flag-color: #ffc7ce;
+  --cell-focus-color: light-dark(#000, #fff);
+  --cell-bevel-light: light-dark(#c4c4c4, #a0a0a0);
+  --cell-bevel-dark: light-dark(#4d4d4d, #3a3a3a);
+  --cell-border-dark: light-dark(#808080, #474747);
+  --cell-mine-color: light-dark(#f4cccc, #b07c7c);
+  --cell-triggered-mine-color: light-dark(#f00, #d93636);
+  --cell-triggered-mine-border-color: light-dark(#800000, #6e0000);
+  --cell-correct-flag-color: light-dark(#c6efce, #6fae7e);
+  --cell-wrong-flag-color: light-dark(#ffc7ce, #c98a92);
   --cell-wrong-flag-cross-color: #800000;
-  --cell-number-1-color: #0000c8;
-  --cell-number-2-color: #006400;
-  --cell-number-3-color: #b00000;
-  --cell-number-4-color: #000080;
-  --cell-number-5-color: #800000;
-  --cell-number-6-color: #006060;
-  --cell-number-7-color: #000;
-  --cell-number-8-color: #595959;
+  --cell-revealed-icon-color: light-dark(#000, #e6e6e6);
+  --cell-revealed-cross-color: light-dark(#800000, #ff7a7a);
+  --cell-number-1-color: light-dark(#0000c8, #6fa8ff);
+  --cell-number-2-color: light-dark(#006400, #6fcf6f);
+  --cell-number-3-color: light-dark(#b00000, #ff6b6b);
+  --cell-number-4-color: light-dark(#000080, #b39dff);
+  --cell-number-5-color: light-dark(#800000, #ffa05a);
+  --cell-number-6-color: light-dark(#006060, #4fd1d1);
+  --cell-number-7-color: light-dark(#000, #e6e6e6);
+  --cell-number-8-color: light-dark(#595959, #a0a0a0);
+  --board-frame-color: light-dark(#4d4d4d, #8a8a8a);
   display: grid;
   grid-template-columns: repeat(9, var(--cell-size));
   grid-auto-rows: var(--cell-size);
@@ -535,7 +539,7 @@ main.minesweeper-game-page {
   margin: 4rem;
   padding: 0.25rem;
   overflow: visible;
-  border: 0.25rem solid var(--cell-bevel-dark);
+  border: 0.25rem solid var(--board-frame-color);
   border-radius: 0.5rem;
   background: var(--board-color);
 
@@ -554,7 +558,7 @@ main.minesweeper-game-page {
 
     &:focus-visible {
       z-index: 1;
-      outline: 0.2rem solid var(--cell-text-color);
+      outline: 0.2rem solid var(--cell-focus-color);
       outline-offset: 0.1rem;
     }
 
@@ -658,6 +662,10 @@ main.minesweeper-game-page {
       pointer-events: none;
     }
 
+    &.is-revealed.is-wrong-flag::after {
+      background-color: var(--cell-revealed-icon-color);
+    }
+
     &.is-mine {
       background: var(--cell-mine-color);
       border-color: var(--cell-mine-color);
@@ -670,7 +678,7 @@ main.minesweeper-game-page {
       outline-offset: 0.05rem;
 
       &:focus-visible {
-        outline: 0.2rem solid var(--cell-text-color);
+        outline: 0.2rem solid var(--cell-focus-color);
         outline-offset: 0.1rem;
       }
     }
@@ -704,15 +712,15 @@ main.minesweeper-game-page {
         linear-gradient(
           45deg,
           transparent 42%,
-          var(--cell-wrong-flag-cross-color) 45%,
-          var(--cell-wrong-flag-cross-color) 55%,
+          var(--cell-revealed-cross-color) 45%,
+          var(--cell-revealed-cross-color) 55%,
           transparent 58%
         ),
         linear-gradient(
           -45deg,
           transparent 42%,
-          var(--cell-wrong-flag-cross-color) 45%,
-          var(--cell-wrong-flag-cross-color) 55%,
+          var(--cell-revealed-cross-color) 45%,
+          var(--cell-revealed-cross-color) 55%,
           transparent 58%
         );
       background-position: right 1px bottom 1px;
