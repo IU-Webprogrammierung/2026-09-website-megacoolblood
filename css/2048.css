@@ -1,22 +1,23 @@
 .board-2048 {
-  --board-color: #bbada0;
+  --board-color: light-dark(#bbada0, #3a332c);
   --board-gap: 0.5rem;
   --board-padding: 0.5rem;
-  --empty-tile-color: #cdc1b4;
-  --tile-light-text: #776e65;
-  --tile-dark-text: #f9f6f2;
-  --tile-2-color: #eee4da;
-  --tile-4-color: #ede0c8;
-  --tile-8-color: #f2b179;
-  --tile-16-color: #f59563;
-  --tile-32-color: #f67c5f;
-  --tile-64-color: #f65e3b;
-  --tile-128-color: #edcf72;
-  --tile-256-color: #e8b923;
-  --tile-512-color: #d99a1f;
-  --tile-1024-color: #c96b1b;
-  --tile-2048-color: #a83d16;
-  --tile-4096-color: #3c3a32;
+  --empty-tile-color: light-dark(#cdc1b4, #4a423a);
+  --tile-text-small: light-dark(#776e65, #f6efe6);
+  --tile-text-medium: light-dark(#f9f6f2, #f6efe6);
+  --tile-text-large: light-dark(#f9f6f2, #1f1a15);
+  --tile-2-color: light-dark(#eee4da, #6b5e51);
+  --tile-4-color: light-dark(#ede0c8, #7d6a52);
+  --tile-8-color: light-dark(#f2b179, #a8551f);
+  --tile-16-color: light-dark(#f59563, #b54a24);
+  --tile-32-color: light-dark(#f67c5f, #b83a2e);
+  --tile-64-color: light-dark(#f65e3b, #a72a14);
+  --tile-128-color: light-dark(#edcf72, #e0c25a);
+  --tile-256-color: light-dark(#e8b923, #ecb92a);
+  --tile-512-color: light-dark(#d99a1f, #f2a52e);
+  --tile-1024-color: light-dark(#c96b1b, #f58a3c);
+  --tile-2048-color: light-dark(#a83d16, #ffd34d);
+  --tile-4096-color: light-dark(#3c3a32, #f4ede2);
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-auto-rows: 1fr;
@@ -40,7 +41,7 @@
     place-items: center;
     min-width: 0;
     aspect-ratio: 1;
-    color: var(--tile-light-text);
+    color: var(--tile-text-small);
     border-radius: 0.25rem;
     font-size: clamp(1rem, 5vw, 2rem);
     font-weight: 700;
@@ -60,52 +61,52 @@
   }
 
   .tile-8 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-medium);
     background: var(--tile-8-color);
   }
 
   .tile-16 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-medium);
     background: var(--tile-16-color);
   }
 
   .tile-32 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-medium);
     background: var(--tile-32-color);
   }
 
   .tile-64 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-medium);
     background: var(--tile-64-color);
   }
 
   .tile-128 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-large);
     background: var(--tile-128-color);
   }
 
   .tile-256 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-large);
     background: var(--tile-256-color);
   }
 
   .tile-512 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-large);
     background: var(--tile-512-color);
   }
 
   .tile-1024 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-large);
     background: var(--tile-1024-color);
   }
 
   .tile-2048 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-large);
     background: var(--tile-2048-color);
   }
 
   .tile-4096 {
-    color: var(--tile-dark-text);
+    color: var(--tile-text-large);
     background: var(--tile-4096-color);
   }
 }
