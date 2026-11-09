@@ -4,15 +4,60 @@ LycheeLab is a static website with progressive web application features.
 The project was created as part of the IU Web Programming course using
 semantic HTML, custom CSS, and vanilla JavaScript.
 
-## Dependency
+## Dependencies
 
 - `@panzoom/panzoom` 4.6.2 (MIT), from
   [the official repository](https://github.com/timmywil/panzoom), is added for the Minesweeper board viewport.
   Its ESM build and MIT license are included in `assets/vendor`, so static hosting does not require `node_modules`.
   The vendored build includes a local pinch-zoom synchronization patch; reapply it when updating Panzoom.
   Install the pinned dependency with `npm ci` when updating the vendored build.
+- `prettier` 3.9.10 (MIT) is a pinned development dependency for code
+  formatting only; it is not part of the published site.
+
+## Development
+
+- Install the pinned tools with `npm ci`.
+- Format HTML, CSS, and JavaScript with `npm run format`; check the formatting
+  with `npm run format:check`. The settings are in `.prettierrc.json`
+  (120 characters, single quotes, no trailing commas); indentation and line
+  endings come from `.editorconfig`.
+- `.gitattributes` checks out text files with LF line endings on every
+  platform, so the format check also passes on Windows.
+- `node_modules`, `assets/vendor`, `package-lock.json`, and Markdown files are
+  not formatted.
 
 ## Features
+
+### Color scheme
+
+- A "Farbschema" select in the site header offers System, Hell (light), and
+  Dunkel (dark). Below 768 px it is part of the menu.
+- System is the default and follows the operating system setting through
+  `prefers-color-scheme`, also when it changes while the page is open.
+- The choice is stored in `localStorage` under `lycheelab-theme`. If storage is
+  unavailable, full, or holds an unknown value, System applies; a choice that
+  cannot be saved only applies to the current page.
+- `js/theme.js` is loaded without `defer` before the stylesheets on every page,
+  so the stored choice is applied before the first paint and the page does not
+  flash in the wrong scheme.
+- A change in one tab is applied to other open tabs of the site without a
+  reload, including their select. Removing the stored value, for example with
+  `localStorage.clear()`, switches open tabs back to System.
+- Every color is a CSS custom property in `css/style.css`, `css/minesweeper.css`,
+  or `css/2048.css` defined with `light-dark()`; `color-scheme` on the root
+  element selects the value, and `data-theme` overrides the system setting.
+  Native controls, scrollbars, and dialogs follow the scheme as well.
+- Icons are SVG files used as CSS masks filled with the current text color, so
+  they follow the scheme. The two-colored flag stacks two masks: the pole
+  follows the text color and the cloth uses its own flag color.
+- Buttons share a lab-flask design based on the site-mascot: green-rimmed glass
+  pills with a gloss, an orange glow on hover,
+  and a filled orange "potion" with bubbles and a thicker rim for the selected
+  Minesweeper mode, so the selection is not shown by color alone. Transitions
+  only run without `prefers-reduced-motion: reduce`.
+- Both game boards have their own dark palette. In Minesweeper, raised cells
+  stay mid gray and revealed cells turn dark with light numbers; in 2048, low
+  tiles are dark with light text and high tiles are bright with dark text.
 
 ### Minesweeper
 
@@ -84,9 +129,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   mode, not the browser Fullscreen API
 - Pan/zoom operates on the board viewport; keyboard cell navigation remains
   independent of the visual zoom level
-- A dark frame marks the real board edge on a dotted surface, and inner
-  shadows on the viewport edges show where the board continues beyond the
-  visible area
+- A frame in a contrasting color marks the real board edge on a dotted
+  surface, and inner shadows on the viewport edges show where the board
+  continues beyond the visible area
 - Visible focus state for board cells
 - Status messages for starting a game, revealing cells, winning, and losing;
   the win message includes the playing time
@@ -127,3 +172,11 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - Statistics include started games, valid and invalid moves, undos, wins,
   losses, highest tile, and total score
 - Best score and statistics are stored locally using `localStorage`
+
+## Browser support
+
+The site relies on CSS `light-dark()` and native CSS nesting. According to
+[MDN browser compatibility data](https://github.com/mdn/browser-compat-data),
+`light-dark()` requires Chrome and Edge 123, Firefox 120, or Safari 17.5;
+unprefixed `mask-image` requires Chrome 120, Firefox 53, or Safari 15.4.
+Older browsers do not get valid colors.
