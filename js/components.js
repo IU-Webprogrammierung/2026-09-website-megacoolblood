@@ -94,6 +94,9 @@ function initializeThemeSelect(template) {
   select.addEventListener('change', () => {
     window.lycheelabTheme.setPreference(select.value);
   });
+  document.addEventListener(window.lycheelabTheme.changeEvent, (event) => {
+    select.value = event.detail.preference;
+  });
 }
 
 async function createSubnavigation(template) {

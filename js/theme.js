@@ -1,11 +1,15 @@
 window.lycheelabTheme = (() => {
   const storageKey = 'lycheelab-theme';
+  const changeEvent = 'lycheelab-themechange';
   const preferences = Object.freeze(['system', 'light', 'dark']);
+
+  function normalizePreference(value) {
+    return preferences.includes(value) ? value : 'system';
+  }
 
   function readStoredPreference() {
     try {
-      const value = localStorage.getItem(storageKey);
-      return preferences.includes(value) ? value : 'system';
+      return normalizePreference(localStorage.getItem(storageKey));
     } catch {
       return 'system';
     }
@@ -22,6 +26,16 @@ window.lycheelabTheme = (() => {
   let currentPreference = readStoredPreference();
   applyPreference(currentPreference);
 
+  function updatePreference(preference) {
+    if (preference === currentPreference) {
+      return;
+    }
+
+    currentPreference = preference;
+    applyPreference(preference);
+    document.dispatchEvent(new CustomEvent(changeEvent, { detail: { preference } }));
+  }
+
   function getPreference() {
     return currentPreference;
   }
@@ -31,8 +45,7 @@ window.lycheelabTheme = (() => {
       throw new RangeError(`Unknown color scheme: ${preference}`);
     }
 
-    currentPreference = preference;
-    applyPreference(preference);
+    updatePreference(preference);
 
     try {
       localStorage.setItem(storageKey, preference);
@@ -42,5 +55,21 @@ window.lycheelabTheme = (() => {
     }
   }
 
-  return Object.freeze({ storageKey, preferences, getPreference, setPreference });
+  window.addEventListener('storage', (event) => {
+    if (event.key !== storageKey && event.key !== null) {
+      return;
+    }
+
+    try {
+      if (event.storageArea !== localStorage) {
+        return;
+      }
+    } catch {
+      return;
+    }
+
+    updatePreference(normalizePreference(event.newValue));
+  });
+
+  return Object.freeze({ storageKey, changeEvent, preferences, getPreference, setPreference });
 })();
