@@ -16,6 +16,14 @@
   --color-error: light-dark(#a4161a, #ff8f87);
   --color-readonly-surface: light-dark(#ebe7dd, #363636);
   --color-info-surface: light-dark(#e8f1ec, #264237);
+  --color-button: light-dark(#eef6f2, #26302c);
+  --color-button-border: light-dark(#2f6b55, #8fd9b6);
+  --color-button-gloss: light-dark(rgb(255 255 255 / 70%), rgb(255 255 255 / 8%));
+  --color-button-glow: rgb(255 166 0 / 35%);
+  --color-potion: light-dark(#ffbe55, #e89a2c);
+  --color-potion-border: light-dark(#a65d00, #ffcf85);
+  --color-on-potion: light-dark(#2b1a05, #1d1204);
+  --color-flag-on-potion: light-dark(#d40000, #a8001a);
   --color-heart: light-dark(#b00020, #ff6b81);
   --color-flag: light-dark(#d40000, #ff5a52);
   --space-small: 0.5rem;
@@ -430,7 +438,54 @@ select {
   font: inherit;
 }
 
-button:disabled {
+:where(button:not(.game-cell, .menu-toggle)) {
+  --button-glow: 0 0 0 0 transparent;
+  --button-rim: 0 0 0 0 transparent;
+  padding: 1px 6px;
+  color: var(--color-text);
+  background: linear-gradient(to bottom, var(--color-button-gloss), transparent 55%), var(--color-button);
+  border: 2px solid var(--color-button-border);
+  border-radius: 999px;
+  box-shadow: var(--button-glow), var(--button-rim);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  :where(button:not(.game-cell, .menu-toggle, :disabled, [aria-disabled='true']):hover) {
+    --button-glow: 0 0 0 4px var(--color-button-glow);
+  }
+}
+
+:where(button:not(.game-cell, .menu-toggle, :disabled, [aria-disabled='true']):active) {
+  scale: 0.96;
+}
+
+:where(button[aria-pressed='true']) {
+  --button-rim: inset 0 0 0 1px var(--color-potion-border);
+  --color-flag: var(--color-flag-on-potion);
+  color: var(--color-on-potion);
+  background:
+    radial-gradient(circle at 18% 72%, rgb(255 255 255 / 70%) 0 2px, transparent 2.5px),
+    radial-gradient(circle at 82% 30%, rgb(255 255 255 / 60%) 0 1.5px, transparent 2px),
+    radial-gradient(circle at 68% 80%, rgb(255 255 255 / 50%) 0 1px, transparent 1.5px),
+    linear-gradient(to bottom, rgb(255 255 255 / 35%), transparent 50%), var(--color-potion);
+  border-color: var(--color-potion-border);
+}
+
+:where(button:not(.game-cell, .menu-toggle):is(:disabled, [aria-disabled='true'])) {
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :where(button:not(.game-cell, .menu-toggle)) {
+    transition:
+      box-shadow 120ms ease-out,
+      scale 90ms ease-out;
+  }
+}
+
+button:disabled,
+button[aria-disabled='true'] {
   cursor: not-allowed;
 }
 
