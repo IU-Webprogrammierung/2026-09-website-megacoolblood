@@ -147,7 +147,9 @@ main.minesweeper-game-page {
 
     > #new-game,
     > #game-chrome-toggle {
+      display: inline-flex;
       flex: 0 0 auto;
+      align-items: center;
       width: max-content;
     }
 
@@ -155,6 +157,11 @@ main.minesweeper-game-page {
       flex: 0 1 auto;
       min-width: 0;
       gap: var(--space-small);
+
+      dt {
+        display: flex;
+        align-items: center;
+      }
     }
   }
 
@@ -433,6 +440,12 @@ main.minesweeper-game-page {
     width: 48px;
     height: 48px;
     padding: 0;
+  }
+
+  main.minesweeper-game-page .game-panel .game-header-actions > #new-game {
+    min-height: 48px;
+    min-width: 48px;
+    justify-content: center;
   }
 }
 
