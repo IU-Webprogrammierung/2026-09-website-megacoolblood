@@ -189,6 +189,18 @@ Performance was judged subjectively and not measured.
 - `npm run format:check` (Prettier) passes without findings
 - All internal links were checked by hand
 - Viewport widths were read from the browser developer tools
+- [Nu Html Checker](https://validator.w3.org/nu/) on all 10 pages and the
+  header and footer components:
+  - Error on every page: the placeholders `<component path="…">` for the
+    header and footer are not a valid HTML element (see Open findings)
+  - Header and footer: missing doctype, `<title>`, and `lang`. These are
+    expected, because the components are fragments that are inserted into a
+    complete page and are not documents of their own
+  - Info only: a trailing slash on void elements such as `<meta … />`. It comes
+    from Prettier's HTML output and has no effect, because all attribute values
+    are quoted
+  - No other errors or warnings. The subnavigation fragments and the pages
+    after the components are inserted were not checked
 
 ### Browsers and devices
 
@@ -288,10 +300,13 @@ Performance was judged subjectively and not measured.
 - Minesweeper in immersive mode below 768 px: the "Menü anzeigen" button sits
   in the top-right corner, but receives focus only after the status message
   and the restart button, because it comes after them in the HTML
+- HTML validity: `<component>` is not a defined HTML element, and a custom
+  element name would need a hyphen. Browsers treat it as an unknown element;
+  `js/components.js` replaces it with the header or footer after loading
 
 ### Not tested
 
-- HTML and CSS validators and automated audits such as Lighthouse or axe
+- CSS validator and automated audits such as Lighthouse or axe
 - Screen readers
 - Contrast measurement and color-blindness simulation
 - `prefers-reduced-motion`
