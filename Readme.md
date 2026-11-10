@@ -263,6 +263,18 @@ Performance was judged subjectively and not measured.
 - Blocked site data in Chrome: a selected scheme only applies to the current
   page; the next page shows System again
 
+### Color vision
+
+- Simulated with "Emulate vision deficiencies" in the Chrome DevTools:
+  protanopia, deuteranopia, tritanopia, and achromatopsia, each in the light
+  and the dark color scheme
+- Minesweeper after a lost game with correct and wrong flags: numbers 1–8,
+  flags, wrong flags, the triggered mine, hidden and revealed cells, and the
+  selected mode can be told apart. Without any color, wrong flags are still
+  recognizable by their cross
+- 2048: all tiles can be told apart; without any color, by their numbers
+- All numbers stay readable in every simulation
+
 ### Minesweeper
 
 - Games played to a win or a loss: Beginner, Intermediate, Expert, Maximum,
@@ -339,8 +351,7 @@ Performance was judged subjectively and not measured.
 
 - CSS validator and axe
 - Screen readers
-- Manual contrast measurement and color-blindness simulation; the Lighthouse
-  audit reported no contrast issues
+- Manual contrast measurement; the Lighthouse audit reported no contrast issues
 - `prefers-reduced-motion`
 
 ## Browser support
