@@ -201,6 +201,16 @@ Performance was judged subjectively and not measured.
     are quoted
   - No other errors or warnings. The subnavigation fragments and the pages
     after the components are inserted were not checked
+- Lighthouse accessibility audit in the Chrome DevTools on all 10 pages, each
+  in the light and the dark color scheme:
+  - Score 100: start page, Impressum, Datenschutz, and the instructions,
+    settings, and statistics pages of both games
+  - Score 95: Minesweeper game, because the board with `role="grid"` contains
+    no elements with `role="row"`
+  - Score 91: 2048 game, for the same reason and because its
+    `role="gridcell"` tiles are not inside a `role="row"` element
+  - Both findings are listed under Open findings. Automated audits only find
+    part of the possible problems and do not replace manual checks
 
 ### Browsers and devices
 
@@ -320,12 +330,17 @@ Performance was judged subjectively and not measured.
   `js/minesweeper/run-state.js` deliberately returns `null` in this case so
   that the stored value is not overwritten. 2048 replaces unreadable
   statistics with default values and keeps saving
+- ARIA grid structure: the Minesweeper board (`role="grid"`) contains the cell
+  buttons directly, and the 2048 board contains its `role="gridcell"` tiles
+  directly. A grid requires `role="row"` elements between the grid and its
+  cells, so screen readers may announce rows and columns incorrectly
 
 ### Not tested
 
-- CSS validator and automated audits such as Lighthouse or axe
+- CSS validator and axe
 - Screen readers
-- Contrast measurement and color-blindness simulation
+- Manual contrast measurement and color-blindness simulation; the Lighthouse
+  audit reported no contrast issues
 - `prefers-reduced-motion`
 
 ## Browser support
