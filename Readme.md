@@ -250,6 +250,8 @@ Performance was judged subjectively and not measured.
 - No flash in the wrong scheme when a page loads
 - An invalid stored value (`lycheelab-theme` set to `quatsch`) falls back to
   System
+- Blocked site data in Chrome: a selected scheme only applies to the current
+  page; the next page shows System again
 
 ### Minesweeper
 
@@ -281,6 +283,8 @@ Performance was judged subjectively and not measured.
 
 - Swipe controls on touch devices, undo, continuing after 2048, the end of a
   game, statistics, and keeping the best score after a reload
+- Blocked site data in Chrome: moves and the statistics page work without
+  errors in the console
 
 ### Open findings
 
@@ -311,8 +315,7 @@ Performance was judged subjectively and not measured.
 - Contrast measurement and color-blindness simulation
 - `prefers-reduced-motion`
 - A complete game on the Intermediate difficulty
-- `localStorage` failure cases: blocked storage for the color scheme and 2048,
-  and invalid values in the Minesweeper and 2048 keys
+- `localStorage` failure cases: invalid values in the Minesweeper and 2048 keys
 
 ## Browser support
 
