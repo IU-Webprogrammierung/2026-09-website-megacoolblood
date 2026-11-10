@@ -25,6 +25,10 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   platform, so the format check also passes on Windows.
 - `node_modules`, `assets/vendor`, `package-lock.json`, and Markdown files are
   not formatted.
+- `node tests/storage-full-check.mjs` repeats the full-storage test for
+  Minesweeper in headless Chrome and prints `PASS` or `FAIL` per check. It
+  needs Node.js 22 or newer and Chrome; pass another `chrome.exe` path as an
+  argument or in `CHROME_PATH`. No npm packages are needed.
 
 ## Features
 
@@ -176,7 +180,8 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 ## Testing
 
 All tests were run manually in November 2026 on the version published on
-[GitHub Pages](https://iu-webprogrammierung.github.io/2026-09-website-megacoolblood/index.html).
+[GitHub Pages](https://iu-webprogrammierung.github.io/2026-09-website-megacoolblood/index.html),
+unless stated otherwise.
 Performance was judged subjectively and not measured.
 
 ### Tools
@@ -247,6 +252,15 @@ Performance was judged subjectively and not measured.
   control
 - Invalid custom values in the settings show a message at the matching field
 - Statistics after won, lost, and aborted rounds, including the card order
+- Full `localStorage`, filled up to the last few free characters: a
+  difficulty without a saved game keeps running, reports "Spielstand konnte
+  nicht gespeichert werden.", and starts a new game after a reload. An existing
+  save is still updated, because overwriting it only adds a few characters.
+  Both cases were checked with [a script](tests/storage-full-check.mjs) in
+  headless Chrome 157 on a local server; the existing-save case also by hand in
+  Chrome on GitHub Pages
+- Blocked site data in Chrome (`chrome://settings/content/siteData`): the game
+  keeps running and reports "Spielstand konnte nicht gespeichert werden."
 - 100 × 100 boards on all listed devices: loading, revealing, and panning felt
   smooth; at the minimum zoom of 13 % the board reacts more slowly but stays
   usable
@@ -282,8 +296,8 @@ Performance was judged subjectively and not measured.
 - Contrast measurement and color-blindness simulation
 - `prefers-reduced-motion`
 - A complete game on the Intermediate difficulty
-- `localStorage` failure cases: full or blocked storage, and invalid values in
-  the Minesweeper and 2048 keys
+- `localStorage` failure cases: blocked storage for the color scheme and 2048,
+  and invalid values in the Minesweeper and 2048 keys
 
 ## Browser support
 
