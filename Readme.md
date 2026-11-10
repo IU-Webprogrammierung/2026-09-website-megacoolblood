@@ -277,7 +277,8 @@ Performance was judged subjectively and not measured.
   keeps running and reports "Spielstand konnte nicht gespeichert werden."
 - Invalid values (`quatsch`) in the saved game, difficulty, mode, and
   statistics keys: each page loads with default values or a new game and
-  without errors in the console
+  without errors in the console. With an invalid statistics value, however,
+  no further results are saved (see Open findings)
 - 100 × 100 boards on all listed devices: loading, revealing, and panning felt
   smooth; at the minimum zoom of 13 % the board reacts more slowly but stays
   usable
@@ -313,6 +314,12 @@ Performance was judged subjectively and not measured.
 - HTML validity: `<component>` is not a defined HTML element, and a custom
   element name would need a hyphen. Browsers treat it as an unknown element;
   `js/components.js` replaces it with the header or footer after loading
+- Minesweeper statistics: if `lycheelab-statistics` holds text that is not
+  valid JSON, wins, losses, and the winning streak are no longer saved, without
+  a message to the player, until the key is removed. `readStatistics()` in
+  `js/minesweeper/run-state.js` deliberately returns `null` in this case so
+  that the stored value is not overwritten. 2048 replaces unreadable
+  statistics with default values and keeps saving
 
 ### Not tested
 
