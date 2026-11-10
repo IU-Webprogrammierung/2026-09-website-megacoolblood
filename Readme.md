@@ -213,8 +213,13 @@ Performance was judged subjectively and not measured.
 
 ### Keyboard
 
-- Tab order and visible focus were checked on all pages except Impressum,
-  Datenschutz, and the game instructions
+- Tab order and visible focus were checked on all pages; all interactive
+  elements can be reached
+- Menu below 768 px: opens with the menu button and closes with Escape
+- The "Farbschema" select can be operated with the arrow keys
+- Minesweeper settings: the form can be filled in by keyboard; after an invalid
+  submission, focus moves to the invalid field, and both the focus change and
+  the error message are understandable
 - Minesweeper: arrow keys and Space on the board, the `A`, `F`, `M`, and `P`
   shortcuts, the zoom and immersive mode buttons, and the win dialog including
   Escape and the focus returning to the header button
@@ -262,6 +267,11 @@ Performance was judged subjectively and not measured.
   board edge is slightly laggy
 - GitHub Pages: switching between pages can take very long; on a local HTTP
   server the pages loaded quickly
+- Menu below 768 px: opening it moves focus to the first navigation link, so
+  the "Farbschema" select before it can only be reached with Shift+Tab
+- Minesweeper in immersive mode below 768 px: the "Menü anzeigen" button sits
+  in the top-right corner, but receives focus only after the status message
+  and the restart button, because it comes after them in the HTML
 
 ### Not tested
 
@@ -269,8 +279,6 @@ Performance was judged subjectively and not measured.
 - Screen readers
 - Contrast measurement and color-blindness simulation
 - `prefers-reduced-motion`
-- Keyboard use of the menu below 768 px, the "Farbschema" select, and the
-  settings form
 - A complete game on the Intermediate difficulty
 - `localStorage` failure cases such as full, blocked, or invalid storage
 
