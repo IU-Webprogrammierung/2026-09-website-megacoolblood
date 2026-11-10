@@ -173,6 +173,107 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   losses, highest tile, and total score
 - Best score and statistics are stored locally using `localStorage`
 
+## Testing
+
+All tests were run manually in November 2026 on the version published on
+[GitHub Pages](https://iu-webprogrammierung.github.io/2026-09-website-megacoolblood/index.html).
+Performance was judged subjectively and not measured.
+
+### Tools
+
+- `npm run format:check` (Prettier) passes without findings
+- All internal links were checked by hand
+- Viewport widths were read from the browser developer tools
+
+### Browsers and devices
+
+- Windows 11 with Firefox 159.0.1 and Chrome 156.0.8078.74, on a 1440p and a
+  1920 px wide monitor
+- Android 15: Fairphone 5 with Chrome 156.0.8078.79
+- iOS 27.2: iPhone 15 Pro (Safari), iPhone 15 (Firefox), and iPhone SE
+  2nd generation (Safari)
+- iPadOS 27.2: iPad mini (Safari) and iPad Air 5th generation (Safari)
+- Touch, drag, and pinch were tested on the real phones and tablets, not only in
+  device emulation
+- All pages were opened on the mobile devices; most of the mobile testing was
+  spent on Minesweeper
+
+### Responsive layout
+
+- All pages were checked at 360, 768, 1280, and 1920 px by resizing the browser
+  window, without findings
+- The 768 px breakpoint was checked exactly at the switch between 767 and 768 px
+- Portrait and landscape: the desktop works in both window shapes; on iPads
+  landscape is usable and works better in immersive mode; on smartphones
+  Minesweeper is only usable in landscape in immersive mode, and even then
+  limited, because the game header and footer take up much of the low height
+- Browser zoom in Firefox on the 1440p monitor: usable up to 300 %
+- System text size on the iPhone 15 Pro: from step 4 onward, the Minesweeper
+  board is no longer visible; other pages were not checked with this setting
+
+### Keyboard
+
+- Tab order and visible focus were checked on all pages except Impressum,
+  Datenschutz, and the game instructions
+- Minesweeper: arrow keys and Space on the board, the `A`, `F`, `M`, and `P`
+  shortcuts, the zoom and immersive mode buttons, and the win dialog including
+  Escape and the focus returning to the header button
+- 2048: arrow keys
+
+### Color scheme
+
+- System, Hell, and Dunkel
+- Changing the system setting while the page is open
+- Applying a change to other open tabs
+- No flash in the wrong scheme when a page loads
+
+### Minesweeper
+
+- Games played to a win or a loss: Beginner, Expert, Maximum, and a custom
+  100 × 100 board with 2,500 mines
+- Extra lives, Check, and less-guess placement, each switched on and off
+- Rewards at the threshold, carrying Score and extra lives into the next round,
+  and resuming the saved game per difficulty after switching
+- After a reload, the playing time continues and the win dialog does not reopen;
+  the timer pauses while the page is hidden
+- Left and right click, mouse-wheel zoom, dragging the board, and the centering
+  control
+- Invalid custom values in the settings show a message at the matching field
+- Statistics after won, lost, and aborted rounds, including the card order
+- 100 × 100 boards on all listed devices: loading, revealing, and panning felt
+  smooth; at the minimum zoom of 13 % the board reacts more slowly but stays
+  usable
+
+### 2048
+
+- Swipe controls on touch devices, undo, continuing after 2048, the end of a
+  game, statistics, and keeping the best score after a reload
+
+### Open findings
+
+- iOS and iPadOS in Safari and Firefox: a long press on the board occasionally
+  selects text or a cell. It could not be reproduced reliably. Since all iOS
+  browsers use WebKit, the cause is assumed to be WebKit-specific; this has not
+  been verified
+- iOS in several browsers: about three times in roughly 30 hours of play, the
+  board got into a state in which a one-finger drag zoomed like a pinch. It
+  could not be reproduced on purpose
+- Fairphone 5: showing and hiding the edge shadows while panning towards the
+  board edge is slightly laggy
+- GitHub Pages: switching between pages can take very long; on a local HTTP
+  server the pages loaded quickly
+
+### Not tested
+
+- HTML and CSS validators and automated audits such as Lighthouse or axe
+- Screen readers
+- Contrast measurement and color-blindness simulation
+- `prefers-reduced-motion`
+- Keyboard use of the menu below 768 px, the "Farbschema" select, and the
+  settings form
+- A complete game on the Intermediate difficulty
+- `localStorage` failure cases such as full, blocked, or invalid storage
+
 ## Browser support
 
 The site relies on CSS `light-dark()` and native CSS nesting. According to
