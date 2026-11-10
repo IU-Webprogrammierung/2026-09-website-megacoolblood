@@ -275,6 +275,9 @@ Performance was judged subjectively and not measured.
   Chrome on GitHub Pages
 - Blocked site data in Chrome (`chrome://settings/content/siteData`): the game
   keeps running and reports "Spielstand konnte nicht gespeichert werden."
+- Invalid values (`quatsch`) in the saved game, difficulty, mode, and
+  statistics keys: each page loads with default values or a new game and
+  without errors in the console
 - 100 × 100 boards on all listed devices: loading, revealing, and panning felt
   smooth; at the minimum zoom of 13 % the board reacts more slowly but stays
   usable
@@ -285,6 +288,9 @@ Performance was judged subjectively and not measured.
   game, statistics, and keeping the best score after a reload
 - Blocked site data in Chrome: moves and the statistics page work without
   errors in the console
+- Invalid values (`quatsch`) in the best score and statistics keys: the game
+  and statistics pages load with default values and without errors in the
+  console
 
 ### Open findings
 
@@ -315,7 +321,6 @@ Performance was judged subjectively and not measured.
 - Contrast measurement and color-blindness simulation
 - `prefers-reduced-motion`
 - A complete game on the Intermediate difficulty
-- `localStorage` failure cases: invalid values in the Minesweeper and 2048 keys
 
 ## Browser support
 
