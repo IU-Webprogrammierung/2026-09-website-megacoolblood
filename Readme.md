@@ -255,8 +255,8 @@ Performance was judged subjectively and not measured.
 
 ### Minesweeper
 
-- Games played to a win or a loss: Beginner, Expert, Maximum, and a custom
-  100 × 100 board with 2,500 mines
+- Games played to a win or a loss: Beginner, Intermediate, Expert, Maximum,
+  and a custom 100 × 100 board with 2,500 mines
 - Extra lives, Check, and less-guess placement, each switched on and off
 - Rewards at the threshold, carrying Score and extra lives into the next round,
   and resuming the saved game per difficulty after switching
@@ -327,7 +327,6 @@ Performance was judged subjectively and not measured.
 - Screen readers
 - Contrast measurement and color-blindness simulation
 - `prefers-reduced-motion`
-- A complete game on the Intermediate difficulty
 
 ## Browser support
 
