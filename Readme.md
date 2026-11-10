@@ -231,6 +231,8 @@ Performance was judged subjectively and not measured.
 - Changing the system setting while the page is open
 - Applying a change to other open tabs
 - No flash in the wrong scheme when a page loads
+- An invalid stored value (`lycheelab-theme` set to `quatsch`) falls back to
+  System
 
 ### Minesweeper
 
@@ -280,7 +282,8 @@ Performance was judged subjectively and not measured.
 - Contrast measurement and color-blindness simulation
 - `prefers-reduced-motion`
 - A complete game on the Intermediate difficulty
-- `localStorage` failure cases such as full, blocked, or invalid storage
+- `localStorage` failure cases: full or blocked storage, and invalid values in
+  the Minesweeper and 2048 keys
 
 ## Browser support
 
