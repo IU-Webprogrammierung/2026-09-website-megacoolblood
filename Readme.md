@@ -29,6 +29,10 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   Minesweeper in headless Chrome and prints `PASS` or `FAIL` per check. It
   needs Node.js 22 or newer and Chrome; pass another `chrome.exe` path as an
   argument or in `CHROME_PATH`. No npm packages are needed.
+- `node tests/reduced-motion-check.mjs` checks the transitions and animations
+  of the Minesweeper game page with `prefers-reduced-motion` set to `reduce`
+  and `no-preference`, with the same output and requirements. The menu icon
+  check fails until the open finding on reduced motion is fixed.
 
 ## Features
 
@@ -275,6 +279,19 @@ Performance was judged subjectively and not measured.
 - 2048: all tiles can be told apart; without any color, by their numbers
 - All numbers stay readable in every simulation
 
+### Reduced motion
+
+- `prefers-reduced-motion` was emulated in headless Chrome 157 on a local
+  server, and the computed styles of the Minesweeper game page were read with
+  [a script](tests/reduced-motion-check.mjs), because the effects are too
+  short to compare reliably by eye:
+  - `reduce`: no button transitions and no pop-in animation of the win dialog
+  - `no-preference`: button transitions of 120 ms (glow) and 90 ms (press) and
+    the 400 ms pop-in animation of the win dialog
+  - The 160 ms transition of the menu icon runs in both cases (see Open
+    findings)
+- In the Chrome DevTools, no difference was visible by eye
+
 ### Minesweeper
 
 - Games played to a win or a loss: Beginner, Intermediate, Expert, Maximum,
@@ -346,13 +363,15 @@ Performance was judged subjectively and not measured.
   buttons directly, and the 2048 board contains its `role="gridcell"` tiles
   directly. A grid requires `role="row"` elements between the grid and its
   cells, so screen readers may announce rows and columns incorrectly
+- Reduced motion: the 160 ms transition of the menu icon (three lines turning
+  into a cross) in `css/style.css` is not limited to
+  `prefers-reduced-motion: no-preference` and also runs with `reduce`
 
 ### Not tested
 
 - CSS validator and axe
 - Screen readers
 - Manual contrast measurement; the Lighthouse audit reported no contrast issues
-- `prefers-reduced-motion`
 
 ## Browser support
 
