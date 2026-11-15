@@ -24,11 +24,18 @@ node tests/storage-full-check.mjs
 node tests/reduced-motion-check.mjs
 node tests/theme-script-check.mjs
 node tests/theme-sync-check.mjs
+node tests/visual-regression-check.mjs
 ```
+
+`visual-regression-check.mjs` compares the working copy with the last commit.
+Set `REFERENCE` to another Git ref to compare with an older version, for
+example `REFERENCE=HEAD~3` (PowerShell: `$env:REFERENCE = 'HEAD~3'`). Run it
+before committing a refactoring to show that nothing visible changed.
 
 `browser-check.mjs` contains the shared setup: it serves the site locally,
 starts headless Chrome with a temporary profile, and removes both afterwards.
-It can open a second tab in the same profile and compares page backgrounds
+It can open a second tab in the same profile, serve a second copy of the site,
+and compares page backgrounds
 with the `light-dark()` value of a color scheme, so the checks contain no
 color values. Each check uses its own ports, so several checks can run at the
 same time.
@@ -44,6 +51,7 @@ same time.
 | `reduced-motion-check.mjs` | Transitions and animations of the Minesweeper game page with `prefers-reduced-motion` set to `reduce` and `no-preference`                                                                    | 8766, 9334 |
 | `theme-script-check.mjs`   | `js/theme.js`: a stored Dunkel is applied before the first stylesheet on all 10 pages; every stored value (none, System, Hell, Dunkel, invalid) against a light and a dark system setting; the `window.lycheelabTheme` API; blocked and full storage | 8769, 9337 |
 | `theme-sync-check.mjs`     | Color scheme sync between two tabs: a change in either tab, the same value again, invalid, removed, and cleared values, unrelated keys, a focused select, immersive mode, and navigation afterwards | 8770, 9338 |
+| `visual-regression-check.mjs` | Working copy against a committed version (`REFERENCE`, default `HEAD`): computed colors of every element and identical pixels in 14 views at 360 and 1920 px, light and dark. Screenshots of different views are kept in a temporary folder, whose path is printed. About 2 minutes | 8772, 8773, 9340 |
 
 ## Known results
 
@@ -68,6 +76,11 @@ same time.
 - The time for a color scheme switch comes from headless Chrome without a
   graphics card. It is an upper bound against large slowdowns, not a
   measurement of the speed on real devices.
+- The visual regression check needs Git and `tar` (included in Windows 10 and
+  newer). It compares only committed files of the reference with the working
+  copy, and identical pixels only within the same Chrome version; it shows that
+  something changed, not whether the change is wanted. Delete the folder with
+  the screenshots after reviewing them.
 - `theme-script-check.mjs` simulates blocked storage with a `localStorage`
   getter that throws a `SecurityError`, and full storage with a `setItem` that
   throws a `QuotaExceededError`, instead of changing browser settings.

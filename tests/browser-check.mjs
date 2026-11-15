@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { extname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const siteRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
+export const siteRoot = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const chromePath =
   process.argv[2] || process.env.CHROME_PATH || 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const contentTypes = {
@@ -41,11 +41,11 @@ export function hasSchemeBackground(scheme) {
   })()`;
 }
 
-function startServer(serverPort) {
+function startServer(root, serverPort) {
   return createServer((request, response) => {
-    const file = join(siteRoot, decodeURIComponent(new URL(request.url, 'http://localhost').pathname));
+    const file = join(root, decodeURIComponent(new URL(request.url, 'http://localhost').pathname));
 
-    if (!file.startsWith(siteRoot + sep)) {
+    if (!file.startsWith(root + sep)) {
       response.writeHead(404).end();
       return;
     }
@@ -120,9 +120,10 @@ function createSession(socket, siteUrl, pagePath) {
     return response.result.result.value;
   }
 
+  // A path opens a page of the checked site; a full URL opens it as given, for example on a second server.
   async function navigate(path = pagePath) {
     const loaded = new Promise((resolveLoad) => eventWaiters.set('Page.loadEventFired', resolveLoad));
-    await send('Page.navigate', { url: siteUrl + path });
+    await send('Page.navigate', { url: path.startsWith('http') ? path : siteUrl + path });
     await loaded;
     // Panzoom is imported after the load event.
     await sleep(500);
@@ -142,10 +143,11 @@ async function openSession(socket, siteUrl, pagePath) {
 // Each check uses its own ports, so several checks can run at the same time.
 // `session.navigate()` opens `pagePath`; `session.navigate(path)` opens another page of the site.
 // `openTab()` opens another tab in the same browser profile and returns its session.
+// `serveSite(root, port)` serves another copy of the site, for example a reference, and returns its URL.
 export async function runBrowserCheck({ name, pagePath = '/index.html', serverPort, debugPort, run }) {
   const siteUrl = `http://127.0.0.1:${serverPort}`;
   const profileDir = mkdtempSync(join(tmpdir(), `lycheelab-${name}-`));
-  const server = startServer(serverPort);
+  const servers = [startServer(siteRoot, serverPort)];
   const chrome = spawn(
     chromePath,
     ['--headless=new', `--remote-debugging-port=${debugPort}`, `--user-data-dir=${profileDir}`, 'about:blank'],
@@ -162,19 +164,29 @@ export async function runBrowserCheck({ name, pagePath = '/index.html', serverPo
     return openSession(socket, siteUrl, pagePath);
   }
 
+  function serveSite(root, port) {
+    servers.push(startServer(resolve(root), port));
+    return `http://127.0.0.1:${port}`;
+  }
+
   try {
     const socket = await connectToPage(debugPort);
     sockets.push(socket);
     const session = await openSession(socket, siteUrl, pagePath);
-    await run(session, { openTab });
+    await run(session, { openTab, serveSite });
   } catch (error) {
     check(false, `check run completes (${error.message})`);
   } finally {
     sockets.forEach((socket) => socket.close());
     chrome.kill();
     await chromeExited;
-    server.close();
-    rmSync(profileDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+    servers.forEach((server) => server.close());
+    // Chrome's helper processes can hold the profile a little longer than the browser itself.
+    try {
+      rmSync(profileDir, { recursive: true, force: true, maxRetries: 10, retryDelay: 300 });
+    } catch (error) {
+      console.warn(`Could not remove the temporary profile ${profileDir} (${error.code}); delete it later.`);
+    }
   }
 
   console.log(failures.length === 0 ? 'All checks passed.' : `${failures.length} check(s) failed.`);

@@ -27,7 +27,8 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   not formatted.
 - Browser checks in headless Chrome for responsive layout, keyboard focus,
   contrast, the game boards, the color scheme script and its sync between tabs,
-  full storage, and reduced motion are in `tests/`; see
+  full storage, and reduced motion are in `tests/`, as well as a visual
+  comparison with the last commit for refactorings; see
   [tests/README.md](tests/README.md) for requirements, usage, and known results.
 
 ## Features
@@ -251,6 +252,11 @@ Performance was judged subjectively and not measured.
   focused cells show an outline of at least 2 px; edge shadows appear only when
   the board does not fit; a color scheme switch on a 100 × 100 board takes less
   than 1 s; the arrow keys move the 2048 tiles
+- [Visual regression check](tests/visual-regression-check.mjs): compares the
+  computed colors and pixels of 14 views at 360 and 1920 px, light and dark,
+  with a committed version. It is meant for refactorings; a deliberate color
+  and spacing change was detected in 50 of 54 views, and the other 4 do not
+  show the changed elements
 
 ### Browsers and devices
 
