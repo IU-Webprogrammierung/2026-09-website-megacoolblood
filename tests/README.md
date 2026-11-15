@@ -20,6 +20,7 @@ node tests/browser-matrix-check.mjs
 node tests/contrast-audit.mjs
 node tests/storage-full-check.mjs
 node tests/reduced-motion-check.mjs
+node tests/theme-script-check.mjs
 ```
 
 `browser-check.mjs` contains the shared setup: it serves the site locally,
@@ -34,6 +35,7 @@ Each check uses its own ports, so several checks can run at the same time.
 | `contrast-audit.mjs`       | WCAG contrast of every visible text, control border, and icon in 15 page states, with the light and the dark system color scheme; 2048 tiles also at 360 px, where their numbers need 4.5:1 | 8767, 9335 |
 | `storage-full-check.mjs`   | Minesweeper save when `localStorage` is full, without and with an existing save                                                                                                                | 8765, 9333 |
 | `reduced-motion-check.mjs` | Transitions and animations of the Minesweeper game page with `prefers-reduced-motion` set to `reduce` and `no-preference`                                                                    | 8766, 9334 |
+| `theme-script-check.mjs`   | `js/theme.js`: a stored Dunkel is applied before the first stylesheet on all 10 pages; every stored value (none, System, Hell, Dunkel, invalid) against a light and a dark system setting; the `window.lycheelabTheme` API; blocked and full storage | 8769, 9337 |
 
 ## Known results
 
@@ -55,5 +57,8 @@ Each check uses its own ports, so several checks can run at the same time.
   values, but only the system setting is checked.
 - The focus walk runs at 1280 px only and compares the outline with the first
   opaque background around the focused element.
+- `theme-script-check.mjs` simulates blocked storage with a `localStorage`
+  getter that throws a `SecurityError`, and full storage with a `setItem` that
+  throws a `QuotaExceededError`, instead of changing browser settings.
 - The scripts wait a fixed time after each page load; on a slow machine, a
   check can fail without a real defect. Repeat the run before investigating.

@@ -26,8 +26,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - `node_modules`, `assets/vendor`, `package-lock.json`, and Markdown files are
   not formatted.
 - Browser checks in headless Chrome for responsive layout, keyboard focus,
-  contrast, full storage, and reduced motion are in `tests/`; see
-  [tests/README.md](tests/README.md) for requirements, usage, and known results.
+  contrast, the color scheme script, full storage, and reduced motion are in
+  `tests/`; see [tests/README.md](tests/README.md) for requirements, usage, and
+  known results.
 
 ## Features
 
@@ -230,6 +231,13 @@ Performance was judged subjectively and not measured.
   - Minesweeper with 9 × 9, 16 × 30, and 100 × 100 cells at 360, 767, 768,
     1280, and 1920 px: no horizontal scrolling before and after hiding or
     showing the site header
+- [Color scheme script check](tests/theme-script-check.mjs) in headless
+  Chrome 157 on a local server, without findings: a stored Dunkel is set before
+  the first stylesheet on all 10 pages; every stored value (none, System, Hell,
+  Dunkel, invalid) gives the expected scheme with a light and a dark system
+  setting; with simulated blocked or full storage, the system scheme applies,
+  a new choice only affects the current page, and the Minesweeper game page
+  loads without errors
 
 ### Browsers and devices
 
@@ -278,7 +286,9 @@ Performance was judged subjectively and not measured.
 - System, Hell, and Dunkel
 - Changing the system setting while the page is open
 - Applying a change to other open tabs
-- No flash in the wrong scheme when a page loads
+- No flash in the wrong scheme when a page loads; the color scheme script
+  check (see Tools) confirms that the stored scheme is set before the first
+  stylesheet
 - An invalid stored value (`lycheelab-theme` set to `quatsch`) falls back to
   System
 - Blocked site data in Chrome: a selected scheme only applies to the current
