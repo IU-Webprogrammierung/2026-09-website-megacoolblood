@@ -1,4 +1,5 @@
 // Shared setup for the browser checks: a static server for the site, headless Chrome, and PASS/FAIL output.
+// Page exceptions, console errors, and browser errors such as failed requests count as failures.
 import { spawn } from 'node:child_process';
 import { mkdtempSync, readFile, rmSync } from 'node:fs';
 import { createServer } from 'node:http';
@@ -80,6 +81,13 @@ function createSession(socket, siteUrl, pagePath) {
     } else if (message.method === 'Runtime.exceptionThrown') {
       const details = message.params.exceptionDetails;
       check(false, `no page exception (${details.exception?.description || details.text})`);
+    } else if (message.method === 'Runtime.consoleAPICalled' && message.params.type === 'error') {
+      const text = message.params.args.map((arg) => arg.value ?? arg.description).join(' ');
+      check(false, `no console error (${text})`);
+    } else if (message.method === 'Log.entryAdded' && message.params.entry.level === 'error') {
+      // Browser messages such as failed requests.
+      const { text, url } = message.params.entry;
+      check(false, `no browser error (${text}${url ? ' ' + url : ''})`);
     } else if (eventWaiters.has(message.method)) {
       eventWaiters.get(message.method)();
       eventWaiters.delete(message.method);
@@ -130,6 +138,7 @@ export async function runBrowserCheck({ name, pagePath = '/index.html', serverPo
     const session = createSession(socket, siteUrl, pagePath);
     await session.send('Page.enable');
     await session.send('Runtime.enable');
+    await session.send('Log.enable');
     await run(session);
   } catch (error) {
     check(false, `check run completes (${error.message})`);

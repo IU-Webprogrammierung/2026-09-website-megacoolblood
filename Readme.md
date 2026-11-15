@@ -25,9 +25,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   platform, so the format check also passes on Windows.
 - `node_modules`, `assets/vendor`, `package-lock.json`, and Markdown files are
   not formatted.
-- Browser checks in headless Chrome for contrast, full storage, and reduced
-  motion are in `tests/`; see [tests/README.md](tests/README.md) for
-  requirements, usage, and known results.
+- Browser checks in headless Chrome for responsive layout, keyboard focus,
+  contrast, full storage, and reduced motion are in `tests/`; see
+  [tests/README.md](tests/README.md) for requirements, usage, and known results.
 
 ## Features
 
@@ -218,6 +218,18 @@ Performance was judged subjectively and not measured.
   and 360 px. All 585 color pairs per scheme meet WCAG 1.4.3 (4.5:1, 3:1 for
   large text) and 1.4.11 (3:1). Not counted: the red flag cloth on Minesweeper
   cells (1.10:1 to 1.56:1), because the flag is recognizable by its pole
+- [Browser matrix](tests/browser-matrix-check.mjs) in headless Chrome 157 on a
+  local server, without findings:
+  - All 10 pages at 360, 768, 1280, and 1920 px with the system scheme light
+    and dark and with Hell and Dunkel stored against the system setting: the
+    expected scheme and select value, no horizontal scrolling, no console
+    errors or failed requests
+  - Keyboard at 1280 px: all 128 Tab stops on the 10 pages show an outline of
+    at least 2 px with at least 3:1 against their background, in light and
+    dark
+  - Minesweeper with 9 × 9, 16 × 30, and 100 × 100 cells at 360, 767, 768,
+    1280, and 1920 px: no horizontal scrolling before and after hiding or
+    showing the site header
 
 ### Browsers and devices
 
@@ -235,7 +247,8 @@ Performance was judged subjectively and not measured.
 ### Responsive layout
 
 - All pages were checked at 360, 768, 1280, and 1920 px by resizing the browser
-  window, without findings
+  window, without findings; the browser matrix (see Tools) repeats this for
+  horizontal scrolling and the color scheme
 - The 768 px breakpoint was checked exactly at the switch between 767 and 768 px
 - Portrait and landscape: the desktop works in both window shapes; on iPads
   landscape is usable and works better in immersive mode; on smartphones
@@ -248,7 +261,8 @@ Performance was judged subjectively and not measured.
 ### Keyboard
 
 - Tab order and visible focus were checked on all pages; all interactive
-  elements can be reached
+  elements can be reached. The browser matrix (see Tools) also measures the
+  focus outline at every Tab stop
 - Menu below 768 px: opens with the menu button and closes with Escape
 - The "Farbschema" select can be operated with the arrow keys
 - Minesweeper settings: the form can be filled in by keyboard; after an invalid
