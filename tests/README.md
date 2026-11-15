@@ -21,11 +21,15 @@ node tests/contrast-audit.mjs
 node tests/storage-full-check.mjs
 node tests/reduced-motion-check.mjs
 node tests/theme-script-check.mjs
+node tests/theme-sync-check.mjs
 ```
 
 `browser-check.mjs` contains the shared setup: it serves the site locally,
 starts headless Chrome with a temporary profile, and removes both afterwards.
-Each check uses its own ports, so several checks can run at the same time.
+It can open a second tab in the same profile and compares page backgrounds
+with the `light-dark()` value of a color scheme, so the checks contain no
+color values. Each check uses its own ports, so several checks can run at the
+same time.
 
 ## Checks
 
@@ -36,6 +40,7 @@ Each check uses its own ports, so several checks can run at the same time.
 | `storage-full-check.mjs`   | Minesweeper save when `localStorage` is full, without and with an existing save                                                                                                                | 8765, 9333 |
 | `reduced-motion-check.mjs` | Transitions and animations of the Minesweeper game page with `prefers-reduced-motion` set to `reduce` and `no-preference`                                                                    | 8766, 9334 |
 | `theme-script-check.mjs`   | `js/theme.js`: a stored Dunkel is applied before the first stylesheet on all 10 pages; every stored value (none, System, Hell, Dunkel, invalid) against a light and a dark system setting; the `window.lycheelabTheme` API; blocked and full storage | 8769, 9337 |
+| `theme-sync-check.mjs`     | Color scheme sync between two tabs: a change in either tab, the same value again, invalid, removed, and cleared values, unrelated keys, a focused select, immersive mode, and navigation afterwards | 8770, 9338 |
 
 ## Known results
 

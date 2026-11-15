@@ -1,7 +1,7 @@
 // All pages at 360, 768, 1280, and 1920 px in four color modes, a keyboard focus walk in light and dark,
 // and the Minesweeper game page without horizontal scrolling after hiding and showing the site header.
 // Usage: node tests/browser-matrix-check.mjs [chrome.exe], or set CHROME_PATH.
-import { check, runBrowserCheck, sleep } from './browser-check.mjs';
+import { check, hasSchemeBackground, runBrowserCheck, sleep } from './browser-check.mjs';
 
 const pages = [
   '/index.html',
@@ -49,22 +49,14 @@ async function resetStorage(session, entries = {}) {
     Object.entries(${JSON.stringify(entries)}).forEach(([key, value]) => localStorage.setItem(key, value))`);
 }
 
-// The expected background comes from the same light-dark() value on a probe with a fixed color scheme.
-const readPageState = (expectedScheme) => `(() => {
-  const probe = document.createElement('div');
-  probe.style.cssText = 'color-scheme: ${expectedScheme}; background: var(--color-background)';
-  document.body.append(probe);
-  const expectedBackground = getComputedStyle(probe).backgroundColor;
-  probe.remove();
-  return {
-    background: getComputedStyle(document.body).backgroundColor,
-    expectedBackground,
-    select: document.querySelector('[data-theme-select]')?.value,
-    overflow: document.documentElement.scrollWidth - innerWidth,
-    hasHeader: !!document.querySelector('#site-header'),
-    hasHeading: !!document.querySelector('main h1')
-  };
-})()`;
+const readPageState = (expectedScheme) => `({
+  background: getComputedStyle(document.body).backgroundColor,
+  hasExpectedBackground: ${hasSchemeBackground(expectedScheme)},
+  select: document.querySelector('[data-theme-select]')?.value,
+  overflow: document.documentElement.scrollWidth - innerWidth,
+  hasHeader: !!document.querySelector('#site-header'),
+  hasHeading: !!document.querySelector('main h1')
+})`;
 
 async function checkPageMatrix(session) {
   for (const mode of colorModes) {
@@ -78,7 +70,7 @@ async function checkPageMatrix(session) {
         await openPage(session, path);
         const state = await session.evaluate(readPageState(mode.expected));
         const pageIssues = [];
-        if (state.background !== state.expectedBackground) pageIssues.push(`background ${state.background}`);
+        if (!state.hasExpectedBackground) pageIssues.push(`background ${state.background}`);
         if (state.select !== (mode.stored ?? 'system')) pageIssues.push(`select ${state.select}`);
         if (state.overflow > 0) pageIssues.push(`horizontal overflow ${state.overflow}px`);
         if (!state.hasHeader || !state.hasHeading) pageIssues.push('site header or h1 missing');

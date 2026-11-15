@@ -29,6 +29,17 @@ export function check(condition, description) {
   }
 }
 
+export function hasSchemeBackground(scheme) {
+  return `(() => {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'color-scheme: ${scheme}; background: var(--color-background)';
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return getComputedStyle(document.body).backgroundColor === expected;
+  })()`;
+}
+
 function startServer(serverPort) {
   return createServer((request, response) => {
     const file = join(siteRoot, decodeURIComponent(new URL(request.url, 'http://localhost').pathname));
@@ -119,8 +130,17 @@ function createSession(socket, siteUrl, pagePath) {
   return { send, evaluate, navigate };
 }
 
+async function openSession(socket, siteUrl, pagePath) {
+  const session = createSession(socket, siteUrl, pagePath);
+  await session.send('Page.enable');
+  await session.send('Runtime.enable');
+  await session.send('Log.enable');
+  return session;
+}
+
 // Each check uses its own ports, so several checks can run at the same time.
 // `session.navigate()` opens `pagePath`; `session.navigate(path)` opens another page of the site.
+// `openTab()` opens another tab in the same browser profile and returns its session.
 export async function runBrowserCheck({ name, pagePath = '/index.html', serverPort, debugPort, run }) {
   const siteUrl = `http://127.0.0.1:${serverPort}`;
   const profileDir = mkdtempSync(join(tmpdir(), `lycheelab-${name}-`));
@@ -131,19 +151,25 @@ export async function runBrowserCheck({ name, pagePath = '/index.html', serverPo
     { stdio: 'ignore' }
   );
   const chromeExited = new Promise((resolveExit) => chrome.once('exit', resolveExit));
-  let socket;
+  const sockets = [];
+
+  async function openTab() {
+    const target = await (await fetch(`http://127.0.0.1:${debugPort}/json/new?about:blank`, { method: 'PUT' })).json();
+    const socket = new WebSocket(target.webSocketDebuggerUrl);
+    await new Promise((resolveOpen) => socket.addEventListener('open', resolveOpen, { once: true }));
+    sockets.push(socket);
+    return openSession(socket, siteUrl, pagePath);
+  }
 
   try {
-    socket = await connectToPage(debugPort);
-    const session = createSession(socket, siteUrl, pagePath);
-    await session.send('Page.enable');
-    await session.send('Runtime.enable');
-    await session.send('Log.enable');
-    await run(session);
+    const socket = await connectToPage(debugPort);
+    sockets.push(socket);
+    const session = await openSession(socket, siteUrl, pagePath);
+    await run(session, { openTab });
   } catch (error) {
     check(false, `check run completes (${error.message})`);
   } finally {
-    socket?.close();
+    sockets.forEach((socket) => socket.close());
     chrome.kill();
     await chromeExited;
     server.close();

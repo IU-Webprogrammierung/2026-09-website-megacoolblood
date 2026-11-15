@@ -26,9 +26,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - `node_modules`, `assets/vendor`, `package-lock.json`, and Markdown files are
   not formatted.
 - Browser checks in headless Chrome for responsive layout, keyboard focus,
-  contrast, the color scheme script, full storage, and reduced motion are in
-  `tests/`; see [tests/README.md](tests/README.md) for requirements, usage, and
-  known results.
+  contrast, the color scheme script and its sync between tabs, full storage,
+  and reduced motion are in `tests/`; see [tests/README.md](tests/README.md)
+  for requirements, usage, and known results.
 
 ## Features
 
@@ -238,6 +238,12 @@ Performance was judged subjectively and not measured.
   setting; with simulated blocked or full storage, the system scheme applies,
   a new choice only affects the current page, and the Minesweeper game page
   loads without errors
+- [Color scheme sync check](tests/theme-sync-check.mjs) with two tabs in
+  headless Chrome 157 on a local server, without findings: a change in either
+  tab reaches the other without a reload, with one change event per tab and
+  none for the same value again; invalid, removed, and cleared values fall back
+  to System; other keys and `sessionStorage` events are ignored; a focused
+  select keeps its focus, and immersive mode does not block the change
 
 ### Browsers and devices
 
@@ -285,7 +291,8 @@ Performance was judged subjectively and not measured.
 
 - System, Hell, and Dunkel
 - Changing the system setting while the page is open
-- Applying a change to other open tabs
+- Applying a change to other open tabs; the color scheme sync check (see Tools)
+  repeats this automatically
 - No flash in the wrong scheme when a page loads; the color scheme script
   check (see Tools) confirms that the stored scheme is set before the first
   stylesheet

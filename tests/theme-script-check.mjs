@@ -1,7 +1,7 @@
 // Early color scheme script (js/theme.js): applied before the first stylesheet, stored value against the system
 // setting, the window.lycheelabTheme API, and blocked or full storage.
 // Usage: node tests/theme-script-check.mjs [chrome.exe], or set CHROME_PATH.
-import { check, runBrowserCheck } from './browser-check.mjs';
+import { check, hasSchemeBackground, runBrowserCheck } from './browser-check.mjs';
 
 const pages = [
   '/index.html',
@@ -53,21 +53,13 @@ async function storeTheme(session, value) {
   );
 }
 
-// The expected background comes from the same light-dark() value on a probe with a fixed color scheme.
-const readState = (expectedScheme) => `(() => {
-  const probe = document.createElement('div');
-  probe.style.cssText = 'color-scheme: ${expectedScheme}; background: var(--color-background)';
-  document.body.append(probe);
-  const expectedBackground = getComputedStyle(probe).backgroundColor;
-  probe.remove();
-  return {
-    theme: document.documentElement.dataset.theme ?? 'none',
-    themeAtFirstStylesheet: window.themeAtFirstStylesheet,
-    hasExpectedBackground: getComputedStyle(document.body).backgroundColor === expectedBackground,
-    preference: window.lycheelabTheme?.getPreference(),
-    hasHeader: !!document.querySelector('#site-header')
-  };
-})()`;
+const readState = (expectedScheme) => `({
+  theme: document.documentElement.dataset.theme ?? 'none',
+  themeAtFirstStylesheet: window.themeAtFirstStylesheet,
+  hasExpectedBackground: ${hasSchemeBackground(expectedScheme)},
+  preference: window.lycheelabTheme?.getPreference(),
+  hasHeader: !!document.querySelector('#site-header')
+})`;
 
 async function checkStoredDarkOnAllPages(session) {
   await setSystemScheme(session, 'light');
