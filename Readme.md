@@ -33,6 +33,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   of the Minesweeper game page with `prefers-reduced-motion` set to `reduce`
   and `no-preference`, with the same output and requirements. The menu icon
   check fails until the open finding on reduced motion is fixed.
+- Both checks share `tests/browser-check.mjs`, which serves the site locally,
+  starts headless Chrome with a temporary profile, and removes both afterwards.
+  Each check uses its own ports, so they can run at the same time.
 
 ## Features
 
