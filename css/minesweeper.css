@@ -53,10 +53,6 @@
     mask-image: url('../assets/icons/increase.svg');
   }
 
-  &[data-icon='menu'] {
-    mask-image: url('../assets/icons/menu.svg');
-  }
-
   &[data-icon='mine'] {
     mask-image: url('../assets/icons/mine.svg');
   }
@@ -427,20 +423,52 @@ main.minesweeper-game-page {
     padding: 0;
   }
 
-  /* Below 768 px the toggle is an icon button in the corner; its label stays available to screen readers. */
+
   main.minesweeper-game-page .game-panel > .game-header {
     padding-inline-end: calc(48px + var(--space-small));
   }
 
   main.minesweeper-game-page .game-panel .game-header-actions > #game-chrome-toggle {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    padding: 0;
+    display: none;
+  }
+
+  body.minesweeper-game-shell.is-immersive {
+    > #site-header {
+      display: flex;
+      position: absolute;
+      /* The border and padding of the game panel, so the button lines up with the game heading. */
+      top: calc(env(safe-area-inset-top) + 1px + var(--space-small));
+      right: calc(env(safe-area-inset-right) + 1px + clamp(var(--space-small), 2vw, var(--space-large)));
+      width: auto;
+      margin: 0;
+      padding: 0;
+      background: none;
+      border: 0;
+
+      .site-logo {
+        display: none;
+      }
+
+      [data-main-navigation] {
+        top: calc(100% + var(--space-small));
+        right: 0;
+        left: auto;
+        width: min(20rem, calc(100vw - 2 * var(--space-medium)));
+      }
+    }
+
+    &:has([data-menu-toggle][aria-expanded='true']) > #site-footer {
+      display: flex;
+      position: fixed;
+      z-index: 10;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      max-width: none;
+      margin: 0;
+      padding-bottom: calc(var(--space-medium) + env(safe-area-inset-bottom));
+      background: var(--color-background);
+    }
   }
 
   main.minesweeper-game-page .game-panel .game-header-actions > #new-game {

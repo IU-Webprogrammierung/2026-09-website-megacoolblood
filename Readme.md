@@ -127,11 +127,13 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   centering control and loading a saved game move the view to the unrevealed,
   unmarked cell next to a revealed cell that is closest to the last used cell;
   without such a cell, the view is reset
-- The game starts in immersive mode below 768 px, where the website header and
-  footer are hidden. A labeled "Vollbild" button hides them on wider screens and
-  becomes "Vollbild beenden" while they are hidden; below 768 px it is an icon
-  button named "Menü anzeigen" that shows them again. This is a CSS layout
-  mode, not the browser Fullscreen API
+- The game is always in immersive mode below 768 px, where the website header
+  and footer are hidden. Only the site menu button stays visible in the top
+  right corner; opening the menu also shows the footer with Impressum and
+  Datenschutz above the game, so the board keeps its size. From 768 px a
+  labeled "Vollbild" button hides header and footer and becomes "Vollbild
+  beenden" while they are hidden. This is a CSS layout mode, not the browser
+  Fullscreen API
 - Pan/zoom operates on the board viewport; keyboard cell navigation remains
   independent of the visual zoom level
 - A frame in a contrasting color marks the real board edge on a dotted
@@ -230,8 +232,10 @@ Performance was judged subjectively and not measured.
     at least 2 px with at least 3:1 against their background, in light and
     dark
   - Minesweeper with 9 × 9, 16 × 30, and 100 × 100 cells at 360, 767, 768,
-    1280, and 1920 px: no horizontal scrolling before and after hiding or
-    showing the site header
+    1280, and 1920 px: no horizontal scrolling before and after opening the
+    site menu (below 768 px, which also shows the footer) or toggling
+    "Vollbild"; below 768 px, Tab reaches the menu button before the status
+    and the restart button
 - [Color scheme script check](tests/theme-script-check.mjs) in headless
   Chrome 157 on a local server, without findings: a stored Dunkel is set before
   the first stylesheet on all 10 pages; every stored value (none, System, Hell,
@@ -303,6 +307,11 @@ Performance was judged subjectively and not measured.
   shortcuts, the zoom and immersive mode buttons, and the win dialog including
   Escape and the focus returning to the header button
 - 2048: arrow keys
+- Minesweeper below 768 px: the site menu button in the top right corner
+  replaced a separate "Menü anzeigen" button, which received focus only after
+  the status message and the restart button although it sat above them. Tab
+  now reaches the menu button first; checked with key presses in headless
+  Chrome 157, not yet by hand
 
 ### Color scheme
 
@@ -396,9 +405,6 @@ Performance was judged subjectively and not measured.
   board edge is slightly laggy
 - GitHub Pages: switching between pages can take very long; on a local HTTP
   server the pages loaded quickly
-- Minesweeper in immersive mode below 768 px: the "Menü anzeigen" button sits
-  in the top-right corner, but receives focus only after the status message
-  and the restart button, because it comes after them in the HTML
 - HTML validity: `<component>` is not a defined HTML element, and a custom
   element name would need a hyphen. Browsers treat it as an unknown element;
   `js/components.js` replaces it with the header or footer after loading
@@ -429,4 +435,7 @@ The site relies on CSS `light-dark()` and native CSS nesting. According to
 [MDN browser compatibility data](https://github.com/mdn/browser-compat-data),
 `light-dark()` requires Chrome and Edge 123, Firefox 120, or Safari 17.5;
 unprefixed `mask-image` requires Chrome 120, Firefox 53, or Safari 15.4.
-Older browsers do not get valid colors.
+Older browsers do not get valid colors. Showing the footer with the open menu
+on the Minesweeper game page below 768 px uses `:has()`, which requires Chrome
+and Edge 105, Firefox 121, or Safari 15.4; in Firefox 120 the footer stays
+hidden there.

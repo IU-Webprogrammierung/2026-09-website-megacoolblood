@@ -1,5 +1,6 @@
 // All pages at 360, 768, 1280, and 1920 px in four color modes, a keyboard focus walk in light and dark,
-// and the Minesweeper game page without horizontal scrolling after hiding and showing the site header.
+// and the Minesweeper header: no horizontal scrolling with the header toggle or the site menu, and the focus order
+// below 768 px.
 // Usage: node tests/browser-matrix-check.mjs [chrome.exe], or set CHROME_PATH.
 import { check, hasSchemeBackground, runBrowserCheck, sleep } from './browser-check.mjs';
 
@@ -175,9 +176,15 @@ const minesweeperBoards = [
   { name: 'Maximum', rows: 100, columns: 100, mines: 2000 }
 ];
 const readOverflow = 'document.documentElement.scrollWidth - innerWidth';
+const readFocusName = `(() => {
+  const element = document.activeElement;
+  return element.id || element.getAttribute('aria-label') || element.tagName.toLowerCase();
+})()`;
+const isFooterShown = `getComputedStyle(document.querySelector('#site-footer')).display !== 'none'`;
 
-// Below 768 px the game starts without the site header; the toggle shows it, above 768 px it hides it.
-async function checkMinesweeperHeaderToggle(session) {
+// Below 768 px the game is immersive: the site menu button comes first and opening the menu shows the footer.
+// From 768 px the "Vollbild" toggle hides and shows the site header and footer.
+async function checkMinesweeperHeader(session) {
   await setSystemScheme(session, 'light');
 
   for (const board of minesweeperBoards) {
@@ -190,14 +197,35 @@ async function checkMinesweeperHeaderToggle(session) {
       await resetStorage(session, { 'lycheelab-minesweeper-difficulty': difficulty });
       await openPage(session, '/pages/minesweeper/game.html');
       const before = await session.evaluate(readOverflow);
-      await session.evaluate(`document.querySelector('#game-chrome-toggle').click()`);
+      const toggle = width < 768 ? '[data-menu-toggle]' : '#game-chrome-toggle';
+      await session.evaluate(`document.querySelector('${toggle}').click()`);
       await sleep(300);
       const after = await session.evaluate(readOverflow);
-      if (before > 0 || after > 0) issues.push(`${width}px: overflow ${before}px, after the toggle ${after}px`);
+      if (before > 0 || after > 0) issues.push(`${width}px: overflow ${before}px, after ${toggle} ${after}px`);
+      if (width < 768 && !(await session.evaluate(isFooterShown))) issues.push(`${width}px: open menu without footer`);
     }
 
-    check(issues.length === 0, `Minesweeper ${name}: no horizontal scrolling before and after the header toggle`);
+    check(
+      issues.length === 0,
+      `Minesweeper ${name}: no horizontal scrolling before and after the header toggle or the site menu`
+    );
     issues.forEach((issue) => console.log(`     ${issue}`));
+  }
+
+  for (const width of [360, 767]) {
+    await setViewport(session, width);
+    await openPage(session, '/pages/minesweeper/game.html');
+    await session.evaluate(`document.querySelector('.skip-link').focus()`);
+    const order = [];
+    for (let step = 0; step < 3; step++) {
+      await pressTab(session);
+      order.push(await session.evaluate(readFocusName));
+    }
+    check(
+      order.join() === 'Menü öffnen,game-status,new-game',
+      `Minesweeper ${width}px: after the skip link, Tab reaches the menu button, the status, and the restart button`,
+      order.join(' > ')
+    );
   }
 }
 
@@ -208,6 +236,6 @@ await runBrowserCheck({
   run: async (session) => {
     await checkPageMatrix(session);
     await checkFocusWalk(session);
-    await checkMinesweeperHeaderToggle(session);
+    await checkMinesweeperHeader(session);
   }
 });

@@ -81,6 +81,10 @@ same time.
   copy, and identical pixels only within the same Chrome version; it shows that
   something changed, not whether the change is wanted. Delete the folder with
   the screenshots after reviewing them.
+- Under heavy load, for example with all checks running at the same time, a
+  page that is almost exactly as high as the window can render once with and
+  once without a scrollbar; the visual regression check then reports a
+  difference that a second run does not show.
 - `theme-script-check.mjs` simulates blocked storage with a `localStorage`
   getter that throws a `SecurityError`, and full storage with a `setItem` that
   throws a `QuotaExceededError`, instead of changing browser settings.

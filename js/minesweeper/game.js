@@ -22,7 +22,7 @@ const modeButtons = document.querySelectorAll('.mode-button');
 const checkModeButton = document.querySelector('[data-mode="check"]');
 const checkChargesElement = document.querySelector('#check-charges');
 const mobileLayout = window.matchMedia('(max-width: 767px)');
-let hasUserSelectedImmersiveMode = false;
+let immersivePreference = false;
 
 const difficultyConfig = minesweeperDifficulty.readStoredDifficulty();
 const difficulty = minesweeperDifficulty.getDifficultyKey(difficultyConfig);
@@ -35,44 +35,28 @@ const hasExtraLives = difficultyConfig.extraLives !== false;
 const hasChecks = difficultyConfig.checks !== false;
 const usesLessGuessPlacement = difficultyConfig.lessGuess !== false;
 
-// On narrow screens the hidden site navigation is what users look for, so the toggle offers the menu.
+// Below 768 px the toggle is hidden; the site menu button stays visible and also shows the footer.
 function updateChromeToggle() {
   const isImmersive = document.body.classList.contains('is-immersive');
-  const state = !isImmersive
-    ? { icon: 'fullscreen', label: 'Vollbild' }
-    : mobileLayout.matches
-      ? { icon: 'menu', label: 'Menü anzeigen' }
-      : { icon: 'fullscreen-exit', label: 'Vollbild beenden' };
+  const state = isImmersive
+    ? { icon: 'fullscreen-exit', label: 'Vollbild beenden' }
+    : { icon: 'fullscreen', label: 'Vollbild' };
 
   gameChromeToggle.setAttribute('aria-expanded', String(!isImmersive));
   gameChromeToggleIcon.dataset.icon = state.icon;
   gameChromeToggleLabel.textContent = state.label;
 }
 
-function setImmersiveMode(isImmersive) {
-  document.body.classList.toggle('is-immersive', isImmersive);
+function applyImmersiveMode() {
+  document.body.classList.toggle('is-immersive', mobileLayout.matches || immersivePreference);
   updateChromeToggle();
 }
 
-setImmersiveMode(mobileLayout.matches);
-mobileLayout.addEventListener('change', (event) => {
-  if (hasUserSelectedImmersiveMode) {
-    updateChromeToggle();
-  } else {
-    setImmersiveMode(event.matches);
-  }
-});
+applyImmersiveMode();
+mobileLayout.addEventListener('change', applyImmersiveMode);
 gameChromeToggle.addEventListener('click', () => {
-  const isImmersive = document.body.classList.contains('is-immersive');
-  const menuToggle = document.querySelector('#site-header [data-menu-toggle]');
-
-  hasUserSelectedImmersiveMode = true;
-  setImmersiveMode(!isImmersive);
-
-  // "Menü anzeigen" opens the navigation directly instead of only revealing the site header's menu button.
-  if (isImmersive && mobileLayout.matches && menuToggle?.getAttribute('aria-expanded') !== 'true') {
-    menuToggle?.click();
-  }
+  immersivePreference = !document.body.classList.contains('is-immersive');
+  applyImmersiveMode();
 });
 let mineCurrentCount = mineTotal;
 let series = minesweeperRunState.createDefaultSeries(difficultyConfig);
