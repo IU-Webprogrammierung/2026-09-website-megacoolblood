@@ -26,9 +26,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
 - `node_modules`, `assets/vendor`, `package-lock.json`, and Markdown files are
   not formatted.
 - Browser checks in headless Chrome for responsive layout, keyboard focus,
-  contrast, the color scheme script and its sync between tabs, full storage,
-  and reduced motion are in `tests/`; see [tests/README.md](tests/README.md)
-  for requirements, usage, and known results.
+  contrast, the game boards, the color scheme script and its sync between tabs,
+  full storage, and reduced motion are in `tests/`; see
+  [tests/README.md](tests/README.md) for requirements, usage, and known results.
 
 ## Features
 
@@ -244,6 +244,13 @@ Performance was judged subjectively and not measured.
   none for the same value again; invalid, removed, and cleared values fall back
   to System; other keys and `sessionStorage` events are ignored; a focused
   select keeps its focus, and immersive mode does not block the change
+- [Game board check](tests/game-board-check.mjs) in headless Chrome 157 on a
+  local server, without findings: in light and dark, hidden and revealed
+  Minesweeper cells differ by at least 3:1, all 7 cell states have different
+  backgrounds, the board frame stands out from the surface by at least 3:1, and
+  focused cells show an outline of at least 2 px; edge shadows appear only when
+  the board does not fit; a color scheme switch on a 100 × 100 board takes less
+  than 1 s; the arrow keys move the 2048 tiles
 
 ### Browsers and devices
 

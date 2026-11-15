@@ -1,9 +1,10 @@
 # Browser checks
 
 These Node scripts check the site in headless Chrome. They repeat tests that
-are hard to do reliably by hand and print `PASS` or `FAIL` per check. Page
-exceptions, console errors, and failed requests also count as `FAIL`. A script
-ends with exit code 0 when all checks pass and 1 otherwise.
+are hard to do reliably by hand and print `PASS` or `FAIL` per check; a failed
+check also prints the measured value. Page exceptions, console errors, and
+failed requests also count as `FAIL`. A script ends with exit code 0 when all
+checks pass and 1 otherwise.
 
 ## Requirements
 
@@ -18,6 +19,7 @@ ends with exit code 0 when all checks pass and 1 otherwise.
 ```sh
 node tests/browser-matrix-check.mjs
 node tests/contrast-audit.mjs
+node tests/game-board-check.mjs
 node tests/storage-full-check.mjs
 node tests/reduced-motion-check.mjs
 node tests/theme-script-check.mjs
@@ -37,6 +39,7 @@ same time.
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
 | `browser-matrix-check.mjs` | All 10 pages at 360, 768, 1280, and 1920 px in four color modes (system light and dark, stored Hell and Dunkel): expected scheme and select value, no horizontal scrolling, site header and `h1` present. Keyboard: every Tab stop on all pages shows an outline of at least 2 px with 3:1, light and dark. Minesweeper with 9 × 9, 16 × 30, and 100 × 100 cells at 360, 767, 768, 1280, and 1920 px: no horizontal scrolling before and after the header toggle. About 2.5 minutes | 8768, 9336 |
 | `contrast-audit.mjs`       | WCAG contrast of every visible text, control border, and icon in 15 page states, with the light and the dark system color scheme; 2048 tiles also at 360 px, where their numbers need 4.5:1 | 8767, 9335 |
+| `game-board-check.mjs`     | Minesweeper, light and dark: hidden and revealed cells differ by at least 3:1, the 7 cell states have different backgrounds, the board frame stands out by at least 3:1, focused cells show an outline. Edge shadows only when the board does not fit; a color scheme switch on 100 × 100 cells under 1 s. 2048: the arrow keys move the tiles | 8771, 9339 |
 | `storage-full-check.mjs`   | Minesweeper save when `localStorage` is full, without and with an existing save                                                                                                                | 8765, 9333 |
 | `reduced-motion-check.mjs` | Transitions and animations of the Minesweeper game page with `prefers-reduced-motion` set to `reduce` and `no-preference`                                                                    | 8766, 9334 |
 | `theme-script-check.mjs`   | `js/theme.js`: a stored Dunkel is applied before the first stylesheet on all 10 pages; every stored value (none, System, Hell, Dunkel, invalid) against a light and a dark system setting; the `window.lycheelabTheme` API; blocked and full storage | 8769, 9337 |
@@ -62,6 +65,9 @@ same time.
   values, but only the system setting is checked.
 - The focus walk runs at 1280 px only and compares the outline with the first
   opaque background around the focused element.
+- The time for a color scheme switch comes from headless Chrome without a
+  graphics card. It is an upper bound against large slowdowns, not a
+  measurement of the speed on real devices.
 - `theme-script-check.mjs` simulates blocked storage with a `localStorage`
   getter that throws a `SecurityError`, and full storage with a `setItem` that
   throws a `QuotaExceededError`, instead of changing browser settings.

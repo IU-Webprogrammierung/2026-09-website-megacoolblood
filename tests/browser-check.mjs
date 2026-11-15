@@ -22,8 +22,9 @@ const failures = [];
 
 export const sleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
 
-export function check(condition, description) {
-  console.log(`${condition ? 'PASS' : 'FAIL'} ${description}`);
+// The optional detail is printed after a failed check, for example the measured value.
+export function check(condition, description, detail = '') {
+  console.log(`${condition ? 'PASS' : 'FAIL'} ${description}${!condition && detail ? ` – ${detail}` : ''}`);
   if (!condition) {
     failures.push(description);
   }
