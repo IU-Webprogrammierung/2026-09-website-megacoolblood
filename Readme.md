@@ -290,7 +290,11 @@ Performance was judged subjectively and not measured.
 - Tab order and visible focus were checked on all pages; all interactive
   elements can be reached. The browser matrix (see Tools) also measures the
   focus outline at every Tab stop
-- Menu below 768 px: opens with the menu button and closes with Escape
+- Menu below 768 px: opens with the menu button and closes with Escape. After
+  opening, focus stays on the menu button, so the next Tab reaches the
+  "Farbschema" select and then the links. Before, focus jumped to the first
+  link and the select could only be reached with Shift+Tab; the fix was
+  checked by hand and with key presses in headless Chrome 157
 - The "Farbschema" select can be operated with the arrow keys
 - Minesweeper settings: the form can be filled in by keyboard; after an invalid
   submission, focus moves to the invalid field, and both the focus change and
@@ -392,8 +396,6 @@ Performance was judged subjectively and not measured.
   board edge is slightly laggy
 - GitHub Pages: switching between pages can take very long; on a local HTTP
   server the pages loaded quickly
-- Menu below 768 px: opening it moves focus to the first navigation link, so
-  the "Farbschema" select before it can only be reached with Shift+Tab
 - Minesweeper in immersive mode below 768 px: the "Menü anzeigen" button sits
   in the top-right corner, but receives focus only after the status message
   and the restart button, because it comes after them in the HTML

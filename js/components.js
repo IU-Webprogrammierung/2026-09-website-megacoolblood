@@ -42,12 +42,10 @@ function initializeMainNavigation(template) {
     updateNavigation();
   }
 
+  // Focus stays on the button, as in the disclosure pattern; the next Tab reaches the color scheme select.
   button.addEventListener('click', () => {
     isOpen = !isOpen;
     updateNavigation();
-    if (isOpen) {
-      navigation.querySelector('a')?.focus();
-    }
   });
 
   navigation.addEventListener('click', (event) => {
