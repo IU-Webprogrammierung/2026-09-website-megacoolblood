@@ -66,7 +66,7 @@ async function connectToPage(debugPort) {
   throw new Error(`Chrome did not open debugging port ${debugPort}.`);
 }
 
-function createSession(socket, pageUrl) {
+function createSession(socket, siteUrl, pagePath) {
   let nextId = 1;
   const pendingCommands = new Map();
   const eventWaiters = new Map();
@@ -100,9 +100,9 @@ function createSession(socket, pageUrl) {
     return response.result.result.value;
   }
 
-  async function navigate() {
+  async function navigate(path = pagePath) {
     const loaded = new Promise((resolveLoad) => eventWaiters.set('Page.loadEventFired', resolveLoad));
-    await send('Page.navigate', { url: pageUrl });
+    await send('Page.navigate', { url: siteUrl + path });
     await loaded;
     // Panzoom is imported after the load event.
     await sleep(500);
@@ -112,8 +112,9 @@ function createSession(socket, pageUrl) {
 }
 
 // Each check uses its own ports, so several checks can run at the same time.
-export async function runBrowserCheck({ name, pagePath, serverPort, debugPort, run }) {
-  const pageUrl = `http://127.0.0.1:${serverPort}${pagePath}`;
+// `session.navigate()` opens `pagePath`; `session.navigate(path)` opens another page of the site.
+export async function runBrowserCheck({ name, pagePath = '/index.html', serverPort, debugPort, run }) {
+  const siteUrl = `http://127.0.0.1:${serverPort}`;
   const profileDir = mkdtempSync(join(tmpdir(), `lycheelab-${name}-`));
   const server = startServer(serverPort);
   const chrome = spawn(
@@ -126,7 +127,7 @@ export async function runBrowserCheck({ name, pagePath, serverPort, debugPort, r
 
   try {
     socket = await connectToPage(debugPort);
-    const session = createSession(socket, pageUrl);
+    const session = createSession(socket, siteUrl, pagePath);
     await session.send('Page.enable');
     await session.send('Runtime.enable');
     await run(session);

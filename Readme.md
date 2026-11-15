@@ -25,17 +25,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   platform, so the format check also passes on Windows.
 - `node_modules`, `assets/vendor`, `package-lock.json`, and Markdown files are
   not formatted.
-- `node tests/storage-full-check.mjs` repeats the full-storage test for
-  Minesweeper in headless Chrome and prints `PASS` or `FAIL` per check. It
-  needs Node.js 22 or newer and Chrome; pass another `chrome.exe` path as an
-  argument or in `CHROME_PATH`. No npm packages are needed.
-- `node tests/reduced-motion-check.mjs` checks the transitions and animations
-  of the Minesweeper game page with `prefers-reduced-motion` set to `reduce`
-  and `no-preference`, with the same output and requirements. The menu icon
-  check fails until the open finding on reduced motion is fixed.
-- Both checks share `tests/browser-check.mjs`, which serves the site locally,
-  starts headless Chrome with a temporary profile, and removes both afterwards.
-  Each check uses its own ports, so they can run at the same time.
+- Browser checks in headless Chrome for contrast, full storage, and reduced
+  motion are in `tests/`; see [tests/README.md](tests/README.md) for
+  requirements, usage, and known results.
 
 ## Features
 
@@ -218,6 +210,14 @@ Performance was judged subjectively and not measured.
     `role="gridcell"` tiles are not inside a `role="row"` element
   - Both findings are listed under Open findings. Automated audits only find
     part of the possible problems and do not replace manual checks
+- [Contrast audit](tests/contrast-audit.mjs) in headless Chrome 157 on a
+  local server: every visible text, control border, and icon against the
+  background it is seen on, in 15 page states with the light and the dark
+  system color scheme, including all Minesweeper cell states, both dialogs, the
+  settings error, the open menu at 360 px, and 2048 tiles 2 to 4096 at 1280
+  and 360 px. All 585 color pairs per scheme meet WCAG 1.4.3 (4.5:1, 3:1 for
+  large text) and 1.4.11 (3:1). Not counted: the red flag cloth on Minesweeper
+  cells (1.10:1 to 1.56:1), because the flag is recognizable by its pole
 
 ### Browsers and devices
 
@@ -374,7 +374,8 @@ Performance was judged subjectively and not measured.
 
 - CSS validator and axe
 - Screen readers
-- Manual contrast measurement; the Lighthouse audit reported no contrast issues
+- Contrast of colors on gradients, background images, or semi-transparent
+  elements, which the contrast audit does not measure
 
 ## Browser support
 
