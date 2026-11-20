@@ -1,5 +1,5 @@
 // WCAG contrast audit: every visible text, control border, and icon against its effective background,
-// in 15 page states, with the light and the dark system color scheme.
+// in 15 page states, with the light and the dark system color scheme and the stored OLED choice.
 // Usage: node tests/contrast-audit.mjs [chrome.exe], or set CHROME_PATH.
 import { check, runBrowserCheck, sleep } from './browser-check.mjs';
 
@@ -211,7 +211,9 @@ function contrastRatio(first, second) {
 
 const toHex = (color) => '#' + color.map((value) => value.toString(16).padStart(2, '0')).join('');
 
-async function auditScheme(session, scheme) {
+// `storedTheme` is saved as the choice in the "Farbschema" select, for OLED, which has no system setting.
+async function auditScheme(session, scheme, storedTheme = null) {
+  const label = storedTheme ?? scheme;
   const findings = [];
   const exempt = [];
   let pairCount = 0;
@@ -225,7 +227,8 @@ async function auditScheme(session, scheme) {
 
   for (const scenario of scenarios) {
     const width = scenario.width ?? 1280;
-    await session.evaluate('try { localStorage.clear(); } catch {}');
+    const store = storedTheme ? `localStorage.setItem('lycheelab-theme', '${storedTheme}');` : '';
+    await session.evaluate(`try { localStorage.clear(); ${store} } catch {}`);
     await session.send('Emulation.setDeviceMetricsOverride', {
       width,
       height: 1000,
@@ -241,7 +244,7 @@ async function auditScheme(session, scheme) {
 
     const pairs = await session.evaluate(collectPairs);
     if (pairs.length === 0) {
-      check(false, `${scheme} ${width}px ${scenario.name}: the page shows content to check`);
+      check(false, `${label} ${width}px ${scenario.name}: the page shows content to check`);
     }
     pairCount += pairs.length;
 
@@ -262,13 +265,13 @@ async function auditScheme(session, scheme) {
 
   check(
     findings.length === 0,
-    `${scheme}: ${pairCount} color pairs in ${scenarios.length} page states meet the minimum`
+    `${label}: ${pairCount} color pairs in ${scenarios.length} page states meet the minimum`
   );
   for (const finding of findings) {
     console.log(`     ${finding.description} – ${finding.where}: ${finding.label}`);
   }
   for (const finding of exempt) {
-    console.log(`INFO ${scheme}: not counted (${finding.exempt}): ${finding.description} – ${finding.where}`);
+    console.log(`INFO ${label}: not counted (${finding.exempt}): ${finding.description} – ${finding.where}`);
   }
 }
 
@@ -280,5 +283,6 @@ await runBrowserCheck({
     await session.send('Page.addScriptToEvaluateOnNewDocument', { source: seedRandom });
     await auditScheme(session, 'light');
     await auditScheme(session, 'dark');
+    await auditScheme(session, 'dark', 'oled');
   }
 });

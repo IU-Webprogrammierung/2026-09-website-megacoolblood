@@ -69,6 +69,13 @@ async function checkChangeInA(a, b) {
     `A [${stateA.events}] B [${stateB.events}]`
   );
 
+  await act(a, setPreference('oled'));
+  stateB = await b.evaluate(readState('oled'));
+  check(
+    stateB.preference === 'oled' && stateB.theme === 'oled' && stateB.select === 'oled' && stateB.hasSchemeBackground,
+    'OLED in tab A: tab B turns black and its select shows OLED'
+  );
+
   await act(a, setPreference('system'));
   stateB = await b.evaluate(readState('light'));
   check(

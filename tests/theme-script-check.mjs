@@ -84,14 +84,14 @@ async function checkStoredDarkOnAllPages(session) {
 }
 
 async function checkStoredValues(session) {
-  for (const stored of [null, 'system', 'light', 'dark', 'quatsch']) {
+  for (const stored of [null, 'system', 'light', 'dark', 'oled', 'quatsch']) {
     for (const system of ['light', 'dark']) {
-      const isExplicit = stored === 'light' || stored === 'dark';
+      const isExplicit = ['light', 'dark', 'oled'].includes(stored);
       await setSystemScheme(session, system);
       await storeTheme(session, stored);
       await openPage(session, '/index.html');
       const state = await session.evaluate(readState(isExplicit ? stored : system));
-      const expectedPreference = ['system', 'light', 'dark'].includes(stored) ? stored : 'system';
+      const expectedPreference = ['system', 'light', 'dark', 'oled'].includes(stored) ? stored : 'system';
       check(
         state.theme === (isExplicit ? stored : 'none') &&
           state.preference === expectedPreference &&
@@ -119,6 +119,13 @@ async function checkApi(session) {
   await openPage(session, '/pages/minesweeper/game.html');
   state = await session.evaluate(readState('dark'));
   check(state.theme === 'dark' && state.preference === 'dark', 'the choice persists on another page');
+
+  const savedOled = await session.evaluate(`window.lycheelabTheme.setPreference('oled')`);
+  state = await session.evaluate(readState('oled'));
+  check(
+    savedOled === true && state.theme === 'oled' && state.hasExpectedBackground && state.hasExpectedThemeColor,
+    'setPreference("oled") applies at once with a black background and browser bar color'
+  );
 
   const savedSystem = await session.evaluate(`window.lycheelabTheme.setPreference('system')`);
   state = await session.evaluate(readState('light'));

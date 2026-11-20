@@ -32,7 +32,11 @@ export function check(condition, description, detail = '') {
   return condition;
 }
 
+// OLED has no color scheme of its own: it uses the dark values with a black background.
 export function hasSchemeBackground(scheme) {
+  if (scheme === 'oled') {
+    return `getComputedStyle(document.body).backgroundColor === 'rgb(0, 0, 0)'`;
+  }
   return `(() => {
     const probe = document.createElement('div');
     probe.style.cssText = 'color-scheme: ${scheme}; background: var(--color-background)';

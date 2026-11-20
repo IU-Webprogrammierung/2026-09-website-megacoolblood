@@ -1,5 +1,6 @@
 // Compares the working copy with a committed version of the site: computed colors and pixels of 14 views at 360 and
-// 1920 px, with the light and the dark system color scheme. Use it to show that a refactoring changes nothing visible.
+// 1920 px, with the light and the dark system color scheme and the stored OLED choice. Use it to show that a
+// refactoring changes nothing visible.
 // Usage: [REFERENCE=<git ref>] node tests/visual-regression-check.mjs [chrome.exe], or set CHROME_PATH.
 // REFERENCE defaults to HEAD, so the check compares uncommitted changes with the last commit.
 import { execFileSync } from 'node:child_process';
@@ -150,13 +151,23 @@ function saveDifference(differenceDir, label, before, after) {
 async function compare(session, referenceUrl, currentUrl, differenceDir) {
   let differenceCount = 0;
 
-  for (const scheme of ['light', 'dark']) {
+  // OLED is only a stored choice; the storage is cleared before each view, so a script stores it on every page load.
+  for (const { name, system, stored } of [
+    { name: 'light', system: 'light' },
+    { name: 'dark', system: 'dark' },
+    { name: 'OLED', system: 'dark', stored: 'oled' }
+  ]) {
     await session.send('Emulation.setEmulatedMedia', {
       features: [
-        { name: 'prefers-color-scheme', value: scheme },
+        { name: 'prefers-color-scheme', value: system },
         { name: 'prefers-reduced-motion', value: 'reduce' }
       ]
     });
+    const storeScript = stored
+      ? await session.send('Page.addScriptToEvaluateOnNewDocument', {
+          source: `localStorage.setItem('lycheelab-theme', '${stored}')`
+        })
+      : null;
 
     for (const size of sizes) {
       await session.send('Emulation.setDeviceMetricsOverride', { ...size, deviceScaleFactor: 1, mobile: false });
@@ -166,7 +177,7 @@ async function compare(session, referenceUrl, currentUrl, differenceDir) {
 
       for (const scenario of scenarios) {
         if (scenario.narrowOnly && size.width > 767) continue;
-        const label = `${scheme} ${size.width}px ${scenario.name}`;
+        const label = `${name} ${size.width}px ${scenario.name}`;
         const before = await capture(session, referenceUrl, scenario);
         const after = await capture(session, currentUrl, scenario);
         const changedColors = before.colors
@@ -187,6 +198,10 @@ async function compare(session, referenceUrl, currentUrl, differenceDir) {
           differenceCount++;
         }
       }
+    }
+
+    if (storeScript) {
+      await session.send('Page.removeScriptToEvaluateOnNewDocument', { identifier: storeScript.result.identifier });
     }
   }
 

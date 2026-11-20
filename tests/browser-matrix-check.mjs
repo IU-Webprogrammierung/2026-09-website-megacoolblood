@@ -1,4 +1,4 @@
-// All pages at 360, 768, 1280, and 1920 px in four color modes, a keyboard focus walk in light and dark,
+// All pages at 360, 768, 1280, and 1920 px in five color modes, a keyboard focus walk in light, dark, and OLED,
 // and the Minesweeper header: no horizontal scrolling with the header toggle or the site menu, and the focus order
 // below 768 px.
 // Usage: node tests/browser-matrix-check.mjs [chrome.exe], or set CHROME_PATH.
@@ -21,7 +21,8 @@ const colorModes = [
   { name: 'system light', system: 'light', stored: null, expected: 'light' },
   { name: 'system dark', system: 'dark', stored: null, expected: 'dark' },
   { name: 'stored Hell, system dark', system: 'dark', stored: 'light', expected: 'light' },
-  { name: 'stored Dunkel, system light', system: 'light', stored: 'dark', expected: 'dark' }
+  { name: 'stored Dunkel, system light', system: 'light', stored: 'dark', expected: 'dark' },
+  { name: 'stored OLED, system light', system: 'light', stored: 'oled', expected: 'oled' }
 ];
 // The focus walk stops when focus returns to an element it has already seen.
 const maxFocusStops = 100;
@@ -135,9 +136,13 @@ async function pressTab(session) {
 async function checkFocusWalk(session) {
   await setViewport(session, 1280);
 
-  for (const scheme of ['light', 'dark']) {
-    await setSystemScheme(session, scheme);
-    await resetStorage(session);
+  for (const { name, system, stored } of [
+    { name: 'light', system: 'light' },
+    { name: 'dark', system: 'dark' },
+    { name: 'OLED', system: 'dark', stored: 'oled' }
+  ]) {
+    await setSystemScheme(session, system);
+    await resetStorage(session, stored ? { 'lycheelab-theme': stored } : {});
     let stopCount = 0;
     const weakStops = [];
 
@@ -151,7 +156,7 @@ async function checkFocusWalk(session) {
         const focus = await session.evaluate(readFocus);
         if (!focus || seen.has(focus.key)) break;
         if (step === maxFocusStops) {
-          check(false, `${scheme} ${path}: focus walk ends within ${maxFocusStops} stops`);
+          check(false, `${name} ${path}: focus walk ends within ${maxFocusStops} stops`);
           break;
         }
         seen.add(focus.key);
@@ -164,7 +169,7 @@ async function checkFocusWalk(session) {
 
     check(
       weakStops.length === 0,
-      `${scheme}: all ${stopCount} focus stops on ${pages.length} pages show an outline of at least 2 px with 3:1`
+      `${name}: all ${stopCount} focus stops on ${pages.length} pages show an outline of at least 2 px with 3:1`
     );
     weakStops.forEach((stop) => console.log(`     ${stop}`));
   }
