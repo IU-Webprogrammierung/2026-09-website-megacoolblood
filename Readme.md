@@ -180,6 +180,43 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   losses, highest tile, and total score
 - Best score and statistics are stored locally using `localStorage`
 
+## Refactoring
+
+Larger refactorings were made in separate commits (`refactor`, `perf`, or
+`style` for formatting and CSS nesting) that do not change the behavior, so
+each step can be reviewed and reverted on its own:
+
+- Minesweeper data model: the cells moved from a flat array to a 2D array
+  addressed by row and column; difficulties became a configuration of size,
+  mines, and rule switches with one key per combination
+  (`js/minesweeper/difficulty.js`), which enabled custom sizes and rule
+  combinations; statistics and saved games share storage helpers in
+  `js/minesweeper/run-state.js`
+- Saved boards: one character per cell instead of an object per cell, so a
+  100 × 100 save needs about 10,000 instead of about 900,000 characters
+- Shared JavaScript: marking the current page with `aria-current` and the rule
+  for when global shortcuts are ignored (form fields, open dialogs) each moved
+  into one function in `js/components.js` used by both games; the page scripts
+  are loaded the same way with `defer` in every document head, except
+  `js/theme.js`, which runs before the stylesheets on purpose
+- CSS organization: Minesweeper layout rules moved from `css/style.css` to
+  `css/minesweeper.css`, duplicate board rules were merged, the site header
+  rules were restructured, and related selectors were grouped with native CSS
+  nesting
+- Colors: all hard-coded colors became CSS custom properties, which later
+  allowed the dark scheme with `light-dark()` without duplicating rules
+- Icons: images and background images became CSS masks filled with the current
+  text color, so they follow the color scheme; the flag uses two mask layers
+- Code formatting: Prettier was introduced and the existing code formatted
+  once in a separate commit, so later commits contain no formatting noise
+- Browser checks: the shared setup of the test scripts (local server, headless
+  Chrome, output) moved into `tests/browser-check.mjs`, which removed about 290
+  repeated lines
+
+Before a refactoring is committed,
+[the visual regression check](tests/visual-regression-check.mjs) compares it
+with the last commit (see Testing).
+
 ## Testing
 
 All tests were run manually in November 2026 on the version published on
