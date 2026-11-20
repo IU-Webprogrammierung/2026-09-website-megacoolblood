@@ -140,7 +140,7 @@ function resolveComponentPaths(template, rootPath) {
 }
 
 async function loadComponent(component) {
-  const path = component.getAttribute('path');
+  const path = component.getAttribute('src');
   const response = await fetch(path);
   const template = document.createElement('template');
   template.innerHTML = await response.text();
@@ -159,9 +159,18 @@ async function loadComponent(component) {
   component.replaceWith(template.content);
 }
 
-async function loadComponents() {
-  await Promise.all([...document.querySelectorAll('component[path]')].map(loadComponent));
+
+class LycheelabInclude extends HTMLElement {
+  connectedCallback() {
+    this.loaded ??= loadComponent(this);
+  }
 }
 
+customElements.define('lycheelab-include', LycheelabInclude);
+
 // Pages can wait for the header and footer, for example before measuring layout.
-window.lycheelabComponentsLoaded = loadComponents().catch(console.error);
+window.lycheelabComponentsLoaded = Promise.allSettled(
+  [...document.querySelectorAll('lycheelab-include')].map((component) => component.loaded)
+).then((results) => {
+  results.filter((result) => result.status === 'rejected').forEach((result) => console.error(result.reason));
+});
