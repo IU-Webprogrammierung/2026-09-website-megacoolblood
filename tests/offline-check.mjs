@@ -2,9 +2,11 @@
 // updated in the background, and all pages and both games work after the server is gone.
 // Usage: node tests/offline-check.mjs [chrome.exe], or set CHROME_PATH.
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { check, runBrowserCheck, siteRoot, sleep } from './browser-check.mjs';
 
-const cacheName = 'lycheelab-v1';
+const cacheName = readFileSync(join(siteRoot, 'sw.js'), 'utf8').match(/const cacheName = '([^']+)'/)[1];
 const pages = [
   '/',
   '/index.html',

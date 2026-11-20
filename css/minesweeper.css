@@ -265,6 +265,11 @@ main.minesweeper-game-page {
         linear-gradient(to top, var(--edge-bottom), transparent) bottom / 100% var(--edge-size) no-repeat;
     }
 
+    /* Dark strips would vanish on a black background. */
+    :root[data-theme='oled'] &::after {
+      --edge-shadow-color: rgb(255 255 255 / 0.35);
+    }
+
     &.has-more-left::after {
       --edge-left: var(--edge-shadow-color);
     }
@@ -570,6 +575,10 @@ main.minesweeper-game-page {
   border: 0.25rem solid var(--board-frame-color);
   border-radius: 0.5rem;
   background: var(--board-color);
+
+  :root[data-theme='oled'] & {
+    --cell-revealed-color: #000;
+  }
 
   .game-cell {
     display: grid;

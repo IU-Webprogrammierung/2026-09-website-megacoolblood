@@ -1,4 +1,7 @@
-/* Each color holds a light and a dark value; color-scheme picks one, data-theme overrides the system setting. */
+/*
+ * Each color holds a light and a dark value; color-scheme picks one, data-theme overrides the system setting.
+ * OLED uses the dark values with black surfaces, separated by their borders.
+ */
 :root {
   color-scheme: light dark;
   --color-background: light-dark(#f4f1ea, #1f1f1f);
@@ -40,6 +43,12 @@
 
   &[data-theme='dark'] {
     color-scheme: dark;
+  }
+
+  &[data-theme='oled'] {
+    color-scheme: dark;
+    --color-background: #000;
+    --color-surface: #000;
   }
 }
 

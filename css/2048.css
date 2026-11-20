@@ -30,6 +30,10 @@
   touch-action: none;
   user-select: none;
 
+  :root[data-theme='oled'] & {
+    --empty-tile-color: #000;
+  }
+
   &:focus-visible {
     outline: 0.2rem solid var(--color-accent-strong);
     outline-offset: 0.2rem;

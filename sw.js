@@ -1,5 +1,5 @@
 // Change the version when files are added, renamed, or removed, so the old cache is deleted.
-const cacheName = 'lycheelab-v1';
+const cacheName = 'lycheelab-v2';
 const precacheFiles = [
   './',
   './index.html',

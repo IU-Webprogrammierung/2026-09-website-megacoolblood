@@ -1,7 +1,7 @@
 window.lycheelabTheme = (() => {
   const storageKey = 'lycheelab-theme';
   const changeEvent = 'lycheelab-themechange';
-  const preferences = Object.freeze(['system', 'light', 'dark']);
+  const preferences = Object.freeze(['system', 'light', 'dark', 'oled']);
 
   function normalizePreference(value) {
     return preferences.includes(value) ? value : 'system';
@@ -15,13 +15,14 @@ window.lycheelabTheme = (() => {
     }
   }
 
-  // The browser bar follows the chosen scheme: one theme-color applies to all media, the other to none.
+  // The browser bar follows the chosen scheme: one theme-color applies to all media, the others to none.
+  // The system reports only light or dark, so the OLED color applies only when it is chosen.
   function applyThemeColor(preference) {
     document.querySelectorAll('meta[name="theme-color"][data-scheme]').forEach((meta) => {
       const scheme = meta.dataset.scheme;
 
       if (preference === 'system') {
-        meta.media = `(prefers-color-scheme: ${scheme})`;
+        meta.media = scheme === 'oled' ? 'not all' : `(prefers-color-scheme: ${scheme})`;
       } else {
         meta.media = scheme === preference ? 'all' : 'not all';
       }
