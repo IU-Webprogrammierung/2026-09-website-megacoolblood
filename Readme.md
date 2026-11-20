@@ -542,3 +542,10 @@ differs between browsers and was not tested. Showing the footer with the open me
 on the Minesweeper game page below 768 px uses `:has()`, which requires Chrome
 and Edge 105, Firefox 121, or Safari 15.4; in Firefox 120 the footer stays
 hidden there.
+
+## Acknowledgements
+
+I thank my wife for her support throughout this project, both for keeping me
+motivated and for using the site intensively. Among other things, she solved the
+100×100 board with 2,000 mines within three days, in about 30 hours of play and
+many attempts, before extra lives and Check existed.
