@@ -39,22 +39,23 @@ Like GitHub Pages, a folder address serves its `index.html`. It can open a
 second tab in the same profile, serve a second copy of the site and stop it
 again, and compares page backgrounds
 with the `light-dark()` value of a color scheme, so the checks contain no
-color values. Each check uses its own ports, so several checks can run at the
-same time.
+color values. The only exception is OLED, which has no color scheme of its own
+and is recognized by its black background. Each check uses its own ports, so
+several checks can run at the same time.
 
 ## Checks
 
 | Script                     | Checks                                                                                                                                                                                         | Ports      |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| `browser-matrix-check.mjs` | All 10 pages at 360, 768, 1280, and 1920 px in four color modes (system light and dark, stored Hell and Dunkel): expected scheme and select value, no horizontal scrolling, site header and `h1` present. Keyboard: every Tab stop on all pages shows an outline of at least 2 px with 3:1, light and dark. Minesweeper with 9 × 9, 16 × 30, and 100 × 100 cells at 360, 767, 768, 1280, and 1920 px: no horizontal scrolling before and after the header toggle. About 2.5 minutes | 8768, 9336 |
-| `contrast-audit.mjs`       | WCAG contrast of every visible text, control border, and icon in 15 page states, with the light and the dark system color scheme; 2048 tiles also at 360 px, where their numbers need 4.5:1 | 8767, 9335 |
+| `browser-matrix-check.mjs` | All 10 pages at 360, 768, 1280, and 1920 px in five color modes (system light and dark, stored Hell, Dunkel, and OLED): expected scheme and select value, no horizontal scrolling, site header and `h1` present. Keyboard: every Tab stop on all pages shows an outline of at least 2 px with 3:1, light, dark, and OLED. Minesweeper with 9 × 9, 16 × 30, and 100 × 100 cells at 360, 767, 768, 1280, and 1920 px: no horizontal scrolling before and after the header toggle. About 2.5 minutes | 8768, 9336 |
+| `contrast-audit.mjs`       | WCAG contrast of every visible text, control border, and icon in 15 page states, with the light and the dark system color scheme and stored OLED; 2048 tiles also at 360 px, where their numbers need 4.5:1 | 8767, 9335 |
 | `game-board-check.mjs`     | Minesweeper, light and dark: hidden and revealed cells differ by at least 3:1, the 7 cell states have different backgrounds, the board frame stands out by at least 3:1, focused cells show an outline. Edge shadows only when the board does not fit; a color scheme switch on 100 × 100 cells under 1 s. 2048: the arrow keys move the tiles | 8771, 9339 |
 | `offline-check.mjs`        | Service worker: it controls the page after the first visit; the precache list in `sw.js` contains every served file of the working copy and nothing else; online, pages come from the network and stylesheets from the cache with a background update; after the server is stopped, the site root, all 10 pages, and both games load completely | 8774, 8775, 9341 |
 | `storage-full-check.mjs`   | Minesweeper save when `localStorage` is full, without and with an existing save                                                                                                                | 8765, 9333 |
 | `reduced-motion-check.mjs` | Transitions and animations of the Minesweeper game page with `prefers-reduced-motion` set to `reduce` and `no-preference`                                                                    | 8766, 9334 |
-| `theme-script-check.mjs`   | `js/theme.js`: a stored Dunkel is applied before the first stylesheet on all 10 pages; every stored value (none, System, Hell, Dunkel, invalid) against a light and a dark system setting, including the `theme-color` of the browser bar; the `window.lycheelabTheme` API; blocked and full storage | 8769, 9337 |
-| `theme-sync-check.mjs`     | Color scheme sync between two tabs: a change in either tab, the same value again, invalid, removed, and cleared values, unrelated keys, a focused select, immersive mode, and navigation afterwards | 8770, 9338 |
-| `visual-regression-check.mjs` | Working copy against a committed version (`REFERENCE`, default `HEAD`): computed colors of every element and identical pixels in 14 views at 360 and 1920 px, light and dark. Screenshots of different views are kept in a temporary folder, whose path is printed. About 2 minutes | 8772, 8773, 9340 |
+| `theme-script-check.mjs`   | `js/theme.js`: a stored Dunkel is applied before the first stylesheet on all 10 pages; every stored value (none, System, Hell, Dunkel, OLED, invalid) against a light and a dark system setting, including the `theme-color` of the browser bar; the `window.lycheelabTheme` API; blocked and full storage | 8769, 9337 |
+| `theme-sync-check.mjs`     | Color scheme sync between two tabs: a change in either tab, including OLED, the same value again, invalid, removed, and cleared values, unrelated keys, a focused select, immersive mode, and navigation afterwards | 8770, 9338 |
+| `visual-regression-check.mjs` | Working copy against a committed version (`REFERENCE`, default `HEAD`): computed colors of every element and identical pixels in 14 views at 360 and 1920 px, light, dark, and OLED. Screenshots of different views are kept in a temporary folder, whose path is printed. About 2 minutes | 8772, 8773, 9340 |
 
 ## Known results
 
@@ -71,9 +72,11 @@ same time.
   behind it. It does not see gradients, background images, or colors blended
   through transparency; text on semi-transparent elements is listed as `INFO`
   instead of being checked.
-- The audit uses the system color scheme (`prefers-color-scheme`), not the
-  stored choice in the "Farbschema" select. Both select the same `light-dark()`
-  values, but only the system setting is checked.
+- Light and dark are audited with the system color scheme
+  (`prefers-color-scheme`), OLED as the stored choice in the "Farbschema"
+  select, because no system setting selects it. Stored Hell and Dunkel select
+  the same `light-dark()` values as the system setting and are not audited
+  separately.
 - The focus walk runs at 1280 px only and compares the outline with the first
   opaque background around the focused element.
 - The time for a color scheme switch comes from headless Chrome without a

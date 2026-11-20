@@ -32,16 +32,17 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   [tests/README.md](tests/README.md) for requirements, usage, and known results.
 - When a served file is added, renamed, or removed, update the list in `sw.js`
   and raise its `cacheName` version, so old copies are deleted;
-  `node tests/offline-check.mjs` reports files missing from the list. The two
-  `theme-color` values in the page heads repeat `--color-background` from
-  `css/style.css` and must be changed together with it.
+  `node tests/offline-check.mjs` reports files missing from the list. The three
+  `theme-color` values in the page heads repeat the light, dark, and OLED
+  `--color-background` from `css/style.css` and must be changed together with
+  it.
 
 ## Features
 
 ### Color scheme
 
-- A "Farbschema" select in the site header offers System, Hell (light), and
-  Dunkel (dark). Below 768 px it is part of the menu.
+- A "Farbschema" select in the site header offers System, Hell (light),
+  Dunkel (dark), and OLED. Below 768 px it is part of the menu.
 - System is the default and follows the operating system setting through
   `prefers-color-scheme`, also when it changes while the page is open.
 - The choice is stored in `localStorage` under `lycheelab-theme`. If storage is
@@ -57,6 +58,17 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   or `css/2048.css` defined with `light-dark()`; `color-scheme` on the root
   element selects the value, and `data-theme` overrides the system setting.
   Native controls, scrollbars, and dialogs follow the scheme as well.
+- OLED uses the dark values with a black page background and black surfaces,
+  which are separated by their borders instead of shadows. Revealed
+  Minesweeper cells and empty 2048 fields are black as well, and the edge
+  strips of the Minesweeper board are light instead of dark, so they stay
+  visible on black. Text keeps the muted white of Dunkel instead of pure white.
+  System never selects OLED, because the operating system only reports light
+  or dark.
+- Right after the update that added OLED, a browser that still has the previous
+  `js/theme.js` in its cache shows the OLED option for one page load, but
+  choosing it has no effect and logs an error until the next page load. The
+  `cacheName` in `sw.js` was raised, so the old cache is replaced.
 - Icons are SVG files used as CSS masks filled with the current text color, so
   they follow the scheme. The two-colored flag stacks two masks: the pole
   follows the text color and the cloth uses its own flag color.
@@ -198,8 +210,9 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   project dependency; together they shrank from 562 KB to 142 KB without a
   visible difference
 - The color of the browser bar (`theme-color`) follows the color scheme: two
-  values for the light and the dark system setting, and `js/theme.js` switches
-  to the one chosen in the "Farbschema" select
+  values for the light and the dark system setting and a black one that only
+  applies when OLED is chosen; `js/theme.js` switches to the value of the
+  choice in the "Farbschema" select
 - A service worker (`sw.js`, registered by `js/pwa.js`) stores all files of the
   site in the browser's cache during the first visit, so LycheeLab and both
   games work offline afterwards:
@@ -303,20 +316,21 @@ Performance was judged subjectively and not measured.
 - [Contrast audit](tests/contrast-audit.mjs) in headless Chrome 157 on a
   local server: every visible text, control border, and icon against the
   background it is seen on, in 15 page states with the light and the dark
-  system color scheme, including all Minesweeper cell states, both dialogs, the
-  settings error, the open menu at 360 px, and 2048 tiles 2 to 4096 at 1280
-  and 360 px. All 585 color pairs per scheme meet WCAG 1.4.3 (4.5:1, 3:1 for
+  system color scheme and with OLED stored as the choice, including all
+  Minesweeper cell states, both dialogs, the settings error, the open menu at
+  360 px, and 2048 tiles 2 to 4096 at 1280 and 360 px. All 586 color pairs per
+  scheme meet WCAG 1.4.3 (4.5:1, 3:1 for
   large text) and 1.4.11 (3:1). Not counted: the red flag cloth on Minesweeper
   cells (1.10:1 to 1.56:1), because the flag is recognizable by its pole
 - [Browser matrix](tests/browser-matrix-check.mjs) in headless Chrome 157 on a
   local server, without findings:
   - All 10 pages at 360, 768, 1280, and 1920 px with the system scheme light
-    and dark and with Hell and Dunkel stored against the system setting: the
-    expected scheme and select value, no horizontal scrolling, no console
+    and dark and with Hell, Dunkel, and OLED stored against the system setting:
+    the expected scheme and select value, no horizontal scrolling, no console
     errors or failed requests
   - Keyboard at 1280 px: all 128 Tab stops on the 10 pages show an outline of
-    at least 2 px with at least 3:1 against their background, in light and
-    dark
+    at least 2 px with at least 3:1 against their background, in light, dark,
+    and OLED
   - Minesweeper with 9 × 9, 16 × 30, and 100 × 100 cells at 360, 767, 768,
     1280, and 1920 px: no horizontal scrolling before and after opening the
     site menu (below 768 px, which also shows the footer) or toggling
@@ -325,16 +339,18 @@ Performance was judged subjectively and not measured.
 - [Color scheme script check](tests/theme-script-check.mjs) in headless
   Chrome 157 on a local server, without findings: a stored Dunkel is set before
   the first stylesheet on all 10 pages; every stored value (none, System, Hell,
-  Dunkel, invalid) gives the expected scheme with a light and a dark system
-  setting; with simulated blocked or full storage, the system scheme applies,
+  Dunkel, OLED, invalid) gives the expected scheme and browser bar color with a
+  light and a dark system setting; with simulated blocked or full storage, the
+  system scheme applies,
   a new choice only affects the current page, and the Minesweeper game page
   loads without errors
 - [Color scheme sync check](tests/theme-sync-check.mjs) with two tabs in
   headless Chrome 157 on a local server, without findings: a change in either
-  tab reaches the other without a reload, with one change event per tab and
-  none for the same value again; invalid, removed, and cleared values fall back
-  to System; other keys and `sessionStorage` events are ignored; a focused
-  select keeps its focus, and immersive mode does not block the change
+  tab, including OLED, reaches the other without a reload, with one change
+  event per tab and none for the same value again; invalid, removed, and
+  cleared values fall back to System; other keys and `sessionStorage` events
+  are ignored; a focused select keeps its focus, and immersive mode does not
+  block the change
 - [Game board check](tests/game-board-check.mjs) in headless Chrome 157 on a
   local server, without findings: in light and dark, hidden and revealed
   Minesweeper cells differ by at least 3:1, all 7 cell states have different
@@ -343,10 +359,10 @@ Performance was judged subjectively and not measured.
   the board does not fit; a color scheme switch on a 100 × 100 board takes less
   than 1 s; the arrow keys move the 2048 tiles
 - [Visual regression check](tests/visual-regression-check.mjs): compares the
-  computed colors and pixels of 14 views at 360 and 1920 px, light and dark,
-  with a committed version. It is meant for refactorings; a deliberate color
-  and spacing change was detected in 50 of 54 views, and the other 4 do not
-  show the changed elements. Scrollbars are hidden for the comparison, so a
+  computed colors and pixels of 14 views at 360 and 1920 px, light, dark, and
+  OLED, with a committed version. It is meant for refactorings; a deliberate
+  color and spacing change was detected in 50 of 54 views, and the other 4 do
+  not show the changed elements. Scrollbars are hidden for the comparison, so a
   page about as high as the window cannot differ by a scrollbar alone
 - Web app manifest in headless Chrome 157, with the same queries as the
   Application panel of the DevTools: no manifest errors and no installation
@@ -528,6 +544,11 @@ Performance was judged subjectively and not measured.
   storage policy (August 2023) and Home Screen web apps (February 2023) do not
   state it, so saved data may differ between Safari and the installed app
 - Whether the service worker makes page changes on GitHub Pages faster
+- OLED by hand and on a real OLED display, including smearing while panning
+  the Minesweeper board; the game board check (see Tools) runs only in light
+  and dark
+- The transition after the update that added OLED, with an old `js/theme.js`
+  in the cache
 
 ## Browser support
 
