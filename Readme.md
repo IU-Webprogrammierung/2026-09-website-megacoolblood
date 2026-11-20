@@ -163,8 +163,8 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   mines and its wrong flags separately, both only when the round ends. Times
   cover won games
 - No account, application backend, or tracking required
-- Serve the static files over HTTP; component loading and the local Panzoom ESM
-  import are not supported by a plain `file://` launch
+- Serve the static files over HTTP; loading the header and footer and the local
+  Panzoom ESM import are not supported by a plain `file://` launch
 
 ### 2048
 
@@ -212,6 +212,16 @@ each step can be reviewed and reverted on its own:
 - Browser checks: the shared setup of the test scripts (local server, headless
   Chrome, output) moved into `tests/browser-check.mjs`, which removed about 290
   repeated lines
+- Header and footer: every page loaded them through a `<component path="…">`
+  placeholder, which is not a valid HTML element. They now use the custom
+  element `<lycheelab-include src="…">` defined in `js/components.js`. It
+  fetches the file and replaces itself with the content, without a shadow
+  root, so the header and footer stay direct children of `<body>` and the page
+  stylesheets and layout rules still apply. `window.lycheelabComponentsLoaded`
+  waits until every placeholder has loaded or failed. A failed request, for
+  example a 404, now leaves the empty placeholder and logs an error instead of
+  inserting the error page; a missing subnavigation stays hidden without
+  hiding the header. The visual regression check found no visible change
 
 Before a refactoring is committed,
 [the visual regression check](tests/visual-regression-check.mjs) compares it
@@ -231,16 +241,24 @@ Performance was judged subjectively and not measured.
 - Viewport widths were read from the browser developer tools
 - [Nu Html Checker](https://validator.w3.org/nu/) on all 10 pages and the
   header and footer components:
-  - Error on every page: the placeholders `<component path="…">` for the
-    header and footer are not a valid HTML element (see Open findings)
+  - Before the header and footer refactoring (see Refactoring), every page had
+    two errors because the placeholder `<component path="…">` is not a valid
+    HTML element
   - Header and footer: missing doctype, `<title>`, and `lang`. These are
     expected, because the components are fragments that are inserted into a
     complete page and are not documents of their own
   - Info only: a trailing slash on void elements such as `<meta … />`. It comes
     from Prettier's HTML output and has no effect, because all attribute values
     are quoted
-  - No other errors or warnings. The subnavigation fragments and the pages
-    after the components are inserted were not checked
+- After the refactoring, the checker (version 26.11.14) ran locally with Java
+  on the source files and on all 10 finished pages, saved from headless Chrome
+  157 after the header, footer, and subnavigation were inserted:
+  - Source files: no errors
+  - Finished pages: 8 without errors, including all header, footer, and
+    subnavigation content. Errors only in the boards created by JavaScript:
+    the Minesweeper game page reports the attributes `row` and `column` on all
+    81 cell buttons, and the 2048 game page its 16 `role="gridcell"` tiles
+    without a `role="row"` parent (see Open findings)
 - Lighthouse accessibility audit in the Chrome DevTools on all 10 pages, each
   in the light and the dark color scheme:
   - Score 100: start page, Impressum, Datenschutz, and the instructions,
@@ -442,9 +460,10 @@ Performance was judged subjectively and not measured.
   board edge is slightly laggy
 - GitHub Pages: switching between pages can take very long; on a local HTTP
   server the pages loaded quickly
-- HTML validity: `<component>` is not a defined HTML element, and a custom
-  element name would need a hyphen. Browsers treat it as an unknown element;
-  `js/components.js` replaces it with the header or footer after loading
+- HTML validity of the Minesweeper board: the cell buttons carry the
+  attributes `row` and `column`, which HTML does not define; `data-row` and
+  `data-column` would be valid. Browsers ignore unknown attributes, so the game
+  works
 - Minesweeper statistics: if `lycheelab-statistics` holds text that is not
   valid JSON, wins, losses, and the winning streak are no longer saved, without
   a message to the player, until the key is removed. `readStatistics()` in
@@ -472,7 +491,8 @@ The site relies on CSS `light-dark()` and native CSS nesting. According to
 [MDN browser compatibility data](https://github.com/mdn/browser-compat-data),
 `light-dark()` requires Chrome and Edge 123, Firefox 120, or Safari 17.5;
 unprefixed `mask-image` requires Chrome 120, Firefox 53, or Safari 15.4.
-Older browsers do not get valid colors. Showing the footer with the open menu
+Older browsers do not get valid colors. Custom elements, used to load the
+header and footer, are supported by all of these browser versions. Showing the footer with the open menu
 on the Minesweeper game page below 768 px uses `:has()`, which requires Chrome
 and Edge 105, Firefox 121, or Safari 15.4; in Firefox 120 the footer stays
 hidden there.
