@@ -111,7 +111,18 @@ async function createSubnavigation(template) {
   }
 
   const subnavigationPath = `${gameDirectory[1]}subnavigation.html`;
-  let response = await fetch(subnavigationPath);
+  let response;
+
+  // A missing subnavigation only hides itself, so the header and main navigation still appear.
+  try {
+    response = await fetch(subnavigationPath);
+    if (!response.ok) {
+      throw new Error(`${subnavigationPath}: HTTP ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Spielnavigation konnte nicht geladen werden.', error);
+    return;
+  }
 
   const subnavigation = document.createElement('template');
   subnavigation.innerHTML = await response.text();
@@ -142,6 +153,13 @@ function resolveComponentPaths(template, rootPath) {
 async function loadComponent(component) {
   const path = component.getAttribute('src');
   const response = await fetch(path);
+
+  // Without this check an error page, for example a 404 from the server, would be inserted as header or footer.
+  // The empty placeholder stays in place, so the page layout keeps its order.
+  if (!response.ok) {
+    throw new Error(`${path}: HTTP ${response.status}`);
+  }
+
   const template = document.createElement('template');
   template.innerHTML = await response.text();
 
@@ -158,7 +176,6 @@ async function loadComponent(component) {
   await createSubnavigation(template);
   component.replaceWith(template.content);
 }
-
 
 class LycheelabInclude extends HTMLElement {
   connectedCallback() {
