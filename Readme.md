@@ -27,9 +27,14 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   not formatted.
 - Browser checks in headless Chrome for responsive layout, keyboard focus,
   contrast, the game boards, the color scheme script and its sync between tabs,
-  full storage, and reduced motion are in `tests/`, as well as a visual
-  comparison with the last commit for refactorings; see
+  full storage, reduced motion, and offline use are in `tests/`, as well as a
+  visual comparison with the last commit for refactorings; see
   [tests/README.md](tests/README.md) for requirements, usage, and known results.
+- When a served file is added, renamed, or removed, update the list in `sw.js`
+  and raise its `cacheName` version, so old copies are deleted;
+  `node tests/offline-check.mjs` reports files missing from the list. The two
+  `theme-color` values in the page heads repeat `--color-background` from
+  `css/style.css` and must be changed together with it.
 
 ## Features
 
@@ -180,6 +185,32 @@ semantic HTML, custom CSS, and vanilla JavaScript.
   losses, highest tile, and total score
 - Best score and statistics are stored locally using `localStorage`
 
+### Installation and offline use
+
+- A web app manifest (`manifest.webmanifest`) lets browsers that support it
+  install LycheeLab as an app that opens without the browser interface
+  (`display: standalone`), starting at the overview page
+- App icons in 192 and 512 px, a "maskable" 512 px icon whose logo stays
+  inside the area that Android may cut to a circle, and a 180 px Apple touch
+  icon with a solid background, because iOS fills transparency with black. They
+  were scaled down from the 1254 px original with `System.Drawing` and
+  compressed with pngquant 2.17.0, which was run once with `npx` and is not a
+  project dependency; together they shrank from 562 KB to 142 KB without a
+  visible difference
+- The color of the browser bar (`theme-color`) follows the color scheme: two
+  values for the light and the dark system setting, and `js/theme.js` switches
+  to the one chosen in the "Farbschema" select
+- A service worker (`sw.js`, registered by `js/pwa.js`) stores all files of the
+  site in the browser's cache during the first visit, so LycheeLab and both
+  games work offline afterwards:
+  - Pages and the header, footer, and game navigation are loaded from the
+    network first, so they are always current online; without a connection,
+    the cached copy is used
+  - Stylesheets, scripts, and images come from the cache at once and are
+    updated in the background. After a new version is published, they are
+    therefore one page load behind
+  - Without service worker support, the site works as before, only not offline
+
 ## Refactoring
 
 Larger refactorings were made in separate commits (`refactor`, `perf`, or
@@ -315,7 +346,17 @@ Performance was judged subjectively and not measured.
   computed colors and pixels of 14 views at 360 and 1920 px, light and dark,
   with a committed version. It is meant for refactorings; a deliberate color
   and spacing change was detected in 50 of 54 views, and the other 4 do not
-  show the changed elements
+  show the changed elements. Scrollbars are hidden for the comparison, so a
+  page about as high as the window cannot differ by a scrollbar alone
+- Web app manifest in headless Chrome 157, with the same queries as the
+  Application panel of the DevTools: no manifest errors and no installation
+  blockers on four folder levels; all icons load in their declared sizes
+- [Offline check](tests/offline-check.mjs) in headless Chrome 157, without
+  findings: the service worker controls the page after the first visit; its
+  list contains every served file and nothing else; online, a changed page
+  comes from the network and a changed stylesheet is used once from the cache
+  and replaced for the next load; after the local server is stopped, the site
+  root, all 10 pages, Minesweeper with Panzoom, and 2048 load completely
 
 ### Browsers and devices
 
@@ -480,6 +521,13 @@ Performance was judged subjectively and not measured.
 - Screen readers
 - Contrast of colors on gradients, background images, or semi-transparent
   elements, which the contrast audit does not measure
+- Installing the app on Windows, Android, iOS, and iPadOS, and offline use on
+  a real device
+- Whether a web app added to the iOS or iPadOS Home Screen shares its saved
+  games, statistics, and color scheme with Safari. WebKit's articles on
+  storage policy (August 2023) and Home Screen web apps (February 2023) do not
+  state it, so saved data may differ between Safari and the installed app
+- Whether the service worker makes page changes on GitHub Pages faster
 
 ## Browser support
 
@@ -488,7 +536,9 @@ The site relies on CSS `light-dark()` and native CSS nesting. According to
 `light-dark()` requires Chrome and Edge 123, Firefox 120, or Safari 17.5;
 unprefixed `mask-image` requires Chrome 120, Firefox 53, or Safari 15.4.
 Older browsers do not get valid colors. Custom elements, used to load the
-header and footer, are supported by all of these browser versions. Showing the footer with the open menu
+header and footer, and service workers are supported by all of these browser
+versions. Whether and how a browser offers to install the site as an app
+differs between browsers and was not tested. Showing the footer with the open menu
 on the Minesweeper game page below 768 px uses `:has()`, which requires Chrome
 and Edge 105, Firefox 121, or Safari 15.4; in Firefox 120 the footer stays
 hidden there.
