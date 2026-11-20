@@ -620,7 +620,7 @@ function handleCellClick(event) {
   if (!cellElement) {
     return;
   }
-  const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
+  const cell = cells[cellElement.dataset.row][cellElement.dataset.column];
 
   if (cell) {
     setActiveCell(cell);
@@ -635,7 +635,7 @@ function handleCellContextMenu(event) {
   if (!cellElement) {
     return;
   }
-  const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
+  const cell = cells[cellElement.dataset.row][cellElement.dataset.column];
 
   if (!cell) {
     return;
@@ -920,7 +920,7 @@ function moveFocus(currentCell, rowOffset, columnOffset) {
 
 function handleCellKeyDown(event) {
   const cellElement = event.target.closest('.game-cell');
-  const cell = cells[cellElement.getAttribute('row')][cellElement.getAttribute('column')];
+  const cell = cells[cellElement.dataset.row][cellElement.dataset.column];
 
   if (cell && event.key.startsWith('Arrow')) {
     const movement = {
@@ -1026,8 +1026,8 @@ function createBoard() {
       cell.className = 'game-cell';
       cell.tabIndex = -1;
       cell.setAttribute('aria-label', `Unaufgedecktes Feld ${coordinate}`);
-      cell.setAttribute('row', `${row}`);
-      cell.setAttribute('column', `${column}`);
+      cell.dataset.row = row;
+      cell.dataset.column = column;
       cell.textContent = '';
       cells[row][column] = cellState;
       board.append(cell);

@@ -256,7 +256,7 @@ Performance was judged subjectively and not measured.
   - Source files: no errors
   - Finished pages: 8 without errors, including all header, footer, and
     subnavigation content. Errors only in the boards created by JavaScript:
-    the Minesweeper game page reports the attributes `row` and `column` on all
+    the Minesweeper game page reported the attributes `row` and `column` on all
     81 cell buttons, and the 2048 game page its 16 `role="gridcell"` tiles
     without a `role="row"` parent (see Open findings)
 - Lighthouse accessibility audit in the Chrome DevTools on all 10 pages, each
@@ -460,10 +460,6 @@ Performance was judged subjectively and not measured.
   board edge is slightly laggy
 - GitHub Pages: switching between pages can take very long; on a local HTTP
   server the pages loaded quickly
-- HTML validity of the Minesweeper board: the cell buttons carry the
-  attributes `row` and `column`, which HTML does not define; `data-row` and
-  `data-column` would be valid. Browsers ignore unknown attributes, so the game
-  works
 - Minesweeper statistics: if `lycheelab-statistics` holds text that is not
   valid JSON, wins, losses, and the winning streak are no longer saved, without
   a message to the player, until the key is removed. `readStatistics()` in
