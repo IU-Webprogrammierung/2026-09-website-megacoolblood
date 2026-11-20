@@ -203,9 +203,12 @@ await runBrowserCheck({
     const referenceRoot = mkdtempSync(join(tmpdir(), 'lycheelab-reference-'));
     try {
       exportReference(referenceRoot);
-      const referenceUrl = serveSite(referenceRoot, referencePort);
+      const { url: referenceUrl } = serveSite(referenceRoot, referencePort);
       const differenceDir = join(tmpdir(), `lycheelab-visual-differences-${Date.now()}`);
       await session.send('Page.addScriptToEvaluateOnNewDocument', { source: seedRandom });
+      // A page about as high as the window can settle with or without a scrollbar depending on load timing;
+      // without scrollbars both sides lay out the same way.
+      await session.send('Emulation.setScrollbarsHidden', { hidden: true });
       await compare(session, referenceUrl, `http://127.0.0.1:${serverPort}`, differenceDir);
     } finally {
       rmSync(referenceRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });

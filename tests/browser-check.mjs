@@ -23,12 +23,13 @@ const failures = [];
 
 export const sleep = (ms) => new Promise((resolveSleep) => setTimeout(resolveSleep, ms));
 
-// The optional detail is printed after a failed check, for example the measured value.
+// The optional detail is printed after a failed check, for example the measured value. Returns the condition.
 export function check(condition, description, detail = '') {
   console.log(`${condition ? 'PASS' : 'FAIL'} ${description}${!condition && detail ? ` – ${detail}` : ''}`);
   if (!condition) {
     failures.push(description);
   }
+  return condition;
 }
 
 export function hasSchemeBackground(scheme) {
@@ -44,7 +45,9 @@ export function hasSchemeBackground(scheme) {
 
 function startServer(root, serverPort) {
   return createServer((request, response) => {
-    const file = join(root, decodeURIComponent(new URL(request.url, 'http://localhost').pathname));
+    const pathname = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
+    // Like GitHub Pages, a folder address such as the site root serves its index.html.
+    const file = join(root, pathname.endsWith('/') ? `${pathname}index.html` : pathname);
 
     if (!file.startsWith(root + sep)) {
       response.writeHead(404).end();
@@ -144,7 +147,7 @@ async function openSession(socket, siteUrl, pagePath) {
 // Each check uses its own ports, so several checks can run at the same time.
 // `session.navigate()` opens `pagePath`; `session.navigate(path)` opens another page of the site.
 // `openTab()` opens another tab in the same browser profile and returns its session.
-// `serveSite(root, port)` serves another copy of the site, for example a reference, and returns its URL.
+// `serveSite(root, port)` serves another copy of the site, for example a reference, and returns `{ url, close }`.
 export async function runBrowserCheck({ name, pagePath = '/index.html', serverPort, debugPort, run }) {
   const siteUrl = `http://127.0.0.1:${serverPort}`;
   const profileDir = mkdtempSync(join(tmpdir(), `lycheelab-${name}-`));
@@ -166,8 +169,14 @@ export async function runBrowserCheck({ name, pagePath = '/index.html', serverPo
   }
 
   function serveSite(root, port) {
-    servers.push(startServer(resolve(root), port));
-    return `http://127.0.0.1:${port}`;
+    const server = startServer(resolve(root), port);
+    servers.push(server);
+    // Closing also ends open keep-alive connections, so the next request fails as if the site were offline.
+    const close = () => {
+      server.closeAllConnections();
+      server.close();
+    };
+    return { url: `http://127.0.0.1:${port}`, close };
   }
 
   try {
