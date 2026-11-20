@@ -15,12 +15,26 @@ window.lycheelabTheme = (() => {
     }
   }
 
+  // The browser bar follows the chosen scheme: one theme-color applies to all media, the other to none.
+  function applyThemeColor(preference) {
+    document.querySelectorAll('meta[name="theme-color"][data-scheme]').forEach((meta) => {
+      const scheme = meta.dataset.scheme;
+
+      if (preference === 'system') {
+        meta.media = `(prefers-color-scheme: ${scheme})`;
+      } else {
+        meta.media = scheme === preference ? 'all' : 'not all';
+      }
+    });
+  }
+
   function applyPreference(preference) {
     if (preference === 'system') {
       delete document.documentElement.dataset.theme;
     } else {
       document.documentElement.dataset.theme = preference;
     }
+    applyThemeColor(preference);
   }
 
   let currentPreference = readStoredPreference();

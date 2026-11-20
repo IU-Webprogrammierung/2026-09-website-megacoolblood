@@ -16,7 +16,8 @@ const contentTypes = {
   '.js': 'text/javascript',
   '.mjs': 'text/javascript',
   '.svg': 'image/svg+xml',
-  '.png': 'image/png'
+  '.png': 'image/png',
+  '.webmanifest': 'application/manifest+json'
 };
 const failures = [];
 

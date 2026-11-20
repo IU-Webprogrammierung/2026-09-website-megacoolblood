@@ -53,10 +53,17 @@ async function storeTheme(session, value) {
   );
 }
 
+const hasSchemeThemeColor = (scheme) => `(() => {
+  const metas = [...document.querySelectorAll('meta[name="theme-color"]')];
+  const active = metas.find((meta) => !meta.media || matchMedia(meta.media).matches);
+  return !!active && active.dataset.scheme === '${scheme}';
+})()`;
+
 const readState = (expectedScheme) => `({
   theme: document.documentElement.dataset.theme ?? 'none',
   themeAtFirstStylesheet: window.themeAtFirstStylesheet,
   hasExpectedBackground: ${hasSchemeBackground(expectedScheme)},
+  hasExpectedThemeColor: ${hasSchemeThemeColor(expectedScheme)},
   preference: window.lycheelabTheme?.getPreference(),
   hasHeader: !!document.querySelector('#site-header')
 })`;
@@ -88,9 +95,10 @@ async function checkStoredValues(session) {
       check(
         state.theme === (isExplicit ? stored : 'none') &&
           state.preference === expectedPreference &&
-          state.hasExpectedBackground,
-        `stored ${stored ?? 'nothing'}, system ${system}: ${isExplicit ? stored : 'system'} scheme applies`,
-        `theme=${state.theme}, preference=${state.preference}`
+          state.hasExpectedBackground &&
+          state.hasExpectedThemeColor,
+        `stored ${stored ?? 'nothing'}, system ${system}: ${isExplicit ? stored : 'system'} scheme and browser bar color apply`,
+        `theme=${state.theme}, preference=${state.preference}, theme-color=${state.hasExpectedThemeColor}`
       );
     }
   }
@@ -104,8 +112,8 @@ async function checkApi(session) {
   const savedDark = await session.evaluate(`window.lycheelabTheme.setPreference('dark')`);
   let state = await session.evaluate(readState('dark'));
   check(
-    savedDark === true && state.theme === 'dark' && state.hasExpectedBackground,
-    'setPreference("dark") applies at once and saves'
+    savedDark === true && state.theme === 'dark' && state.hasExpectedBackground && state.hasExpectedThemeColor,
+    'setPreference("dark") applies at once, also to the browser bar color, and saves'
   );
 
   await openPage(session, '/pages/minesweeper/game.html');
@@ -115,8 +123,8 @@ async function checkApi(session) {
   const savedSystem = await session.evaluate(`window.lycheelabTheme.setPreference('system')`);
   state = await session.evaluate(readState('light'));
   check(
-    savedSystem === true && state.theme === 'none' && state.hasExpectedBackground,
-    'setPreference("system") removes data-theme'
+    savedSystem === true && state.theme === 'none' && state.hasExpectedBackground && state.hasExpectedThemeColor,
+    'setPreference("system") removes data-theme and the browser bar follows the system again'
   );
 
   const errorName = await session.evaluate(`(() => {
